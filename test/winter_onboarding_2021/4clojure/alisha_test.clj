@@ -9,3 +9,7 @@
 (deftest conj-function
   (testing "conj function will return a new list with one or more items added to the front"
     (is (= (solutions/problem5) '(1 2 3 4)))))
+
+(deftest vector-list-comparison
+  (testing "comparison of vector & list"
+    (is (= (solutions/problem6) [:a :b :c]))))
