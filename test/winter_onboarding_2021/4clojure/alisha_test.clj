@@ -13,3 +13,8 @@
 (deftest vector-list-comparison
   (testing "comparison of vector & list"
     (is (= (solutions/problem6) [:a :b :c]))))
+
+(deftest conj-function-for-vector
+  (testing "to check conj function appends to the end of vector"
+    (is (= (solutions/problem7) [1 2 3 4]))))
+
