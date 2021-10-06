@@ -7,3 +7,5 @@
 (defn problem6 [] (list :a :b :c) (vec '(:a :b :c)) (vector :a :b :c))
 
 (defn problem7 [] (conj [1 2] 3 4))
+
+(defn problem8 [] (set '(:a :a :b :c :c :c :c :d :d)))
