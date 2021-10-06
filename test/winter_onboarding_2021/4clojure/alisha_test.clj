@@ -18,3 +18,8 @@
   (testing "to check conj function appends to the end of vector"
     (is (= (solutions/problem7) [1 2 3 4]))))
 
+(deftest set-contain-unique-values
+  (testing "to check set contain unique values"
+    (is (= (solutions/problem8) #{:a :b :c :d}))))
+
+
