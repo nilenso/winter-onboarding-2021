@@ -12,8 +12,8 @@
 
 (defn problem9 [] (conj #{1 4 3} 2))
 
-(defn problem10_1 [] ((hash-map :a 10, :b 20, :c 30) :b))
+(defn problem10 [] 20)
 
-(defn problem10_2 [] (:b {:a 10, :b 20, :c 30}))
+(defn problem11 [] {:b 2})
 
-
+(defn problem12 [] 3)
