@@ -52,5 +52,12 @@
   (is (= (solutions/problem14) (#(+ % 5) 3)))
   (is (= (solutions/problem14) ((partial + 5) 3))))
 
+(deftest double-func
+  (testing "function to double the number")
+  (is (= ((solutions/problem15) 2) 4))
+  (is (= ((solutions/problem15) 3) 6))
+  (is (= ((solutions/problem15) 11) 22))
+  (is (= ((solutions/problem15) 7) 14)))
+
 
 
