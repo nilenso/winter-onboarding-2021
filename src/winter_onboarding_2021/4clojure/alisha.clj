@@ -17,3 +17,5 @@
 (defn problem11 [] {:b 2})
 
 (defn problem12 [] 3)
+
+(defn problem13 [] '(20 30 40))
