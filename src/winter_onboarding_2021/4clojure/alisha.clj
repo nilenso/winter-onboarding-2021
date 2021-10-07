@@ -21,3 +21,5 @@
 (defn problem13 [] '(20 30 40))
 
 (defn problem14 [] 8)
+
+(defn problem15 [] (fn [x] (* x 2)))
