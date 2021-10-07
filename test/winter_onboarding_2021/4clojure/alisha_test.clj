@@ -66,5 +66,10 @@
   (is (= ((solutions/problem16) "Rhea") "Hello, Rhea"))
   )
 
+(deftest map-function
+  (testing "To understand map function"
+    (is (= solutions/problem17 (map #(+ % 5) '(1 2 3))))))
 
-
+(deftest filter-function
+  (testing "Understand filter function"
+    (is (= solutions/problem18 (filter #(> % 5) '(3 4 5 6 7))))))
