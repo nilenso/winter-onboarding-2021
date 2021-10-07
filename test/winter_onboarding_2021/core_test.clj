@@ -1,6 +1,5 @@
 (ns winter-onboarding-2021.core-test
-  (:require [clojure.test :refer :all]
-            [winter-onboarding-2021.core :refer :all]))
+  (:require [clojure.test :refer [deftest is testing]]))
 
 (deftest a-test
   (testing "FIXME, I always pass."
