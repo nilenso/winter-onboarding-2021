@@ -25,3 +25,7 @@
 (defn problem15 [] (fn [x] (* x 2)))
 
 (defn problem16 [] (fn [x] (str "Hello, " x "!")))
+
+(defn problem17 [] '[6 7 8])
+
+(defn problem18 [] '[6 7])
