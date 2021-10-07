@@ -36,10 +36,14 @@
   (is (= {:a 1, :b 2, :c 3} (conj {:a 1} (solutions/problem11) [:c 3]))))
 
 (deftest sequences
-  (testing "")
+  (testing "operation on sequences with functions first second last")
   (is (= (solutions/problem12) (first '(3 2 1))))
   (is (= (solutions/problem12) (second [2 3 4])))
   (is (= (solutions/problem12) (last (list 1 2 3)))))
+
+(deftest rest-function
+  (testing "to check return of rest function"
+    (is (= (solutions/problem13) (rest [10 20 30 40])))))
 
 
 
