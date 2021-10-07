@@ -26,12 +26,20 @@
   (testing "to check keys added to set using conj function")
   (is (= (solutions/problem9) #{1 2 3 4})))
 
-(deftest conj-on-sets-1
+(deftest hashmap-lookup
   (testing "to check keys added to set using conj function")
-  (is (= (solutions/problem10_1) :20)))
+  (is (= (solutions/problem10) (hash-map :a 10, :b 20, :c 30) :b))
+  ((is (= (solutions/problem10) (:b {:a 10, :b 20, :c 30})))))
 
-(deftest conj-on-sets-2
-  (testing "to check keys added to set using conj function")
-  (is (= (solutions/problem10_2) 20)))
+(deftest conj-on-maps
+  (testing "to check keys added to map using conj function")
+  (is (= {:a 1, :b 2, :c 3} (conj {:a 1} (solutions/problem11) [:c 3]))))
+
+(deftest sequences
+  (testing "")
+  (is (= (solutions/problem12) (first '(3 2 1))))
+  (is (= (solutions/problem12) (second [2 3 4])))
+  (is (= (solutions/problem12) (last (list 1 2 3)))))
+
 
 
