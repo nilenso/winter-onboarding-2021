@@ -34,3 +34,40 @@
   (testing "Conjuction of maps and/or keys")
   (is (= {:a 1, :b 2, :c 3} (conj {:a 1} (solutions/problem11) [:c 3]))))
 
+(deftest seq-colls
+  (testing "Sequencing operations on collections")
+  (is (= (solutions/problem12) (first '(3 2 1))))
+  (is (= (solutions/problem12) (second [2 3 4])))
+  (is (= (solutions/problem12) (last (list 1 2 3)))))
+
+(deftest rest-func
+  (testing "Rest function on a collection")
+  (is (= (solutions/problem13) (rest [10 20 30 40]))))
+
+(deftest creating-fns
+  (testing "Vaious ways of creating functions")
+  (is (= (solutions/problem14) ((fn add-five [x] (+ x 5)) 3)))
+  (is (= (solutions/problem14) ((fn [x] (+ x 5)) 3)))
+  (is (= (solutions/problem14) (#(+ % 5) 3)))
+  (is (= (solutions/problem14) ((partial + 5) 3))))
+
+(deftest double-n
+  (testing "Doubling a number")
+  (is (= (solutions/problem15 2) 4))
+  (is (= (solutions/problem15 3) 6))
+  (is (= (solutions/problem15 11) 22))
+  (is (= (solutions/problem15 7) 14)))
+
+(deftest greeting
+  (testing "Joining two strings to form a personalised greeting")
+  (is (= (solutions/problem16 "Dave") "Hello, Dave!"))
+  (is (= (solutions/problem16 "Jenn") "Hello, Jenn!"))
+  (is (= (solutions/problem16 "Rhea") "Hello, Rhea!")))
+
+(deftest add-five
+  (testing "Demonstrating the use of map in applying a function on a collection")
+  (is (= (solutions/problem17) (map #(+ % 5) '(1 2 3)))))
+
+(deftest filter-func
+  (testing "Demonstrating the use of map in applying a function on a collection")
+  (is (= (solutions/problem18) (filter #(> % 5) '(3 4 5 6 7)))))

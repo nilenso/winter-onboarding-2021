@@ -112,3 +112,16 @@
 
 (defn problem11 [] {:b 2})
 
+(defn problem12 [] 3)
+
+(defn problem13 [] '(20 30 40))
+
+(defn problem14 [] 8)
+
+(defn problem15 [x] (* x 2))
+
+(defn problem16 [name] (str "Hello, " name "!"))
+
+(defn problem17 [] '(6 7 8))
+
+(defn problem18 [] '(6 7))
