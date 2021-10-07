@@ -59,5 +59,12 @@
   (is (= ((solutions/problem15) 11) 22))
   (is (= ((solutions/problem15) 7) 14)))
 
+(deftest personalised-greeting
+  (testing "personalised greeting")
+  (is (= ((solutions/problem16) "Dave") "Hello, Dave!"))
+  (is (= ((solutions/problem16) "Jenn") "Hello, Jenn"))
+  (is (= ((solutions/problem16) "Rhea") "Hello, Rhea"))
+  )
+
 
 
