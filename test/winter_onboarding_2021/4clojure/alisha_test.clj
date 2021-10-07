@@ -22,5 +22,16 @@
   (testing "to check set contain unique values"
     (is (= (solutions/problem8) #{:a :b :c :d}))))
 
+(deftest conj-on-sets
+  (testing "to check keys added to set using conj function")
+  (is (= (solutions/problem9) #{1 2 3 4})))
+
+(deftest conj-on-sets-1
+  (testing "to check keys added to set using conj function")
+  (is (= (solutions/problem10_1) :20)))
+
+(deftest conj-on-sets-2
+  (testing "to check keys added to set using conj function")
+  (is (= (solutions/problem10_2) 20)))
 
 
