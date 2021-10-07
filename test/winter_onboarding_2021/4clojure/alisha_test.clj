@@ -45,5 +45,12 @@
   (testing "to check return of rest function"
     (is (= (solutions/problem13) (rest [10 20 30 40])))))
 
+(deftest function-declarations
+  (testing "to check diff ways to declare functions")
+  (is (= (solutions/problem14) ((fn add-five [x] (+ x 5)) 3)))
+  (is (= (solutions/problem14) ((fn [x] (+ x 5)) 3)))
+  (is (= (solutions/problem14) (#(+ % 5) 3)))
+  (is (= (solutions/problem14) ((partial + 5) 3))))
+
 
 
