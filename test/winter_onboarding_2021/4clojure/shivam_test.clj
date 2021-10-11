@@ -77,3 +77,9 @@
   (is (= ((solutions/problem19) [1 2 3 4 5]) 5))
   (is (= ((solutions/problem19) '(5 4 3)) 3))
   (is (= ((solutions/problem19) ["b" "c" "d"]) "d")))
+
+(deftest get-penultimate
+  (testing "Getting the penultimate(last 2nd) element from a collection")
+  (is (= (solutions/problem20 (list 1 2 3 4 5)) 4))
+  (is (= (solutions/problem20 ["a" "b" "c"]) "b"))
+  (is (= (solutions/problem20 [[1 2] [3 4]]) [1 2])))
