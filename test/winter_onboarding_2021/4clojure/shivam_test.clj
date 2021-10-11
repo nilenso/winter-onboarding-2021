@@ -83,3 +83,9 @@
   (is (= (solutions/problem20 (list 1 2 3 4 5)) 4))
   (is (= (solutions/problem20 ["a" "b" "c"]) "b"))
   (is (= (solutions/problem20 [[1 2] [3 4]]) [1 2])))
+
+(deftest get-nth-element
+  (testing "Getting the nth element element from a collection")
+  (is (= (solutions/problem20 (list 1 2 3 4 5)) 4))
+  (is (= (solutions/problem20 ["a" "b" "c"]) "b"))
+  (is (= (solutions/problem20 [[1 2] [3 4]]) [1 2])))

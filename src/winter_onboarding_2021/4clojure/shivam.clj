@@ -129,3 +129,7 @@
 (defn problem19 [] last)
 
 (defn problem20 [coll] (second (reverse coll)))
+
+(defn problem21 [coll index] (if (pos? index)
+                               (coll index)
+                               (coll (+ (count coll) index))))
