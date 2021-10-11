@@ -86,6 +86,15 @@
 
 (deftest get-nth-element
   (testing "Getting the nth element element from a collection")
-  (is (= (solutions/problem20 (list 1 2 3 4 5)) 4))
-  (is (= (solutions/problem20 ["a" "b" "c"]) "b"))
-  (is (= (solutions/problem20 [[1 2] [3 4]]) [1 2])))
+  (is (= (solutions/problem21 '(4 5 6 7) 2) 6))
+  (is (= (solutions/problem21 [:a :b :c] 0) :a))
+  (is (= (solutions/problem21 [1 2 3 4] 1) 2))
+  (is (= (solutions/problem21 '([1 2] [3 4] [5 6]) 2) [5 6])))
+
+(deftest get-len-seq
+  (testing "Getting the length of the sequence")
+  (is (= (solutions/problem22 '(1 2 3 3 1)) 5))
+  (is (= (solutions/problem22 "Hello World") 11))
+  (is (= (solutions/problem22 [[1 2] [3 4] [5 6]]) 3))
+  (is (= (solutions/problem22 '(13)) 1))
+  (is (= (solutions/problem22 '(:a :b :c)) 3)))
