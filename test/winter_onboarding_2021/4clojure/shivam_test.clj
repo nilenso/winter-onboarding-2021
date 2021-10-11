@@ -71,3 +71,9 @@
 (deftest filter-func
   (testing "Demonstrating the use of map in applying a function on a collection")
   (is (= (solutions/problem18) (filter #(> % 5) '(3 4 5 6 7)))))
+
+(deftest get-last
+  (testing "Getting the last element")
+  (is (= ((solutions/problem19) [1 2 3 4 5]) 5))
+  (is (= ((solutions/problem19) '(5 4 3)) 3))
+  (is (= ((solutions/problem19) ["b" "c" "d"]) "d")))

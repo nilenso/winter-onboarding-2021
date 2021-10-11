@@ -125,3 +125,5 @@
 (defn problem17 [] '(6 7 8))
 
 (defn problem18 [] '(6 7))
+
+(defn problem19 [] last)
