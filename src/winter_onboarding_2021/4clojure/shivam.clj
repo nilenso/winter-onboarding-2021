@@ -127,3 +127,5 @@
 (defn problem18 [] '(6 7))
 
 (defn problem19 [] last)
+
+(defn problem20 [coll] (second (reverse coll)))
