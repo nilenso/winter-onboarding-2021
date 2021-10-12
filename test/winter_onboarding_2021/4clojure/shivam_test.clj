@@ -146,3 +146,10 @@
   (is (= (solutions/problem29 "HeLlO, WoRlD!") "HLOWRD"))
   (is (empty? (solutions/problem29 "nothing")))
   (is (= (solutions/problem29 "$#A(*&987Zf") "AZ")))
+
+(deftest remove-consecutive-dups
+  (testing "a function which removes consecutive duplicates from a sequence")
+  (is (= (apply str (solutions/problem30 "Leeeeeerrroyyy")) "Leroy"))
+  (is (= (solutions/problem30 [1 1 2 3 3 2 2 3]) '(1 2 3 2 3)))
+  (is (= (solutions/problem30 [[1 2] [1 2] [3 4] [1 2]]) '([1 2] [3 4] [1 2]))))
+
