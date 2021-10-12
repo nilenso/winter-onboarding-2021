@@ -62,14 +62,40 @@
 (deftest personalised-greeting
   (testing "personalised greeting")
   (is (= ((solutions/problem16) "Dave") "Hello, Dave!"))
-  (is (= ((solutions/problem16) "Jenn") "Hello, Jenn"))
-  (is (= ((solutions/problem16) "Rhea") "Hello, Rhea"))
-  )
+  (is (= ((solutions/problem16) "Jenn") "Hello, Jenn!"))
+  (is (= ((solutions/problem16) "Rhea") "Hello, Rhea!")))
 
 (deftest map-function
   (testing "To understand map function"
-    (is (= solutions/problem17 (map #(+ % 5) '(1 2 3))))))
+    (is (= (solutions/problem17) (map #(+ % 5) '(1 2 3))))))
 
 (deftest filter-function
   (testing "Understand filter function"
-    (is (= solutions/problem18 (filter #(> % 5) '(3 4 5 6 7))))))
+    (is (= (solutions/problem18) (filter #(> % 5) '(3 4 5 6 7))))))
+
+(deftest last-element-in-sequence
+  (testing "Function to return last element in a sequence"
+    (is (= ((solutions/problem19) [1 2 3 4 5]) 5))
+    (is (= ((solutions/problem19) '(5 4 3)) 3))
+    (is (= ((solutions/problem19) ["b" "c" "d"]) "d"))))
+
+(deftest penultimate-element
+  (testing "Function to return second last element in a sequence"
+    (is (= ((solutions/problem20) (list 1 2 3 4 5)) 4))
+    (is (= ((solutions/problem20) ["a" "b" "c"]) "b"))
+    (is (= ((solutions/problem20) [[1 2] [3 4]]) [1 2]))))
+
+(deftest count-function
+  (testing "To operate on count function"
+    (is (= ((solutions/problem22) '(1 2 3 3 1)) 5))
+    (is (= ((solutions/problem22) "Hello World") 11))
+    (is (= ((solutions/problem22) [[1 2] [3 4] [5 6]]) 3))
+    (is (= ((solutions/problem22) '(13)) 1))
+    (is (= ((solutions/problem22) '(:a :b :c)) 3))))
+
+(deftest sequence-reverse
+      (testing "To reverse a sequence"
+        (is ((= (solutions/problem23 [1 2 3 4 5]) [5 4 3 2 1])))
+        (is ((= (solutions/problem23 (sorted-set 5 7 2 7)) '(7 5 2))))
+        (is ((= (solutions/problem23 [[1 2] [3 4] [5 6]]) [[5 6] [3 4] [1 2]])))))))
+
