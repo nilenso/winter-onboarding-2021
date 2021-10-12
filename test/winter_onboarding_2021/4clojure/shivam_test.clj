@@ -134,3 +134,9 @@
   (is (true? (solutions/problem27 [:foo :bar :foo])))
   (is (true? (solutions/problem27 '(1 1 3 3 1 1))))
   (is (false? (solutions/problem27 '(:a :b :c)))))
+
+(deftest my-flatten
+  (testing "a function which flattens a sequence")
+  (is (= (solutions/problem28 '((1 2) 3 [4 [5 6]])) '(1 2 3 4 5 6)))
+  (is (= (solutions/problem28 ["a" ["b"] "c"]) '("a" "b" "c")))
+  (is (= (solutions/problem28 '((((:a))))) '(:a))))
