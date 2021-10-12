@@ -6,4 +6,4 @@
   (println x "Hello, World!"))
 
 
-(foo "togi")
+(foo "Yogi ")
