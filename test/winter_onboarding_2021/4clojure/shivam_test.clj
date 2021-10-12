@@ -120,3 +120,9 @@
   (is (= (solutions/problem25 [4 2 1 6]) '(1)))
   (is (= (solutions/problem25 [2 2 4 6]) '()))
   (is (= (solutions/problem25 [1 1 1 3]) '(1 1 1 3))))
+
+(deftest fibonacci
+  (testing "a function which returns the first X fibonacci numbers")
+  (is (= (solutions/problem26 3) '(0 1 1)))
+  (is (= (solutions/problem26 6) '(0 1 1 2 3 5)))
+  (is (= (solutions/problem26 8) '(0 1 1 2 3 5 8 13))))

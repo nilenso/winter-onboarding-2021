@@ -149,3 +149,13 @@
 (defn problem25 [coll] (filter
                         (fn [x] (not (= 0 (rem x 2))))
                         coll))
+
+(defn problem26 [n] (reduce
+                   (fn [acc, ele]
+                     (if (<= n 1)
+                       (vec (range n))
+                       (conj acc (+ (or (second (reverse acc)) 1) (last acc)))))
+                   (if (<= n 1)
+                     []
+                     [0])
+                   (range (- n 1))))
