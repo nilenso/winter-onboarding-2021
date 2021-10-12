@@ -135,3 +135,8 @@
                                ((vec coll) (+ (count coll) index))))
 
 (defn problem22 [seq-coll] (reduce (fn [acc _] (+ acc 1)) 0 seq-coll))
+
+(defn problem23 [coll] (reduce
+                        (fn [acc, ele] (cons ele acc))
+                        (empty coll)
+                        coll))
