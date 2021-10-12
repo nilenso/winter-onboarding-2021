@@ -172,3 +172,9 @@
 (defn problem29 [test-str] (apply str (filter
                                        (fn [c] (Character/isUpperCase c))
                                        test-str)))
+
+(defn problem30 [to-compress-seq] (if (< (count to-compress-seq) 2)
+                                    to-compress-seq
+                                    (if (= (first to-compress-seq) (second to-compress-seq))
+                                      (problem30 (rest to-compress-seq))
+                                      (conj (problem30 (rest to-compress-seq)) (first to-compress-seq)))))
