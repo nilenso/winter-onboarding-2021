@@ -163,3 +163,8 @@
 (defn problem27 [coll] (if (= java.lang.String (type coll))
                          (= (apply str (reverse coll)) coll)
                          (= (reverse coll) coll)))
+
+(defn problem28 [coll] (reduce
+                        (fn [acc, ele] (concat acc (if (coll? ele)
+                                                     (problem28 ele)
+                                                     [ele]))) [] coll))
