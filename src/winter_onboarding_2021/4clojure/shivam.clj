@@ -168,3 +168,7 @@
                         (fn [acc, ele] (concat acc (if (coll? ele)
                                                      (problem28 ele)
                                                      [ele]))) [] coll))
+
+(defn problem29 [test-str] (apply str (filter
+                                       (fn [c] (Character/isUpperCase c))
+                                       test-str)))
