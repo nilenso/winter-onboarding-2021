@@ -29,3 +29,9 @@
 (defn problem17 [] '[6 7 8])
 
 (defn problem18 [] '[6 7])
+
+(defn problem19 [] last)
+
+(defn problem20 [] #(second (reverse %)))
+
+(defn problem22 [] #(reduce (fn [x _] (+ x 1))0 %))
