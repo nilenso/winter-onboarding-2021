@@ -126,3 +126,11 @@
   (is (= (solutions/problem26 3) '(0 1 1)))
   (is (= (solutions/problem26 6) '(0 1 1 2 3 5)))
   (is (= (solutions/problem26 8) '(0 1 1 2 3 5 8 13))))
+
+(deftest palindrome
+  (testing "a function which returns the sum of a sequence of numbers")
+  (is (false? (solutions/problem27 '(1 2 3 4 5))))
+  (is (true? (solutions/problem27 "racecar")))
+  (is (true? (solutions/problem27 [:foo :bar :foo])))
+  (is (true? (solutions/problem27 '(1 1 3 3 1 1))))
+  (is (false? (solutions/problem27 '(:a :b :c)))))

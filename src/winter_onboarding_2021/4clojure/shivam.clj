@@ -159,3 +159,7 @@
                      []
                      [0])
                    (range (- n 1))))
+
+(defn problem27 [coll] (if (= java.lang.String (type coll))
+                         (= (apply str (reverse coll)) coll)
+                         (= (reverse coll) coll)))
