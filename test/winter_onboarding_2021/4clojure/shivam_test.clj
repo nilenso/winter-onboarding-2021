@@ -104,3 +104,19 @@
   (is (= (solutions/problem23 [1 2 3 4 5]) [5 4 3 2 1]))
   (is (= (solutions/problem23 (sorted-set 5 7 2 7)) '(7 5 2)))
   (is (= (solutions/problem23 [[1 2] [3 4] [5 6]]) [[5 6] [3 4] [1 2]])))
+
+(deftest sum-seq
+  (testing "a function which returns the sum of a sequence of numbers")
+  (is (= (solutions/problem24 [1 2 3]) 6))
+  (is (= (solutions/problem24 (list 0 -2 5 5)) 8))
+  (is (= (solutions/problem24 #{4 2 1}) 7))
+  (is (= (solutions/problem24 '(0 0 -1)) -1))
+  (is (= (solutions/problem24 '(1 10 3)) 14)))
+
+
+(deftest only-odd
+  (testing "a function which returns only the odd numbers from a sequence")
+  (is (= (solutions/problem25 #{1 2 3 4 5}) '(1 3 5)))
+  (is (= (solutions/problem25 [4 2 1 6]) '(1)))
+  (is (= (solutions/problem25 [2 2 4 6]) '()))
+  (is (= (solutions/problem25 [1 1 1 3]) '(1 1 1 3))))

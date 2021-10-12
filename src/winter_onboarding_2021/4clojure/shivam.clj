@@ -140,3 +140,12 @@
                         (fn [acc, ele] (cons ele acc))
                         (empty coll)
                         coll))
+
+(defn problem24 [coll] (reduce
+                        (fn [acc ele] (+ acc ele))
+                        0
+                        coll))
+
+(defn problem25 [coll] (filter
+                        (fn [x] (not (= 0 (rem x 2))))
+                        coll))
