@@ -140,3 +140,9 @@
   (is (= (solutions/problem28 '((1 2) 3 [4 [5 6]])) '(1 2 3 4 5 6)))
   (is (= (solutions/problem28 ["a" ["b"] "c"]) '("a" "b" "c")))
   (is (= (solutions/problem28 '((((:a))))) '(:a))))
+
+(deftest find-capital-letters
+  (testing "a function which takes a string and returns a new string containing only the capital letters.")
+  (is (= (solutions/problem29 "HeLlO, WoRlD!") "HLOWRD"))
+  (is (empty? (solutions/problem29 "nothing")))
+  (is (= (solutions/problem29 "$#A(*&987Zf") "AZ")))
