@@ -20,7 +20,7 @@ where:
 | syntax | name     | description         |
 |--------|----------|---------------------|
 | +X     | positive | does nothing        |
-| +Y     | negative | negative value of X |
+| -Y     | negative | negative value of Y |
 
 ### Binary operations (numerical)
 
