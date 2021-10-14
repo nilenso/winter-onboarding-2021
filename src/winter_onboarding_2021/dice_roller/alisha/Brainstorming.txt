@@ -1,0 +1,153 @@
+Dice Engine
+-----------
+
+//Takes input an expression
+function input () 
+{
+
+}
+
+
+//Define all the unary operations possible
+*(more clarity to be added)
+unary-operation {
+    +
+    -
+}
+
+
+Binary operation
+--------
+//Define all the binary operation possible, more like combination of enum or structure
+binary operation {
+    +
+    -
+    *
+    \
+}
+
+//DiceNotation 
+Anything in the format of ndX is dice notation
+
+format -> (number1)(d)(number2)    
+
+-> number1 - number of times dice is rolled
+-> number2 - The number od sides dice has
+Example: 3d5
+
+//DiceExpression
+A dice expression is in the format of DiceNotation and SetOperation
+
+Format -> (ndX)(SetOperator SetSelector Y)  //brackets are just to show separation of dice notation and set operation
+Example -> 3d10kl2
+
+//Set
+---
+//Define set which is a combination of multiple numbers(i.e multiple die rolls)
+//its essentially numbers or the outcomes of particular dice roll
+
+set ( )
+example: (1 , 2 , 3)
+
+
+//Literal set
+---
+//Define a combination of Set and DiceNotation
+
+literalset ()
+example: (1 , 2 , 3 , 4 , 2d4)
+
+//SetOperators
+{
+    k -> keep all matched values
+    d -> drop all matched values
+    rr -> Re rolls all matched value until none match
+}
+
+//SetSelectors
+{
+    X  -> All valies that are literally this value
+    h X -> The highest X values in the set
+    l X -> The lowest X values in the set
+    > X -> Values in the set that are greater than X
+    < X -> Values in the set that are lesser than X
+}
+
+//SetOperation = (combination of -> SetOperator SetSelectors)
+Examples
+
+kh2 -> keep the highest 2 values in the set
+d<5 -> drop the values which are less than 5
+rr>4 -> reroll the dice as much as u can until there is no occurence of numbers greater than 4 in the set
+rr4 -> reroll the dice as much as u can until there is no occurence of 4 in the set
+d>4 -> drop the values that are greater than 4
+
+//Some understanding (Thinking out loud)
+-------------
+
+-> A Set(here) can be simplified into a collection of numbers (after the dice is rolled)
+-> A literal set can be simplified into a Set.
+-> A SetOperation is to be performed on the Set
+-> A SetOperation is a combination of SetOperator and SetSelector like
+ (here X is any number)
+            SetOperator SetSelector SetOperation
+                k                       k X
+                k           h           kh X
+                k           l           kl X
+                k           >           k> X
+                k           <           k< X
+                d                       d X
+                d           h           dh X
+                d           l           dk X
+                d           >           d> X
+                d           <           d< X
+                rr                      rr X
+                rr          h           rrh X
+                rr          l           rrl X
+                rr          >           rr> X
+                rr          <           rr< X
+
+-> Lets call ndX as DiceNotation
+-> When given a DiceExpression it is separated to get DiceNotation and SetOperation
+-> DiceNotation will result into a set like 4dX -> (1 2 3 4) ->//same length as of number1, set numbers to be in the range of X
+-> We also need a function that would separate DiceNotation and SetOperation from DiceExpression 
+or may be a function which would return DiceNotation from DiceExpression similarly for getting SetOperation
+from DiceExpression.
+
+function getDiceNotation( input: DiceExpression)
+{
+    //do something
+    //output: DiceNotation
+}
+
+function getSetOperation( input: DiceExpression)
+{
+    //do something
+    //output: SetOperation
+}
+-> So we can have a 
+function performDiceRoll( input: DiceNotation)
+{
+    //do something
+    output: set 
+}
+
+-> After we get the set, we 
+function performSetOperation(input: set, setOperation)
+{
+    //do something
+    output: set (not sure if we need to add all the set elements so returning the entire set)
+}
+example: 3d10kl2 -> 3d10 k12 -> (3 8 10) kl2 -> (3 8) ->(optional)(may be always not sure)-> 11
+
+//(unsure) 
+After getting the set, we do operation depending the expression which we get earlier for example
+//will do unary/binary operation depending on what we get.
+(1 + 2 + 3d10k12) -> (1 + 2 + 11) -> 14
+
+
+
+
+
+
+
