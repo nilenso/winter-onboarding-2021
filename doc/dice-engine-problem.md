@@ -65,11 +65,11 @@ Which can result in a set with values: 1, 9, 2 & 5 (from rolling the 2d4).
 
 ### Set operations
 
-| Syntax | Name     | Description             |
-|--------|----------|-------------------------|
-| k      | keep     | keep all matched values |
-| d      | drop     | Drop all matched values |
-| rr     | reroll   | Reroll matched values   |
+| Syntax | Name     | Description                                 |
+|--------|----------|---------------------------------------------|
+| k      | keep     | keep all matched values                     |
+| d      | drop     | Drop all matched values                     |
+| rr     | reroll   | Rerolls all matched values until none match.|
 
 The notation is extended by adding an optional set operation followed by a selector.
 
