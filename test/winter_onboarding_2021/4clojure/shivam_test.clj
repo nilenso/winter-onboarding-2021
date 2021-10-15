@@ -153,3 +153,24 @@
   (is (= (solutions/problem30 [1 1 2 3 3 2 2 3]) '(1 2 3 2 3)))
   (is (= (solutions/problem30 [[1 2] [1 2] [3 4] [1 2]]) '([1 2] [3 4] [1 2]))))
 
+
+(deftest duplicate-elements
+  (testing "duplicates")
+  (is (= (solutions/problem32 [1 2 3]) '(1 1 2 2 3 3)))
+  (is (= (solutions/problem32 [:a :a :b :b]) '(:a :a :a :a :b :b :b :b)))
+  (is (= (solutions/problem32 [[1 2] [3 4]]) '([1 2] [1 2] [3 4] [3 4])))
+  (is (= (solutions/problem32 [44 33]) [44 44 33 33])))
+
+;; (deftest continuous-word-chain
+;;   (testing "the continuity of the word chain")
+;;   (is (= true (solutions/problem82? #{"hat" "coat" "dog" "cat" "oat" "cot" "hot" "hog"})))
+;;   (is (= false (solutions/problem82? #{"cot" "hot" "bat" "fat"})))
+;;   (is (= false (solutions/problem82? #{"to" "top" "stop" "tops" "toss"})))
+;;   (is (= true (solutions/problem82? #{"spout" "do" "pot" "pout" "spot" "dot"})))
+;;   (is (= true (solutions/problem82? #{"share" "hares" "shares" "hare" "are"})))
+;;   (is (= false (solutions/problem82? #{"share" "hares" "hare" "are"}))))
+
+(deftest filter-perfect-squares
+  (testing "a function which returns a new comma separated string that only contains the numbers which are perfect squares")
+  (is (= (solutions/problem74 "4,5,6,7,8,9") "4,9"))
+  (is (= (solutions/problem74 "15,16,25,36,37") "16,25,36")))
