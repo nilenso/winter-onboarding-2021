@@ -174,3 +174,9 @@
   (testing "a function which returns a new comma separated string that only contains the numbers which are perfect squares")
   (is (= (solutions/problem74 "4,5,6,7,8,9") "4,9"))
   (is (= (solutions/problem74 "15,16,25,36,37") "16,25,36")))
+
+(deftest kebab-to-camelcase
+  (testing "a function which takes lower-case hyphen-separated strings and converts them to camel-case strings")
+  (is (= (solutions/problem102 "something") "something"))
+  (is (= (solutions/problem102 "multi-word-key") "multiWordKey"))
+  (is (= (solutions/problem102 "leaveMeAlone") "leaveMeAlone")))

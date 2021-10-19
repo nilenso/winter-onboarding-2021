@@ -153,14 +153,14 @@
                         coll))
 
 (defn problem26 [n] (reduce
-                   (fn [acc, ele]
+                     (fn [acc, ele]
+                       (if (<= n 1)
+                         (vec (range n))
+                         (conj acc (+ (or (second (reverse acc)) 1) (last acc)))))
                      (if (<= n 1)
-                       (vec (range n))
-                       (conj acc (+ (or (second (reverse acc)) 1) (last acc)))))
-                   (if (<= n 1)
-                     []
-                     [0])
-                   (range (- n 1))))
+                       []
+                       [0])
+                     (range (- n 1))))
 
 (defn problem27 [coll] (if (= java.lang.String (type coll))
                          (= (apply str (reverse coll)) coll)
@@ -270,3 +270,7 @@
 ;;   (filter
 ;;    #(are-co-prime num %)
 ;;    (range 1 num)))
+
+(defn problem102 [kebab-string]
+  (let [[first-ele & rest-elems] (str/split kebab-string #"-")]
+    (apply str first-ele (map str/capitalize rest-elems))))
