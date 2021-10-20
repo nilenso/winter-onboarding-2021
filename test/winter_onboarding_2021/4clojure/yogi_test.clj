@@ -79,10 +79,66 @@
   (testing "second last")
   (is (= (solutions/prob20) (second (reverse [1 2 3 4 5])))))
 
+
+
+
 (deftest prob21
   (testing "nth")
-  (is (= (solutions/prob21) ((fn [x n] ((vec x) n)) '([1 2] [3 4] [5 6]) 2))))
+  (is 
+   (= (solutions/prob21 '([1 2] [3 4] [5 6]) 2)
+      [5 6]))
+
+  (is  
+   (= (solutions/prob21 '(4 5 6 7) 2)
+      6))
+
+  (is  
+   (= (solutions/prob21 [:a :b :c] 0)
+      :a))
+
+  (is  
+   (= (solutions/prob21 [1 2 3 4] 1)
+      2))
+  
+  (is  
+   (= (solutions/prob21 '([1 2] [3 4] [5 6]) 2)
+      [5 6]))) 
+
+
+
+
 
 (deftest prob22
-  (testing"count")
-  (is (= (solutions/prob22) (reduce (fn [x y] (inc x)) 0 [12 3 4 5]))))
+  (testing "count")
+  (is 
+   (= (solutions/prob22 '(1 2 3 3 1)) 
+      5))
+  (is   
+   (= (solutions/prob22 "Hello World")
+      11))
+  (is  
+   (= (solutions/prob22 [[1 2] [3 4] [5 6]])
+      3))
+  (is
+   (= (solutions/prob22 '(13))
+      1))
+  (is   
+   (= (solutions/prob22 '(:a :b :c))
+      3)))
+
+
+(deftest prob23
+  (testing "reverse")
+  (is
+   (= (solutions/prob23 [1 2 3 4 5])
+      [5 4 3 2 1]))
+
+  (is
+   (= (solutions/prob23 (sorted-set 5 7 2 7))
+      '(7 5 2)))
+
+  (is 
+   (= ( solutions/prob23 [[1 2] [3 4] [5 6]]) 
+      [[5 6] [3 4] [1 2]])))
+
+

@@ -31,12 +31,15 @@
 
 (defn prob17 [] '(6 7 8))
 
+
 (defn prob18 [] '(6 7))
 
 (defn prob19 [] 5)
 
 (defn prob20 [] 4)
 
-(defn prob21 [] [5 6])
+(defn prob21  [x n] ((vec x) n))
 
-(defn prob22 [] 4)
+(defn prob22 [ip] (reduce (fn [x y] (inc x)) 0 ip))
+
+(defn prob23 [ip] (reduce (fn [x y] (conj x y)) () ip))
