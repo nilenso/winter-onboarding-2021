@@ -1,5 +1,5 @@
-(ns winter-onboarding-2021.dice-roller.yogi.core)
-
+(ns winter-onboarding-2021.dice-roller.yogi.core
+  (:require [winter-onboarding-2021.dice-roller.yogi.functions :as functions]))
 
 ;How to store - states?
 ;In clojure, like lisp, everything is a list.
@@ -12,21 +12,17 @@
 
 ;3d4k2
 
-(defn my-roller [x y] (repeatedly x #(rand-int (+ y 1))))
-(my-roller 5 3)
-(defn check [x num] (if (= x num) true false) )
-(defn k [x list] (filter (partial check x) list))
-(defn d [x list] (filter (partial check x) list))
 
+(functions/check '(2 1) 1)
 ;Now, lets say the expression is 3d4k2 we bind it to an identifer - theexp
-(def theexp '(k (l 2 (quote (3 2 2)))))
+(def theexp '(k '(3 2) (quote (3 2 2))))
+
 
 ;We can tun eval on theexp, or, we can just print the binding
 (print theexp)
 (eval theexp)
-(defn solve [list] (eval (conj (eval list) +)))
-(solve theexp)
 
+(functions/solve theexp)
 ;
 ;;
 ;
@@ -39,4 +35,3 @@
 ;
 
 
-(defn rr [theexp] theexp)
