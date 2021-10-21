@@ -16,3 +16,11 @@
     (is (= (dnd-dice/set-operation "l" "") {:type "SetOperation" :op "l" :selector ""}))
     (is (= (dnd-dice/set-operation "rr" "h") {:type "SetOperation" :op "rr" :selector "h"}))
     (is (= (dnd-dice/set-operation "k" "<") {:type "SetOperation" :op "k" :selector "<"}))))
+
+(deftest set-expression
+  (testing "to check set-expression return a hashmap with dice-notation and set-operation"
+    (is (= (dnd-dice/set-expression {:type "DiceNotation" :rolls 3 :faces 4} 
+                                   {:type "SetOperation" :op "k" :selector ">"})
+           {:type "SetExpression"
+            :dice-notation {:type "DiceNotation" :rolls 3 :faces 4}
+            :set-operation {:type "SetOperation" :op "k" :selector ">"}}))))
