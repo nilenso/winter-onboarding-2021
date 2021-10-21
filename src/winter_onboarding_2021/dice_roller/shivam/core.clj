@@ -1,5 +1,6 @@
-(ns winter-onboarding-2021.dice-roller.shivam.core)
-
+(ns winter-onboarding-2021.dice-roller.shivam.core
+  (:require [clojure.pprint :as pprint]
+            [winter-onboarding-2021.dice-roller.shivam.data-structs :as data-structs]))
 
 ;; Some sample dice expressions
 ;; 2d11k2 -> Roll two dices with 11 faces and keep all 2s
@@ -26,58 +27,30 @@
 ;; >8
 ;; <8
 
-
-
 ;; Expression -- it will be the root element
-(defn expression [subtree] {:type "Expression" :subtree subtree :total total :set set})
+;; (defn expression [subtree] {:type "Expression" :subtree subtree :total total :set set})
 
 
-(defn build-die [num-faces value]
-  {:type "Die"
-  :num-faces num-faces ;; Int, number of faces this die should have
-  :value value})
+
+(defn operate [operation raw-set] nil)
+
+(defn eval-dice-notation [{type :type :as expression}]
+  (when (= type "Dice")
+    (let [{:keys [operation values]} expression
+          operated-set (operate operation values)]
+      ()))) ;; returns a hashmap with `total` and entities tree
 
 
-;; Dice represents a set of Die
-(defn build-dice [num-rolls num-faces values operations]
-  {:type "Dice"
-   :num-rolls num-rolls 
-   :num-faces num-faces
-   :values values ;; Vector of `Die` 
-   :operations operations})
+;; 3d4kl2
+(def selector (data-structs/build-selector "l" 2))
 
-;; Represents Unary Operation
-;; op tells us whether it is - or +
-(defn build-unary-op [op value]
-  {:type "UnaryOp"
-   :op op
-   :value value})
+(def operation (data-structs/build-operation "k" selector))
 
-;; Represents Binary Operations like -, +, *, /
-;; left and right represents the expressions on which the operartion will be applied
-(defn build-bin-op [left op right]
-  {:type "BinaryOp"
-   :left left
-   :op op ;; 
-   :right right})
+(def rolled-dices (data-structs/generate-die-values 3 4))
 
-;; Represents Set Operation
-(defn build-operation [op selector]
-  {:type "SetOperation"
-   :op op ;; k, rr, d
-   :selector selector})
+(def dice-ast (data-structs/build-dice 3 4 rolled-dices operation))
 
-;; Represents Set Selector
-;; `category` can be "", "<", ">", "l", "h" 
-(defn build-selector [category num] 
-  {:type "SetSelector"
-   :category category
-   :num num })
-
-
-(defn eval-dice-notation [expression] (nil)) ;; returns a hashmap with `total` and entities tree
-
-
+(eval-dice-notation dice-ast)
 
 
 ;; (defn get-rolls [dice-info] (nil)) ;; return us [1 2 3]
@@ -96,7 +69,6 @@
 
 ;; (defn hof [f] ((defn [condition digit my-set] (if (= condition "k")) ;; f must be a function like filter which filters out 
 ;;                  (f () my-set))))
-
 
 ;; (def my-keep (hof keep))
 ;; (def my-delete (hof remove))
