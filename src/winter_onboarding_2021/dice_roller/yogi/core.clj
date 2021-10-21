@@ -15,7 +15,8 @@
 
 (functions/check '(2 1) 1)
 ;Now, lets say the expression is 3d4k2 we bind it to an identifer - theexp
-(def theexp '(k '(3 2) (quote (3 2 2))))
+
+(def theexp '(functions/k '(3 2)  (functions/my-roller 3 3)))
 
 
 ;We can tun eval on theexp, or, we can just print the binding
