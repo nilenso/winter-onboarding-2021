@@ -38,41 +38,32 @@
 
 (defn prob20 [] 4)
 
-(defn 
-  prob21  
-  [x n] 
-  ((vec x) 
-   n))
+(defn prob21 [x n] 
+  ((vec x) n))
 
-(defn 
-  prob22 
-  [ip] 
+(defn prob22 [ip] 
   (reduce 
    (fn [x y] (inc x)) 
    0 
    ip))
 
-(defn 
-  prob23 [ip] 
+(defn prob23 [ip] 
   (reduce 
    (fn [x y] (conj x y)) 
    () 
    ip))
 
-(defn 
-  prob24 [ip] 
+(defn prob24 [ip] 
   (reduce
    +
    ip))
 
-(defn
-  prob25 [ip]
+(defn prob25 [ip]
   (filter
    odd?
    ip))
 
-(defn
-  prob26 [x]
+(defn prob26 [x]
   (if 
    (= x 1)
     '(1)
@@ -86,8 +77,7 @@
          (last (prob26 (- x 1))) 
          (last (prob26(- x 2)))))))))
 
-(defn
-  prob27 [x]
+(defn prob27 [x]
   (=
    (seq x)
    (reverse (seq x))))
