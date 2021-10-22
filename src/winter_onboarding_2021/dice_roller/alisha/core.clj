@@ -14,3 +14,5 @@
   {:dice-notation dice-notation
    :set-operation set-operation})
 
+;;define
+(defn perform-dice-roll [{:keys [rolls faces]}] (dice-roll-set (repeatedly rolls #(inc (rand-int faces)))))

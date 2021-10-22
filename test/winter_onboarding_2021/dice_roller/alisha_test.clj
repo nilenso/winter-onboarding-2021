@@ -24,3 +24,8 @@
            {:dice-notation {:rolls 3 :faces 4}
             :set-operation {:op "k" :selector ">"}}))))
 
+(deftest perform-dice-roll
+  (testing "to check for random values getting geneerated when dice is roll"
+    (with-redefs [rand-int (fn [x] x)]
+      (is (= (dnd-dice/perform-dice-roll {:rolls 3 :faces 4}) {:values [5 5 5]})))))
+
