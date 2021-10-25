@@ -32,3 +32,7 @@
 (deftest get-first-x-highest
   (testing "to get first x highest values"
     (is (= (dnd-dice/get-first-x-highest [1 2 3 4] 3) [4 3 2]))))
+
+(deftest get-first-x-lowest
+  (testing "to get first x lowest values"
+    (is (= (dnd-dice/get-first-x-lowest [1 6 3 4] 3) [1 3 4]))))

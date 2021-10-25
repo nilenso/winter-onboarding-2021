@@ -20,3 +20,6 @@
 
 (defn get-first-x-highest [values x] 
   (take x (reverse (sort values))))
+
+(defn get-first-x-lowest [values x]
+  (take x (vec (sort values))))
