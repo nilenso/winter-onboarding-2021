@@ -26,6 +26,6 @@
 
 (deftest perform-dice-roll
   (testing "to check for random values getting geneerated when dice is roll"
-    (with-redefs [rand-int (fn [x] x)]
-      (is (= (dnd-dice/perform-dice-roll {:rolls 3 :faces 4}) [5 5 5])))))
+    (with-redefs [rand-int (fn [x] (- x 1))] ;;rand int would return only the highest dice value always
+      (is (= (dnd-dice/perform-dice-roll {:rolls 3 :faces 4}) [4 4 4])))))
 
