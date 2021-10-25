@@ -17,3 +17,6 @@
 ;;define
 (defn perform-dice-roll [{:keys [rolls faces]}] 
   (vec (repeatedly rolls #(inc (rand-int faces)))))
+
+(defn get-first-x-highest [values x] 
+  (take x (reverse (sort values))))

@@ -29,3 +29,6 @@
     (with-redefs [rand-int (fn [x] (- x 1))] ;;rand int would return only the highest dice value always
       (is (= (dnd-dice/perform-dice-roll {:rolls 3 :faces 4}) [4 4 4])))))
 
+(deftest get-first-x-highest
+  (testing "to get first x highest values"
+    (is (= (dnd-dice/get-first-x-highest [1 2 3 4] 3) [4 3 2]))))
