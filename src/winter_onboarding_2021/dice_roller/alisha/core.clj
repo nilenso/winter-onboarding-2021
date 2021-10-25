@@ -40,3 +40,14 @@
 ;; sample call -> (keep-fn get-greater-than-x [1 2 3 4 5 2] 2)
 (defn keep-fn [selector-operation-func values x]
   (selector-operation-func values x))
+
+;;helper function to create 
+(defn remove-once [pred coll]
+  ((fn inner [coll]
+     (lazy-seq
+      (when-let [[x & xs] (seq coll)]
+        (if (pred x)
+          xs
+          (cons x (inner xs)))
+        )))
+   coll))

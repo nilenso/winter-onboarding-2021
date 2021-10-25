@@ -52,3 +52,8 @@
 (deftest keep-fn
   (testing "to keep all the value returned after operating on selector-operation"
     (is (= (dnd-dice/keep-fn #(dnd-dice/get-first-x-highest %1 %2) [1 2 3 4 5] 2) [5 4]))))
+
+(deftest remove-once 
+  (testing "to remove an element from a sequence only once which matches the predicate"
+    (let [pred #(= %1 1)] ;;checks if value is 1
+      (is (= (dnd-dice/remove-once pred [1 2 3 4 1]) [2 3 4 1])))))
