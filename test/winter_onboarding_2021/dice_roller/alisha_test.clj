@@ -44,3 +44,7 @@
 (deftest get-lesser-than-x
   (testing "to get values lesser than x"
     (is (= (dnd-dice/get-lesser-than-x [1 2 3 4] 3) [1 2]))))
+
+(deftest get-equal-than-x
+  (testing "to get all the values equal to x"
+    (is (= (dnd-dice/get-equal-with-x [1 2 2 3 4 5] 2) [2 2]))))

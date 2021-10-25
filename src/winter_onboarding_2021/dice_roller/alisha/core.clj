@@ -29,3 +29,7 @@
 
 (defn get-lesser-than-x [values x]
   (filter #(< %1 x) values))
+
+(defn get-equal-with-x [values x]
+  (filter #(= %1 x) values))
+
