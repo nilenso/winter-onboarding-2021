@@ -1,7 +1,7 @@
 (ns winter-onboarding-2021.dice-roller.alisha.core)
 
 ;;Define dice-roll-set expression representation
-(defn dice-roll-outcomes [values] (vec values))
+;;(defn dice-roll-outcomes [values] (vec values))
 
 (defn dice-notation [rolls faces] {:rolls rolls :faces faces})
 
@@ -15,4 +15,5 @@
    :set-operation set-operation})
 
 ;;define
-(defn perform-dice-roll [{:keys [rolls faces]}] (dice-roll-outcomes (repeatedly rolls #(inc (rand-int faces)))))
+(defn perform-dice-roll [{:keys [rolls faces]}] 
+  (vec (repeatedly rolls #(inc (rand-int faces)))))
