@@ -2,9 +2,9 @@
   (:require [clojure.test :refer [deftest is testing]]
             [winter-onboarding-2021.dice-roller.alisha.core :as dnd-dice]))
 
-(deftest dice-roll-set
+(deftest dice-roll-outcomes
   (testing "to check dice-roll-set return a hashmap with values"
-    (is (= (dnd-dice/dice-roll-set [1 2 3 4]) {:values [1 2 3 4]}))))
+    (is (= (dnd-dice/dice-roll-outcomes [1 2 3 4]) [1 2 3 4]))))
 
 (deftest dice-notation 
   (testing "to check dice-notation return a hashmap with rolls and faces"
@@ -27,5 +27,6 @@
 (deftest perform-dice-roll
   (testing "to check for random values getting geneerated when dice is roll"
     (with-redefs [rand-int (fn [x] x)]
-      (is (= (dnd-dice/perform-dice-roll {:rolls 3 :faces 4}) {:values [5 5 5]})))))
+      (is (= (dnd-dice/perform-dice-roll {:rolls 3 :faces 4}) [5 5 5])))))
+
 
