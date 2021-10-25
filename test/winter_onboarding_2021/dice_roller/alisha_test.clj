@@ -48,3 +48,7 @@
 (deftest get-equal-than-x
   (testing "to get all the values equal to x"
     (is (= (dnd-dice/get-equal-with-x [1 2 2 3 4 5] 2) [2 2]))))
+
+(deftest keep-fn
+  (testing "to keep all the value returned after operating on selector-operation"
+    (is (= (dnd-dice/keep-fn #(dnd-dice/get-first-x-highest %1 %2) [1 2 3 4 5] 2) [5 4]))))

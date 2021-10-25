@@ -32,3 +32,11 @@
 
 (defn get-equal-with-x [values x]
   (vec (filter #(= %1 x) values)))
+
+;;define a function keep
+;;it takes a vector of values (i.e values)
+;;it takes another vector wwhich is subset of values
+
+;; sample call -> (keep-fn get-greater-than-x [1 2 3 4 5 2] 2)
+(defn keep-fn [selector-operation-func values x]
+  (selector-operation-func values x))
