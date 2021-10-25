@@ -30,15 +30,33 @@
 ;; Expression -- it will be the root element
 ;; (defn expression [subtree] {:type "Expression" :subtree subtree :total total :set set})
 
+(defn check [criteria my-num]
+  (contains? criteria my-num))
 
+(defn generate-operation-handler [op]
+  (fn [my-set condition number]
+    (case condition
+      "" (op #(when (= % number) %) my-set) ;; f must be a function like filter which passes each element from my-set to fn. fn will return true or false. On that 
+      "<" (op #(when (< % number) %) my-set)
+      ">" (op #(when (> % number) %) my-set)
+      "l" (op #(when (check (vec (take number (sort my-set))) %) %) my-set)
+      "h" (op #(when (check (vec (take-last number (sort my-set))) %) %) my-set))))
 
-(defn operate [operation raw-set] nil)
+(def keep-in-set (generate-operation-handler keep))
+;; (def drop-in-set (generate-operation-handler remove))
+
+;; func `operate` will return us a new set where op(with category on number) is applied to raw-set
+(defn operate [[[op] [category number]] raw-set]
+  (case op
+    "k" (keep-in-set raw-set category number)))
 
 (defn eval-dice-notation [{type :type :as expression}]
   (when (= type "Dice")
     (let [{:keys [operation values]} expression
           operated-set (operate operation values)]
-      ()))) ;; returns a hashmap with `total` and entities tree
+      {:original values
+       :operated operated-set
+       :total 0}))) ;; returns a hashmap with `total` and entities tree
 
 
 ;; 3d4kl2
@@ -53,38 +71,9 @@
 (eval-dice-notation dice-ast)
 
 
-;; (defn get-rolls [dice-info] (nil)) ;; return us [1 2 3]
-
-;; (defn call-on-op [op condition num-set] (nil)) ; will call k, d, rr opeartion functions and then return the resultant vector
-;; ((if (= op "k")
-;;    (my-keep "3" num-set)) ;; if 
-;;  (if (= op "d")
-;;    (my-delete "l3" num-set))
-;;  (if (= op "rr")))
 
 
 
-;; (defn roll-dice [num-faces] (nil)) ; will return an Int in range (0, num-faces]
 
 
-;; (defn hof [f] ((defn [condition digit my-set] (if (= condition "k")) ;; f must be a function like filter which filters out 
-;;                  (f () my-set))))
-
-;; (def my-keep (hof keep))
-;; (def my-delete (hof remove))
-;; (def my-reroll (hof (fn)))
-
-;; (defn call-on-op [op condition num-set] (nil)) ; will call k, d, rr opeartion functions and then return the resultant vector
-;; ((if (= op "k")
-;;    (my-keep "3" num-set)) ;; if 
-;;  (if (= op "d")
-;;    (my-delete "l3" num-set))
-;;  (if (= op "rr")))
-
-
-
-;; (defn apply-condition [f condition])
-;; (defn hh keep)
-
-
-;; (defn apply-ops [op condition] (nil))
+;; (def my-delete (generate-operation-handler remove))
