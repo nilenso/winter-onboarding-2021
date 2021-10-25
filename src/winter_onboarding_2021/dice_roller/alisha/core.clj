@@ -19,17 +19,16 @@
   (vec (repeatedly rolls #(inc (rand-int faces)))))
 
 (defn get-first-x-highest [values x] 
-  (take x (reverse (sort values))))
+  (vec (take x (reverse (sort values)))))
 
 (defn get-first-x-lowest [values x]
-  (take x (vec (sort values))))
+  (vec (take x (vec (sort values)))))
 
 (defn get-greater-than-x [values x] 
-  (filter #(> %1 x) values))
+  (vec (filter #(> %1 x) values)))
 
 (defn get-lesser-than-x [values x]
-  (filter #(< %1 x) values))
+  (vec (filter #(< %1 x) values)))
 
 (defn get-equal-with-x [values x]
-  (filter #(= %1 x) values))
-
+  (vec (filter #(= %1 x) values)))
