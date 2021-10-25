@@ -36,3 +36,8 @@
 (deftest get-first-x-lowest
   (testing "to get first x lowest values"
     (is (= (dnd-dice/get-first-x-lowest [1 6 3 4] 3) [1 3 4]))))
+
+(deftest get-greater-than-x
+  (testing "to get values greater than x"
+    (is (= (dnd-dice/get-greater-than-x [1 2 3 4] 3) [4]))))
+

@@ -23,3 +23,6 @@
 
 (defn get-first-x-lowest [values x]
   (take x (vec (sort values))))
+
+(defn get-greater-than-x [values x] 
+  (filter #(> %1 x) values))
