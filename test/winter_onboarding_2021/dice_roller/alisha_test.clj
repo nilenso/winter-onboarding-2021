@@ -41,3 +41,6 @@
   (testing "to get values greater than x"
     (is (= (dnd-dice/get-greater-than-x [1 2 3 4] 3) [4]))))
 
+(deftest get-lesser-than-x
+  (testing "to get values lesser than x"
+    (is (= (dnd-dice/get-lesser-than-x [1 2 3 4] 3) [1 2]))))

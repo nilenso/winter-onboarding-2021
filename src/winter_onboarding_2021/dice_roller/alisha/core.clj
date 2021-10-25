@@ -26,3 +26,6 @@
 
 (defn get-greater-than-x [values x] 
   (filter #(> %1 x) values))
+
+(defn get-lesser-than-x [values x]
+  (filter #(< %1 x) values))
