@@ -57,3 +57,7 @@
   (testing "to remove an element from a sequence only once which matches the predicate"
     (let [pred #(= %1 1)] ;;checks if value is 1
       (is (= (dnd-dice/remove-once pred [1 2 3 4 1]) [2 3 4 1])))))
+
+(deftest drop-from-dice-outcomes
+  (testing "to drop a subset of outcomes returned from executing selector operation from the dice-outcomes"
+    (is (= (dnd-dice/drop-from-dice-outcomes #(dnd-dice/get-first-x-highest %1 %2) [1 2 2 3 1 3] 3) [1 2 1]))))

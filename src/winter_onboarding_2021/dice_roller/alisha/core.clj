@@ -51,3 +51,9 @@
           (cons x (inner xs)))
         )))
    coll))
+
+(defn drop-from-dice-outcomes [selector-operation-func values x]
+  (let [to-be-dropped-vals (selector-operation-func values x)]
+    ;;(substract on vectors)
+    (reduce (fn [outcomes, ele]
+              (remove-once #(= %1 ele) outcomes)) values to-be-dropped-vals)))
