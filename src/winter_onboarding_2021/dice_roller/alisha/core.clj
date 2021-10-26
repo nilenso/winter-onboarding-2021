@@ -18,6 +18,7 @@
 (defn perform-dice-roll [{:keys [rolls faces]}] 
   (vec (repeatedly rolls #(inc (rand-int faces)))))
 
+;;Selector functions 
 (defn get-first-x-highest [values x] 
   (vec (take x (reverse (sort values)))))
 
@@ -35,13 +36,13 @@
 
 ;;define a function keep
 ;;it takes a vector of values (i.e values)
-;;it takes another vector wwhich is subset of values
+;;it takes another vector which is subset of values
 
 ;; sample call -> (keep-fn get-greater-than-x [1 2 3 4 5 2] 2)
-(defn keep-fn [selector-operation-func values x]
+(defn keep-from-dice-outcomes [selector-operation-func values x]
   (selector-operation-func values x))
 
-;;helper function to create 
+;;helper function to remove once from a collection satisfying a predicate 
 (defn remove-once [pred coll]
   ((fn inner [coll]
      (lazy-seq
