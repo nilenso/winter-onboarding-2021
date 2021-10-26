@@ -44,9 +44,9 @@
        :selector selector}))
 
 ;; Represents Set Selector
-;; `category` can be "", "<", ">", "l", "h" 
-(defn build-selector [category num]
-  (do (assert (some #(= % category) utils/valid-selectors) "Invalid Selector")
+;; `criteria` can be "", "<", ">", "l", "h" 
+(defn build-selector [criteria num]
+  (do (assert (some #(= % criteria) utils/valid-selectors) "Invalid Selector")
       {:type "SetSelector"
-       :category category
+       :criteria criteria
        :num num}))

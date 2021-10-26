@@ -62,17 +62,41 @@
            sample-dice))))
 
 (deftest operations-on-set
-  (testing "keep elements with a certain criteria"
-    ;; keeping only the matched value 
-    (is (= (dice-roller/keep-in-set '(1 2 3 1 2 3) "" 3) '(3 3)))
-    ;; keeping values smaller than X
-    (is (= (dice-roller/keep-in-set '(1 2 3 1 2 3) "<" 3) '(1 2 1 2)))
-    ;; keeping values greater than X
-    (is (= (dice-roller/keep-in-set '(1 2 3 1 2 3) ">" 3) '()))
-    ;; keeping X smallest values
-    (is (= (dice-roller/keep-in-set '(1 2 3 1 2 3) "l" 3) '(1 2 1 2)))
-    ;; keeping X largest values
-    (is (= (dice-roller/keep-in-set '(1 2 3 1 2 3) "k" 3) '(1 2 1 2)))))
+  (testing "keep"
+    (testing "only the matched values"
+      (is (= (dice-roller/keep-in-set '(1 2 3 1 2 3) "" 3) '(3 3))))
+    (testing "values smaller than X"
+      (is (= (dice-roller/keep-in-set '(1 2 3 1 2 3) "<" 3) '(1 2 1 2))))
+    (testing "values greater than X"
+      (is (= (dice-roller/keep-in-set '(1 2 3 1 2 3) ">" 3) '())))
+    (testing "X smallest values"
+      (is (= (dice-roller/keep-in-set '(1 2 3 1 2 3) "l" 3) '(1 1 2))))
+    (testing "X largest values"
+      (is (= (dice-roller/keep-in-set '(1 2 3 1 2 3) "h" 3) '(2 3 3)))))
+
+  (testing "drop"
+    (testing "only the matched values"
+      (is (= (dice-roller/drop-in-set '(1 2 3 1 2 3) "" 3) '(1 2 1 2))))
+    (testing "values smaller than X"
+      (is (= (dice-roller/drop-in-set '(1 2 3 1 2 3) "<" 3) '(3 3))))
+    (testing "values greater than X"
+      (is (= (dice-roller/drop-in-set '(1 2 3 1 2 3) ">" 3) '(1 2 3 1 2 3))))
+    (testing "X smallest values"
+      (is (= (dice-roller/drop-in-set '(1 2 3 1 2 3) "l" 3) '(3 2 3))))
+    (testing "X largest values"
+      (is (= (dice-roller/drop-in-set '(1 2 3 1 2 3) "h" 3) '(1 1 2)))))
+
+  #_(testing "reroll"
+    (testing "only the matched values"
+      (is (= (dice-roller/drop-in-set '(1 2 3 1 2 3) "" 3) '(1 2 1 2))))
+    (testing "values smaller than X"
+      (is (= (dice-roller/drop-in-set '(1 2 3 1 2 3) "<" 3) '(3 3))))
+    (testing "values greater than X"
+      (is (= (dice-roller/drop-in-set '(1 2 3 1 2 3) ">" 3) '(1 2 3 1 2 3))))
+    (testing "X smallest values"
+      (is (= (dice-roller/drop-in-set '(1 2 3 1 2 3) "l" 3) '(2 3 3))))
+    (testing "X largest values"
+      (is (= (dice-roller/drop-in-set '(1 2 3 1 2 3) "h" 3) '(1 1 2))))))
 
 ;; TODO
 ;; 1. Instead of definign the whole func, try to only redef the func which causes the side effects
