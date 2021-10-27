@@ -2,10 +2,10 @@
   (:require [winter-onboarding-2021.dice-roller.shivam.utils :as utils]))
 
 (defn build-die [num-faces value]
-  (do (assert (>= num-faces value) "`value` can't be larger than `num-faces`")
-      {:type :die
-       :num-faces num-faces
-       :value value}))
+  (assert (>= num-faces value) "`value` can't be larger than `num-faces`")
+  {:type :die
+   :num-faces num-faces
+   :value value})
 
 ;; Generate list of Die with length equal to `num-rolls`
 (defn generate-die-values [num-rolls num-faces]
@@ -38,15 +38,15 @@
 
 ;; Represents Set Operation
 (defn build-operation [op selector]
-  (do (assert (some #(= % op) utils/valid-ops) "Invalid Operator")
-      {:type :set-operation
-       :op op ;; k, rr, d
-       :selector selector}))
+  (assert (some #(= % op) utils/valid-ops) "Invalid Operator")
+  {:type :set-operation
+   :op op ;; k, rr, d
+   :selector selector})
 
 ;; Represents Set Selector
 ;; `criteria` can be "", "<", ">", "l", "h" 
 (defn build-selector [criteria num]
-  (do (assert (some #(= % criteria) utils/valid-selectors) "Invalid Selector")
-      {:type :set-selector
-       :criteria criteria
-       :num num}))
+  (assert (some #(= % criteria) utils/valid-selectors) "Invalid Selector")
+  {:type :set-selector
+   :criteria criteria
+   :num num})
