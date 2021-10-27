@@ -1,4 +1,4 @@
-(ns winter-onboarding-2021.dice-roller.yogi.function-test
+(ns winter-onboarding-2021.dice-roller.yogi.operations-test
   (:require [clojure.test :refer [deftest is testing]]
             [winter-onboarding-2021.dice-roller.yogi.operations :as operations]))
   
@@ -13,5 +13,4 @@
   (testing "testing drop"
     (is (= '(3 5) (operations/drop 2 '(3 2 2 5))))
     (is (= '(3 5) (operations/drop '(1 2) '(1 2 3 2 1 5))))))
-
 
