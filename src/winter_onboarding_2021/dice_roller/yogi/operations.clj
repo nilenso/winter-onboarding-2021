@@ -20,7 +20,7 @@
   ([y seq]
    (filter (partial check y) seq)))
 
-(defn drop 
+(defn my-drop 
   ([selector x seq]
    (filter (partial rcheck (selector x seq)) seq))
   ([y seq]

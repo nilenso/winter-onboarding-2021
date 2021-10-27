@@ -11,6 +11,6 @@
 
 (deftest drop-test
   (testing "testing drop"
-    (is (= '(3 5) (operations/drop 2 '(3 2 2 5))))
-    (is (= '(3 5) (operations/drop '(1 2) '(1 2 3 2 1 5))))))
+    (is (= '(3 5) (operations/my-drop 2 '(3 2 2 5))))
+    (is (= '(3 5) (operations/my-drop '(1 2) '(1 2 3 2 1 5))))))
 
