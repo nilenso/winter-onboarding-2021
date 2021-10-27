@@ -14,7 +14,6 @@
   {:dice-notation dice-notation
    :set-operation set-operation})
 
-;;define
 (defn perform-dice-roll [{:keys [rolls faces]}] 
   (vec (repeatedly rolls #(inc (rand-int faces)))))
 
@@ -41,7 +40,6 @@
 ;; sample call -> (keep-fn get-greater-than-x [1 2 3 4 5 2] 2)
 (defn keep-from-dice-outcomes [selector-operation-func values x]
   (selector-operation-func values x))
-
 ;;helper function to remove once from a collection satisfying a predicate 
 (defn remove-once [pred coll]
   ((fn inner [coll]
@@ -58,3 +56,11 @@
     ;;(substract on vectors)
     (reduce (fn [outcomes, ele]
               (remove-once #(= %1 ele) outcomes)) values to-be-dropped-vals)))
+
+(defn reroll-dice [selector-operation-func outcomes x dice-notation]
+  (if (not= (selector-operation-func outcomes x) [])
+    (let [new-outcomes (perform-dice-roll dice-notation)]
+      (reroll-dice selector-operation-func new-outcomes x dice-notation))
+     outcomes))
+;;Sample call
+;; (reroll-dice get-first-x-lowest [1 2 3 4 4 2] 2 {:rolls 2 :faces 3})

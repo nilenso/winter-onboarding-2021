@@ -49,9 +49,9 @@
   (testing "to get all the values equal to x"
     (is (= (dnd-dice/get-equal-with-x [1 2 2 3 4 5] 2) [2 2]))))
 
-(deftest keep-fn
+(deftest keep-from-dice-outcomes
   (testing "to keep all the value returned after operating on selector-operation"
-    (is (= (dnd-dice/keep-fn #(dnd-dice/get-first-x-highest %1 %2) [1 2 3 4 5] 2) [5 4]))))
+    (is (= (dnd-dice/keep-from-dice-outcomes #(dnd-dice/get-first-x-highest %1 %2) [1 2 3 4 5] 2) [5 4]))))
 
 (deftest remove-once 
   (testing "to remove an element from a sequence only once which matches the predicate"
@@ -61,3 +61,8 @@
 (deftest drop-from-dice-outcomes
   (testing "to drop a subset of outcomes returned from executing selector operation from the dice-outcomes"
     (is (= (dnd-dice/drop-from-dice-outcomes #(dnd-dice/get-first-x-highest %1 %2) [1 2 2 3 1 3] 3) [1 2 1]))))
+
+(deftest reroll-dice
+  (testing "to re-roll dice until none match"
+    (with-redefs [rand-int (fn [x] (- x 1))]
+     (is (= (dnd-dice/reroll-dice #(dnd-dice/get-lesser-than-x %1 %2) [1 2 3 4 4 2] 2 {:rolls 6 :faces 5}) [5 5 5 5 5 5])))))
