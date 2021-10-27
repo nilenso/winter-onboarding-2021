@@ -3,7 +3,7 @@
 
 (defn build-die [num-faces value]
   (do (assert (>= num-faces value) "`value` can't be larger than `num-faces`")
-      {:type "Die"
+      {:type :die
        :num-faces num-faces
        :value value}))
 
@@ -15,7 +15,7 @@
 
 ;; Dice represents a set of Die
 (defn build-dice [num-rolls num-faces values operation]
-  {:type "Dice"
+  {:type :dice
    :num-rolls num-rolls
    :num-faces num-faces
    :values values ;; Vector of `Die` 
@@ -24,22 +24,22 @@
 ;; Represents Unary Operation
 ;; op tells us whether it is - or +
 (defn build-unary-op [op value]
-  {:type "UnaryOp"
+  {:type :unary-op
    :op op
    :value value})
 
 ;; Represents Binary Operations like -, +, *, /
 ;; left and right represents the expressions on which the operartion will be applied
 (defn build-bin-op [left op right]
-  {:type "BinaryOp"
+  {:type :binary-op
    :left left
-   :op op ;; 
+   :op op
    :right right})
 
 ;; Represents Set Operation
 (defn build-operation [op selector]
   (do (assert (some #(= % op) utils/valid-ops) "Invalid Operator")
-      {:type "SetOperation"
+      {:type :set-operation
        :op op ;; k, rr, d
        :selector selector}))
 
@@ -47,6 +47,6 @@
 ;; `criteria` can be "", "<", ">", "l", "h" 
 (defn build-selector [criteria num]
   (do (assert (some #(= % criteria) utils/valid-selectors) "Invalid Selector")
-      {:type "SetSelector"
+      {:type :set-selector
        :criteria criteria
        :num num}))

@@ -54,18 +54,18 @@
             pred-or-coll)))
 
 #_(defn reroll-op [pred-or-coll raw-set]
-  (if (fn? pred-or-coll)
-    nil
-    nil))
+    (if (fn? pred-or-coll)
+      nil
+      nil))
 
 (defn generate-operation-handler [op]
   (fn [my-set criteria number]
     (case criteria
-      "" (op #(when (= % number) %) my-set)
-      "<" (op #(when (< % number) %) my-set)
-      ">" (op #(when (> % number) %) my-set)
-      "l" (op (take-lowest number my-set) my-set)
-      "h" (op (take-highest number my-set) my-set))))
+      :equals (op #(when (= % number) %) my-set)
+      :lesser-than (op #(when (< % number) %) my-set)
+      :greater-than (op #(when (> % number) %) my-set)
+      :lowest (op (take-lowest number my-set) my-set)
+      :highest (op (take-highest number my-set) my-set))))
 
 (def keep-in-set (generate-operation-handler keep-op))
 
@@ -76,11 +76,11 @@
 (defn operate [{:keys [op selector]} die-values]
   (let [{:keys [criteria num]} selector raw-set (denormalise die-values)]
     (case op
-      "k" (keep-in-set raw-set criteria num)
-      "d" (drop-in-set raw-set criteria num))))
+      :keep (keep-in-set raw-set criteria num)
+      :drop (drop-in-set raw-set criteria num))))
 
 (defn eval-dice-notation [{type :type :as expression}]
-  (when (= type "Dice")
+  (when (= type :dice)
     (let [{:keys [operation values]} expression
           operated-set (operate operation values)]
       {:original values
@@ -88,9 +88,9 @@
        :total 0}))) ;; returns a hashmap with `total` and entities tree
 
 
-(def selector (data-structs/build-selector ">" 2))
+(def selector (data-structs/build-selector :greater-than 2))
 
-(def operation (data-structs/build-operation "k" selector))
+(def operation (data-structs/build-operation :keep selector))
 
 (def die-values (data-structs/generate-die-values 3 4))
 
