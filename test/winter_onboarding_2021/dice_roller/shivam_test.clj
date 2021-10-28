@@ -1,10 +1,11 @@
 (ns winter-onboarding-2021.dice-roller.shivam-test
   (:require [clojure.test :refer [deftest is testing]]
+            [winter-onboarding-2021.dice-roller.shivam.utils :as utils]
             [winter-onboarding-2021.dice-roller.shivam.data-structs :as data-structs]
             [winter-onboarding-2021.dice-roller.shivam.core :as dice-roller]))
 
 (def sample-selector {:type :set-selector
-                      :criteria :lesser-than 
+                      :criteria :lesser-than
                       :num 2})
 
 (def sample-operation {:type :set-operation
@@ -17,18 +18,14 @@
 
 (def sample-values-for-die
   '({:type :die, :num-faces 5, :value 5}
-    {:type :die, :num-faces 5, :value 1}
-    {:type :die, :num-faces 5, :value 2}
-    {:type :die, :num-faces 5, :value 1}))
+    {:type :die, :num-faces 5, :value 5}
+    {:type :die, :num-faces 5, :value 5}
+    {:type :die, :num-faces 5, :value 5}))
 
 (def sample-dice {:type :dice
                   :num-rolls 4
                   :num-faces 5
-                  :values
-                  '({:type :die, :num-faces 5, :value 5}
-                    {:type :die, :num-faces 5, :value 1}
-                    {:type :die, :num-faces 5, :value 2}
-                    {:type :die, :num-faces 5, :value 1})
+                  :values sample-values-for-die
                   :operation
                   {:type :set-operation
                    :op :keep
@@ -54,7 +51,7 @@
     (is (= (data-structs/build-die 5 3) sample-die)))
 
   (testing "generated values for die"
-    (with-redefs [data-structs/generate-die-values (fn [num-rolls num-faces] sample-values-for-die)]
+    (with-redefs [utils/gen-rand-int (fn [x] x)]
       (is (= (data-structs/generate-die-values 4 5) sample-values-for-die))))
 
   (testing "data structure for dice"
@@ -64,40 +61,36 @@
 (deftest operations-on-set
   (testing "keep"
     (testing "only the matched values"
-      (is (= (dice-roller/keep-in-set '(1 2 3 1 2 3) :equals 3) '(3 3))))
+      (is (= (dice-roller/keep-in-set sample-values-for-die :equals 3) '())))
     (testing "values smaller than X"
-      (is (= (dice-roller/keep-in-set '(1 2 3 1 2 3) :lesser-than 3) '(1 2 1 2))))
+      (is (= (dice-roller/keep-in-set sample-values-for-die :lesser-than 3) '())))
     (testing "values greater than X"
-      (is (= (dice-roller/keep-in-set '(1 2 3 1 2 3) :greater-than 3) '())))
+      (is (= (dice-roller/keep-in-set sample-values-for-die :greater-than 3) '(5 5 5 5))))
     (testing "X smallest values"
-      (is (= (dice-roller/keep-in-set '(1 2 3 1 2 3) :lowest 3) '(1 1 2))))
+      (is (= (dice-roller/keep-in-set sample-values-for-die :lowest 3) '(5 5 5))))
     (testing "X largest values"
-      (is (= (dice-roller/keep-in-set '(1 2 3 1 2 3) :highest 3) '(2 3 3)))))
+      (is (= (dice-roller/keep-in-set sample-values-for-die :highest 2) '(5 5)))))
 
   (testing "drop"
     (testing "only the matched values"
-      (is (= (dice-roller/drop-in-set '(1 2 3 1 2 3) :equals 3) '(1 2 1 2))))
+      (is (= (dice-roller/drop-in-set sample-values-for-die :equals 5) '())))
     (testing "values smaller than X"
-      (is (= (dice-roller/drop-in-set '(1 2 3 1 2 3) :lesser-than 3) '(3 3))))
+      (is (= (dice-roller/drop-in-set sample-values-for-die :lesser-than 3) '(5 5 5 5))))
     (testing "values greater than X"
-      (is (= (dice-roller/drop-in-set '(1 2 3 1 2 3) :greater-than 3) '(1 2 3 1 2 3))))
+      (is (= (dice-roller/drop-in-set sample-values-for-die :greater-than 3) '())))
     (testing "X smallest values"
-      (is (= (dice-roller/drop-in-set '(1 2 3 1 2 3) :lowest 3) '(3 2 3))))
+      (is (= (dice-roller/drop-in-set sample-values-for-die :lowest 3) '(5))))
     (testing "X largest values"
-      (is (= (dice-roller/drop-in-set '(1 2 3 1 2 3) :highest 3) '(1 1 2)))))
+      (is (= (dice-roller/drop-in-set sample-values-for-die :highest 2) '(5 5)))))
 
-  #_(testing "reroll"
+  (testing "reroll"
     (testing "only the matched values"
-      (is (= (dice-roller/drop-in-set '(1 2 3 1 2 3) :equals 3) '(1 2 1 2))))
+      (is (not (some #(= % 3) (dice-roller/reroll-in-set sample-values-for-die :equals 3)))))
     (testing "values smaller than X"
-      (is (= (dice-roller/drop-in-set '(1 2 3 1 2 3) :lesser-than 3) '(3 3))))
+      (is (not (some #(< % 3) (dice-roller/reroll-in-set sample-values-for-die :lesser-than 3)))))
     (testing "values greater than X"
-      (is (= (dice-roller/drop-in-set '(1 2 3 1 2 3) :greater-than 3) '(1 2 3 1 2 3))))
-    (testing "X smallest values"
-      (is (= (dice-roller/drop-in-set '(1 2 3 1 2 3) :lowest 3) '(2 3 3))))
-    (testing "X largest values"
-      (is (= (dice-roller/drop-in-set '(1 2 3 1 2 3) :highest 3) '(1 1 2))))))
-
-;; TODO
-;; 1. Instead of definign the whole func, try to only redef the func which causes the side effects
-;; 2. Instead of writing "s" "k" strings, try to use keywords
+      (is (not (some #(> % 3) (dice-roller/reroll-in-set sample-values-for-die :greater-than 3)))))
+    #_(testing "X smallest values"
+        (is (= (dice-roller/reroll-in-set sample-values-for-die :lowest 3) (5 5))))
+    #_(testing "X largest values"
+        (is (= (dice-roller/reroll-in-set '(1 2 3 1 2 3) :highest 3) '(1 1 2))))))

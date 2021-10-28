@@ -41,59 +41,70 @@
 (defn take-highest [n coll]
   (take-last n (sort coll)))
 
-(defn keep-op [pred-or-coll raw-set]
-  (if (fn? pred-or-coll)
-    (keep pred-or-coll raw-set)
-    pred-or-coll))
-
-(defn remove-op [pred-or-coll raw-set]
-  (if (fn? pred-or-coll)
-    (remove pred-or-coll raw-set)
-    (reduce (fn [accum, ele] (utils/remove-once #(= % ele) accum))
-            raw-set
-            pred-or-coll)))
-
-#_(defn reroll-op [pred-or-coll raw-set]
+(defn keep-op [pred-or-coll die-values]
+  (let [raw-set (denormalise die-values)]
     (if (fn? pred-or-coll)
-      nil
-      nil))
+      (keep pred-or-coll raw-set)
+      pred-or-coll)))
 
-(defn generate-operation-handler [op]
-  (fn [my-set criteria number]
-    (case criteria
-      :equals (op #(when (= % number) %) my-set)
-      :lesser-than (op #(when (< % number) %) my-set)
-      :greater-than (op #(when (> % number) %) my-set)
-      :lowest (op (take-lowest number my-set) my-set)
-      :highest (op (take-highest number my-set) my-set))))
+(defn remove-op [pred-or-coll die-values]
+  (let [raw-set (denormalise die-values)]
+    (if (fn? pred-or-coll)
+      (remove pred-or-coll raw-set)
+      (reduce (fn [accum, ele] (utils/remove-once #(= % ele) accum))
+              raw-set
+              pred-or-coll))))
+
+(defn reroll-op [pred-or-coll die-values]
+  (letfn [(gen-valid-rand-value [raw-value]
+            (if (fn? pred-or-coll)
+              (if (pred-or-coll raw-value)
+                (gen-valid-rand-value (utils/gen-rand-int (:num-faces (first die-values))))
+                raw-value) ;; NEED TO CHANGE FOR DISCARDED & PREVIOUS
+              (if (some #(= % raw-value) pred-or-coll)
+                (gen-valid-rand-value (utils/gen-rand-int (:num-faces (first die-values))))
+                raw-value)))] ;; NEED TO CHANGE FOR DISCARDED & PREVIOUS
+    (map gen-valid-rand-value (denormalise die-values))))
+
+
+(defn generate-operation-handler [operator]
+  (fn [die-values criteria number]
+    (let [raw-set (denormalise die-values)]
+      (case criteria
+        :equals (operator #(when (= % number) %) die-values)
+        :lesser-than (operator #(when (< % number) %) die-values)
+        :greater-than (operator #(when (> % number) %) die-values)
+        :lowest (operator (take-lowest number raw-set) die-values)
+        :highest (operator (take-highest number raw-set) die-values)))))
 
 (def keep-in-set (generate-operation-handler keep-op))
 
 (def drop-in-set (generate-operation-handler remove-op))
-;; (def reroll-in-set (generate-operation-handler reroller))
+
+(def reroll-in-set (generate-operation-handler reroll-op))
 
 ;; func `operate` will return us a new set where op(with criteria on number) is applied to raw-set
 (defn operate [{:keys [op selector]} die-values]
-  (let [{:keys [criteria num]} selector raw-set (denormalise die-values)]
+  (let [{:keys [criteria num]} selector]
     (case op
-      :keep (keep-in-set raw-set criteria num)
-      :drop (drop-in-set raw-set criteria num))))
+      :keep (keep-in-set die-values criteria num)
+      :drop (drop-in-set die-values criteria num)
+      :reroll (reroll-in-set die-values criteria num))))
 
 (defn eval-dice-notation [{type :type :as expression}]
-  (when (= type :dice)
-    (let [{:keys [operation values]} expression
-          operated-set (operate operation values)]
-      {:original values
-       :operated operated-set
-       :total 0}))) ;; returns a hashmap with `total` and entities tree
+  (assert (= type :dice))
+  (let [{:keys [operation values num-rolls num-faces]} expression
+        die-values (data-structs/generate-die-values num-rolls num-faces)
+        operated-set (operate operation die-values)]
+    {:original values
+     :operated operated-set
+     :total 0})) ;; returns a hashmap with `total` and entities tree
 
 
 (def selector (data-structs/build-selector :greater-than 2))
 
 (def operation (data-structs/build-operation :keep selector))
 
-(def die-values (data-structs/generate-die-values 3 4))
-
-(def dice-ast (data-structs/build-dice 3 4 die-values operation))
+(def dice-ast (data-structs/build-dice 3 4 operation))
 
 (eval-dice-notation dice-ast)

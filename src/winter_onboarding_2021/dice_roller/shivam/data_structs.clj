@@ -14,11 +14,10 @@
    (repeatedly num-rolls #(utils/gen-rand-int num-faces))))
 
 ;; Dice represents a set of Die
-(defn build-dice [num-rolls num-faces values operation]
+(defn build-dice [num-rolls num-faces operation]
   {:type :dice
    :num-rolls num-rolls
    :num-faces num-faces
-   :values values ;; Vector of `Die` 
    :operation operation})
 
 ;; Represents Unary Operation
