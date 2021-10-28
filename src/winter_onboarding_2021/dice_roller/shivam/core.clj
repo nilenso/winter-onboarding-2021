@@ -30,6 +30,7 @@
 ;; Expression -- it will be the root element
 ;; (defn expression [subtree] {:type "Expression" :subtree subtree :total total :set set})
 
+(def max-number-of-rerolls 500)
 
 ;; Converts a list of Die into a flat list of numbers
 (defn denormalise [die-values]
@@ -56,15 +57,16 @@
               pred-or-coll))))
 
 (defn reroll-op [pred-or-coll die-values]
-  (letfn [(gen-valid-rand-value [raw-value]
+  (letfn [(gen-valid-rand-value [repeated-rolls raw-value]
+            (assert (<= repeated-rolls max-number-of-rerolls) "Limit exceeded!!!")
             (if (fn? pred-or-coll)
               (if (pred-or-coll raw-value)
-                (gen-valid-rand-value (utils/gen-rand-int (:num-faces (first die-values))))
+                (gen-valid-rand-value (inc repeated-rolls) (utils/gen-rand-int (:num-faces (first die-values))))
                 raw-value) ;; NEED TO CHANGE FOR DISCARDED & PREVIOUS
               (if (some #(= % raw-value) pred-or-coll)
-                (gen-valid-rand-value (utils/gen-rand-int (:num-faces (first die-values))))
+                (gen-valid-rand-value (inc repeated-rolls) (utils/gen-rand-int (:num-faces (first die-values))))
                 raw-value)))] ;; NEED TO CHANGE FOR DISCARDED & PREVIOUS
-    (map gen-valid-rand-value (denormalise die-values))))
+    (map (partial gen-valid-rand-value 0) (denormalise die-values))))
 
 
 (defn generate-operation-handler [operator]

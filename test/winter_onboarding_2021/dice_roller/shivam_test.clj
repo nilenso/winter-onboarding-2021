@@ -25,7 +25,6 @@
 (def sample-dice {:type :dice
                   :num-rolls 4
                   :num-faces 5
-                  :values sample-values-for-die
                   :operation
                   {:type :set-operation
                    :op :keep
@@ -55,8 +54,7 @@
       (is (= (data-structs/generate-die-values 4 5) sample-values-for-die))))
 
   (testing "data structure for dice"
-    (is (= (data-structs/build-dice 4 5 sample-values-for-die sample-operation)
-           sample-dice))))
+    (is (= (data-structs/build-dice 4 5 sample-operation) sample-dice))))
 
 (deftest operations-on-set
   (testing "keep"
@@ -93,4 +91,8 @@
     #_(testing "X smallest values"
         (is (= (dice-roller/reroll-in-set sample-values-for-die :lowest 3) (5 5))))
     #_(testing "X largest values"
-        (is (= (dice-roller/reroll-in-set '(1 2 3 1 2 3) :highest 3) '(1 1 2))))))
+        (is (= (dice-roller/reroll-in-set '(1 2 3 1 2 3) :highest 3) '(1 1 2))))
+    (testing "throws error when the expression re-rolls more than 500 times"
+      (let [values4d1 (data-structs/generate-die-values 4 1)]
+        (is (thrown? java.lang.AssertionError
+             (dice-roller/reroll-in-set values4d1 :lowest 4)))))))
