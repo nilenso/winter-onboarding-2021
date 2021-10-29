@@ -36,38 +36,61 @@
 (defn denormalise [die-values]
   (map :value die-values))
 
-(defn take-lowest [n coll]
-  (take n (sort coll)))
+(defn take-lowest-value-dies [n coll]
+  (take n (sort-by :value coll)))
 
-(defn take-highest [n coll]
-  (take-last n (sort coll)))
+(defn take-highest-value-dies [n coll]
+  (take-last n (sort-by :value coll)))
 
-(defn keep-op [pred-or-coll die-values]
-  (let [raw-set (denormalise die-values)]
-    (if (fn? pred-or-coll)
-      (keep pred-or-coll raw-set)
-      pred-or-coll)))
+(defn set-discarded-true [die-value]
+  (assoc die-value :discarded true))
 
-(defn remove-op [pred-or-coll die-values]
-  (let [raw-set (denormalise die-values)]
-    (if (fn? pred-or-coll)
-      (remove pred-or-coll raw-set)
-      (reduce (fn [accum, ele] (utils/remove-once #(= % ele) accum))
-              raw-set
-              pred-or-coll))))
+(defn update-current-value
+  "die-value: Die 
+   new-value: Int
 
-(defn reroll-op [pred-or-coll die-values]
-  (letfn [(gen-valid-rand-value [repeated-rolls raw-value]
+   Shifts the current (:value die-value) to :previous-values and 
+   replaces (:value die-value) with `new-value`
+   "
+  [{:keys [value previous-values] :as die-value} new-value]
+  (assoc die-value
+         :previous-values (conj previous-values value)
+         :value new-value))
+
+
+;; keep-op returns a list of Die
+(defn keep-op [pred die-values]
+  (if (fn? pred)
+    (map #(if (pred (:value %))
+            %
+            (set-discarded-true %))
+         die-values)
+    nil)) ;; TODO: `lowest` & `highest` selector
+
+;; remove-op returns a list of Die
+(defn remove-op [pred die-values]
+  (if (fn? pred)
+    (map #(if (pred (:value %))
+            (set-discarded-true %)
+            %)
+         die-values)
+    nil)) ;; TODO: `lowest` & `highest` selector
+
+(defn reroll-op [pred die-values]
+  (letfn [(gen-valid-rand-value [repeated-rolls die-value]
             (assert (<= repeated-rolls max-number-of-rerolls) "Limit exceeded!!!")
-            (if (fn? pred-or-coll)
-              (if (pred-or-coll raw-value)
-                (gen-valid-rand-value (inc repeated-rolls) (utils/gen-rand-int (:num-faces (first die-values))))
-                raw-value) ;; NEED TO CHANGE FOR DISCARDED & PREVIOUS
-              (if (some #(= % raw-value) pred-or-coll)
-                (gen-valid-rand-value (inc repeated-rolls) (utils/gen-rand-int (:num-faces (first die-values))))
-                raw-value)))] ;; NEED TO CHANGE FOR DISCARDED & PREVIOUS
-    (map (partial gen-valid-rand-value 0) (denormalise die-values))))
-
+            (if (fn? pred)
+              (if (pred (:value die-value))
+                (gen-valid-rand-value
+                 (inc repeated-rolls)
+                 (update-current-value die-value (utils/gen-rand-int (:num-faces die-value))))
+                die-value)
+              (if (some #(= % (:value die-value)) pred)
+                (gen-valid-rand-value
+                 (inc repeated-rolls)
+                 (update-current-value die-value (utils/gen-rand-int (:num-faces die-value))))
+                die-value)))]
+    (map (partial gen-valid-rand-value 0) die-values)))
 
 (defn generate-operation-handler [operator]
   (fn [die-values criteria number]
@@ -76,8 +99,8 @@
         :equals (operator #(when (= % number) %) die-values)
         :lesser-than (operator #(when (< % number) %) die-values)
         :greater-than (operator #(when (> % number) %) die-values)
-        :lowest (operator (take-lowest number raw-set) die-values)
-        :highest (operator (take-highest number raw-set) die-values)))))
+        :lowest (operator (take-lowest-value-dies number die-values) die-values)
+        :highest (operator (take-highest-value-dies number raw-set) die-values)))))
 
 (def keep-in-set (generate-operation-handler keep-op))
 

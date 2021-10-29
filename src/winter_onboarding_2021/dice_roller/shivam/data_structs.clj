@@ -5,7 +5,9 @@
   (assert (>= num-faces value) "`value` can't be larger than `num-faces`")
   {:type :die
    :num-faces num-faces
-   :value value})
+   :value value
+   :discarded false
+   :previous-values []})
 
 ;; Generate list of Die with length equal to `num-rolls`
 (defn generate-die-values [num-rolls num-faces]
