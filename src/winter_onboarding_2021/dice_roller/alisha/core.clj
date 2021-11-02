@@ -1,9 +1,6 @@
 (ns winter-onboarding-2021.dice-roller.alisha.core)
 
-;;Define dice-roll-set expression representation
-;;(defn dice-roll-outcomes [values] (vec values))
-
-(defn dice-notation [rolls faces] {:rolls rolls :faces faces})
+(defn dice-notation [num-rolls num-faces] {:num-rolls num-rolls :num-faces num-faces})
 
 ; op -> be "k", "d", "rr"
 ; selector -> "" "h" "l" "<" ">"
@@ -14,32 +11,34 @@
   {:dice-notation dice-notation
    :set-operation set-operation})
 
-(defn perform-dice-roll [{:keys [rolls faces]}] 
-  (vec (repeatedly rolls #(inc (rand-int faces)))))
+(defn generate-dice-roll-outcome [value num-faces]
+  {:type :dice-roll-outcome
+   :num-faces num-faces
+   :value value})
+
+(defn perform-dice-roll [{:keys [num-rolls num-faces]}]
+  (map #(generate-dice-roll-outcome % num-faces)
+       (repeatedly num-rolls #(inc (rand-int num-faces)))))
 
 ;;Selector functions 
-(defn get-first-x-highest [values x] 
-  (vec (take x (reverse (sort values)))))
+(defn get-x-highest [outcomes x]
+  (take x (reverse (sort-by :value outcomes))))
 
-(defn get-first-x-lowest [values x]
-  (vec (take x (vec (sort values)))))
+(defn get-x-lowest [outcomes x]
+  (take x (vec (sort-by :value outcomes))))
 
-(defn get-greater-than-x [values x] 
-  (vec (filter #(> %1 x) values)))
+(defn get-greater-than-x [outcomes x]
+  (filter #(> (get %1 :value) x) outcomes))
 
-(defn get-lesser-than-x [values x]
-  (vec (filter #(< %1 x) values)))
+(defn get-lesser-than-x [outcomes x]
+  (filter #(< (get %1 :value) x) outcomes))
 
-(defn get-equal-with-x [values x]
-  (vec (filter #(= %1 x) values)))
+(defn get-equal-with-x [outcomes x]
+  (filter #(= (get %1 :value) x) outcomes))
 
-;;define a function keep
-;;it takes a vector of values (i.e values)
-;;it takes another vector which is subset of values
+(defn keep-from-dice-outcomes [selector-func outcomes x]
+  (selector-func outcomes x))
 
-;; sample call -> (keep-fn get-greater-than-x [1 2 3 4 5 2] 2)
-(defn keep-from-dice-outcomes [selector-operation-func values x]
-  (selector-operation-func values x))
 ;;helper function to remove once from a collection satisfying a predicate 
 (defn remove-once [pred coll]
   ((fn inner [coll]
@@ -51,16 +50,16 @@
         )))
    coll))
 
-(defn drop-from-dice-outcomes [selector-operation-func values x]
-  (let [to-be-dropped-vals (selector-operation-func values x)]
-    ;;(substract on vectors)
+(defn drop-from-dice-outcomes [selector-operation-func outcomes x]
+  (let [to-be-dropped-outcomes (selector-operation-func outcomes x)]
+    ;;(substract on sequence)
     (reduce (fn [outcomes, ele]
-              (remove-once #(= %1 ele) outcomes)) values to-be-dropped-vals)))
+              (remove-once #(= %1 ele) outcomes))
+            outcomes
+            to-be-dropped-outcomes)))
 
-(defn reroll-dice [selector-operation-func outcomes x dice-notation]
+#_(defn reroll-dice [selector-operation-func outcomes x dice-notation]
   (if (not= (selector-operation-func outcomes x) [])
     (let [new-outcomes (perform-dice-roll dice-notation)]
       (reroll-dice selector-operation-func new-outcomes x dice-notation))
      outcomes))
-;;Sample call
-;; (reroll-dice get-first-x-lowest [1 2 3 4 4 2] 2 {:rolls 2 :faces 3})
