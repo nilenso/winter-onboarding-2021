@@ -65,11 +65,16 @@ Which can result in a set with values: 1, 9, 2 & 5 (from rolling the 2d4).
 
 ### Set operations
 
-| Syntax | Name     | Description                                 |
-|--------|----------|---------------------------------------------|
-| k      | keep     | keep all matched values                     |
-| d      | drop     | Drop all matched values                     |
-| rr     | reroll   | Rerolls all matched values until none match.|
+| Syntax | Name           | Description                                                                  |
+|--------|----------------|------------------------------------------------------------------------------|
+| k      | keep           | keep all matched values                                                      |
+| d      | drop           | Drop all matched values                                                      |
+| rr     | reroll         | Rerolls all matched values until none match.                                 |
+| ro     | reroll once    | Rerolls all matched values once. (Dice only)                                 |
+| ra     | reroll and add | Rerolls up to one matched value once, keeping the original roll. (Dice only) |
+| e      | explode on     | Rolls another die for each matched value. (Dice only)                        |
+| mi     | minimum        |  Sets the minimum value of each die. (Dice only)                             |
+| ma     | maximum        | Sets the maximum value of each die. (Dice only)                              |
 
 The notation is extended by adding an optional set operation followed by a selector.
 
