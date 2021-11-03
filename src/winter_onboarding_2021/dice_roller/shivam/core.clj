@@ -57,15 +57,40 @@
          :previous-values (conj previous-values value)
          :value new-value))
 
+(defn update-first [selector update-fn [x & xs]]
+  "Applies update-fn to only the first value which passes selector"
+  (if (selector x)
+    (conj xs (update-fn x))
+    (conj (update-first selector update-fn xs) x)))
+
+(defn discard-values [[v & vs] dice-rolls]
+  "Sets the :discard flag to true of `dice-rolls` elements which match [v & vs]"
+  (if (some? v)
+    (discard-values vs
+                    (update-first
+                     #(and (= (:value v) (:value %)) (not (:discarded %)))
+                     set-discarded-true
+                     dice-rolls))
+    dice-rolls))
+
+(defn keep-values [[v & vs] dice-rolls]
+  "Sets the :discard flag to false of `dice-rolls` elements which match [v & vs]"
+  (if (some? v)
+    (keep-values vs
+                 (update-first
+                  #(and (= (:value v) (:value %)) (:discarded %))
+                  #(assoc % :discarded false)
+                  dice-rolls))
+    dice-rolls))
 
 ;; keep-op returns a list of Die
-(defn keep-op [pred die-values]
+(defn keep-op [pred die-values] ;; array of Die 
   (if (fn? pred)
     (map #(if (pred (:value %))
             %
             (set-discarded-true %))
          die-values)
-    nil)) ;; TODO: `lowest` & `highest` selector
+    (keep-values pred (map set-discarded-true die-values))))
 
 ;; remove-op returns a list of Die
 (defn remove-op [pred die-values]
@@ -74,7 +99,7 @@
             (set-discarded-true %)
             %)
          die-values)
-    nil)) ;; TODO: `lowest` & `highest` selector
+    (discard-values pred die-values)))
 
 (defn reroll-op [pred die-values]
   (letfn [(gen-valid-rand-value [repeated-rolls die-value]
@@ -94,13 +119,12 @@
 
 (defn generate-operation-handler [operator]
   (fn [die-values criteria number]
-    (let [raw-set (denormalise die-values)]
       (case criteria
         :equals (operator #(when (= % number) %) die-values)
         :lesser-than (operator #(when (< % number) %) die-values)
         :greater-than (operator #(when (> % number) %) die-values)
         :lowest (operator (take-lowest-value-dies number die-values) die-values)
-        :highest (operator (take-highest-value-dies number raw-set) die-values)))))
+      :highest (operator (take-highest-value-dies number die-values) die-values))))
 
 (def keep-in-set (generate-operation-handler keep-op))
 
@@ -121,8 +145,7 @@
   (let [{:keys [operation values num-rolls num-faces]} expression
         die-values (data-structs/generate-die-values num-rolls num-faces)
         operated-set (operate operation die-values)]
-    {:original values
-     :operated operated-set
+    {:operated operated-set
      :total 0})) ;; returns a hashmap with `total` and entities tree
 
 
