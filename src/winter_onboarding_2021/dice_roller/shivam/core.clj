@@ -32,9 +32,6 @@
 
 (def max-number-of-rerolls 500)
 
-;; Converts a list of Die into a flat list of numbers
-(defn denormalise [die-values]
-  (map :value die-values))
 
 (defn take-lowest-value-dies [n coll]
   (take n (sort-by :value coll)))
@@ -145,14 +142,52 @@
   (let [{:keys [operation values num-rolls num-faces]} expression
         die-values (data-structs/generate-die-values num-rolls num-faces)
         operated-set (operate operation die-values)]
-    {:operated operated-set
-     :total 0})) ;; returns a hashmap with `total` and entities tree
+    {:type :evaluated-dice
+     :values operated-set
+     :value (reduce #(if (:discarded %2)
+                       %1
+                       (+ %1 (:value %2)))
+                    0
+                    operated-set)})) ;; returns a hashmap with `total` and entities tree
 
+(declare evaluate-by-type)
+
+(defn eval-bin-op [{:keys [type] :as bin-op-exp}]
+  (assert (= type :binary-op))
+  (let [{:keys [left op right]} bin-op-exp
+        evaluated-left (evaluate-by-type left)
+        evaluated-right (evaluate-by-type right)
+        value (case op
+                :add (+ (:value evaluated-left) (:value evaluated-right))
+                :subtract (- (:value evaluated-left) (:value evaluated-right))
+                :multiply (* (:value evaluated-left) (:value evaluated-right))
+                :divide (/ (:value evaluated-left) (:value evaluated-right)))]
+    (assoc bin-op-exp
+           :type :evaluated-bin-op
+           :left evaluated-left
+           :right evaluated-right
+           :value value)))
+
+(defn evaluate-by-type [entity]
+  "If entity has :value, it means it's already evaluated"
+  (if (contains? entity :value)
+    entity
+    (case (:type entity)
+      :dice (eval-dice-notation entity)
+      :binary-op (eval-bin-op entity)
+      :literal entity)))
 
 (def selector (data-structs/build-selector :greater-than 2))
 
 (def operation (data-structs/build-operation :keep selector))
 
 (def dice-ast (data-structs/build-dice 3 4 operation))
+
+(def bin-op (data-structs/build-bin-op
+             (data-structs/build-literal 3)
+             :add
+             dice-ast))
+
+(eval-bin-op bin-op)
 
 (eval-dice-notation dice-ast)
