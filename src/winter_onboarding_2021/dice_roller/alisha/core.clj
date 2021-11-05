@@ -1,65 +1,26 @@
-(ns winter-onboarding-2021.dice-roller.alisha.core)
+(ns winter-onboarding-2021.dice-roller.alisha.core
+  (:require [winter-onboarding-2021.dice-roller.alisha.data_struct :as data-struct]
+            [winter-onboarding-2021.dice-roller.alisha.utils :as utils]))
 
-(defn dice-notation [num-rolls num-faces] {:num-rolls num-rolls :num-faces num-faces})
+(defn roll [num-faces] #(inc (rand-int num-faces)))
 
-; op -> be "k", "d", "rr"
-; selector -> "" "h" "l" "<" ">"
-(defn set-operation [op selector] {:op op :selector selector})
+;;generate rolls
+(defn generate-rolls [{:keys [num-rolls num-faces]}]
+  (map #(data-struct/build-dice-roll-outcome %)
+       (repeatedly num-rolls (roll num-faces))))
 
-;;define set expression with consists of dice-notation and set-operation
-(defn set-expression [dice-notation set-operation]
-  {:dice-notation dice-notation
-   :set-operation set-operation})
-
-(defn generate-dice-roll-outcome [value num-faces]
-  {:type :dice-roll-outcome
-   :num-faces num-faces
-   :value value})
-
-(defn perform-dice-roll [{:keys [num-rolls num-faces]}]
-  (map #(generate-dice-roll-outcome % num-faces)
-       (repeatedly num-rolls #(inc (rand-int num-faces)))))
-
-;;Selector functions 
-(defn get-x-highest [outcomes x]
-  (take x (reverse (sort-by :value outcomes))))
-
-(defn get-x-lowest [outcomes x]
-  (take x (vec (sort-by :value outcomes))))
-
-(defn get-greater-than-x [outcomes x]
-  (filter #(> (get %1 :value) x) outcomes))
-
-(defn get-lesser-than-x [outcomes x]
-  (filter #(< (get %1 :value) x) outcomes))
-
-(defn get-equal-with-x [outcomes x]
-  (filter #(= (get %1 :value) x) outcomes))
-
-(defn keep-from-dice-outcomes [selector-func outcomes x]
-  (selector-func outcomes x))
-
-;;helper function to remove once from a collection satisfying a predicate 
-(defn remove-once [pred coll]
-  ((fn inner [coll]
-     (lazy-seq
-      (when-let [[x & xs] (seq coll)]
-        (if (pred x)
-          xs
-          (cons x (inner xs)))
-        )))
-   coll))
-
-(defn drop-from-dice-outcomes [selector-operation-func outcomes x]
-  (let [to-be-dropped-outcomes (selector-operation-func outcomes x)]
-    ;;(substract on sequence)
-    (reduce (fn [outcomes, ele]
-              (remove-once #(= %1 ele) outcomes))
-            outcomes
-            to-be-dropped-outcomes)))
-
-#_(defn reroll-dice [selector-operation-func outcomes x dice-notation]
-  (if (not= (selector-operation-func outcomes x) [])
-    (let [new-outcomes (perform-dice-roll dice-notation)]
-      (reroll-dice selector-operation-func new-outcomes x dice-notation))
-     outcomes))
+;;Sample Calls
+#_(def dice-input (data-struct/build-dice-input 5 6))
+#_(def rolls (generate-rolls {:num-rolls 5 :num-faces 6}))
+#_(def dice-result (data-struct/build-dice-result rolls))
+#_(data-struct/build-dice-struct dice-input dice-result)
+;;Sample data struct
+#_{:input {:type :dice-input, :num-faces 5, :num-rolls 6}
+ :result
+ {:type :dice-result
+  :rolls
+  ({:type :dice-roll-outcome, :value 2}
+   {:type :dice-roll-outcome, :value 4}
+   {:type :dice-roll-outcome, :value 5}
+   {:type :dice-roll-outcome, :value 3}
+   {:type :dice-roll-outcome, :value 4})}}
