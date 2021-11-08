@@ -32,7 +32,6 @@
 
 (def max-number-of-rerolls 500)
 
-
 (defn take-lowest-value-dies [n coll]
   (take n (sort-by :value coll)))
 
@@ -172,6 +171,23 @@
            :right evaluated-right
            :value value)))
 
+; The `reroll` operation can't be applied to a Set
+; because a Set is not a Dice i.e. Set doesnt have `num-faces`
+(defn eval-set [{:keys [type] :as st}]
+  (assert (= type :set))
+  (let [{:keys [values operation]} st
+        evaluated-values (map evaluate-by-type values)
+        ;; if operation is nil, return values otherwise apply only allowed operations
+        operated-values (if (nil? operation)
+                          evaluated-values
+                          (do (assert (some #(= (get-in st [:operation :op]) %) [:keep :drop])
+                                    "Only keep or drop operation is allowed on a Set")
+                            (operate operation evaluated-values)))
+        value (sum-non-discarded operated-values)]
+    {:type :evaluated-set
+     :values operated-values
+     :value value}))
+
 (defn evaluate-by-type [entity]
   "If entity has :value, it means it's already evaluated"
   (if (contains? entity :value)
@@ -179,7 +195,8 @@
     (case (:type entity)
       :dice (eval-dice-notation entity)
       :binary-op (eval-bin-op entity)
-      :literal entity)))
+      :literal entity
+      :set (eval-set entity))))
 
 (def selector (data-structs/build-selector :greater-than 2))
 
@@ -192,6 +209,16 @@
              :add
              dice-ast))
 
+(def st (data-structs/build-set
+         [(data-structs/build-literal 2)
+         (data-structs/build-literal 4)
+         (data-structs/build-literal 10)]
+         operation))
+
+(eval-set st)
+
 (eval-bin-op bin-op)
 
 (eval-dice-notation dice-ast)
+
+

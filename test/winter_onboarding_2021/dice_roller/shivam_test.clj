@@ -10,6 +10,12 @@
    :previous-values []
    :value 4})
 
+(def sample-literal-2
+  {:type :literal
+   :discarded false
+   :previous-values []
+   :value 5})
+
 (def sample-selector
   {:type :set-selector
    :criteria :lesser-than
@@ -27,15 +33,10 @@
    :discarded false
    :previous-values []})
 
-#_(def sample-with-redef-values-for-die
-    '({:type :die, :num-faces 5, :value 5 :discarded false :previous-values []}
-      {:type :die, :num-faces 5, :value 5 :discarded false :previous-values []}
-      {:type :die, :num-faces 5, :value 5 :discarded false :previous-values []}
-      {:type :die, :num-faces 5, :value 5 :discarded false :previous-values []}))
-
 (defn dies-factory
   ([discard-sequence previous-values-sequence]
    (dies-factory [3 5 3 2] discard-sequence previous-values-sequence))
+  
   ([values discard-sequence previous-values-sequence]
    [{:type :die :num-faces 5 :value (nth values 0) :discarded (nth discard-sequence 0) :previous-values (nth previous-values-sequence 0)}
     {:type :die :num-faces 5 :value (nth values 1) :discarded (nth discard-sequence 1) :previous-values (nth previous-values-sequence 1)}
@@ -61,13 +62,13 @@
   {:type :binary-op
    :left sample-literal
    :op :add
-   :right {:type :literal :value 5 :discarded false :previous-values []}})
+   :right sample-literal-2})
 
 (def evaluated-bin-op-on-literals
   {:type :evaluated-bin-op
    :left sample-literal
    :op :add
-   :right {:type :literal :value 5 :discarded false :previous-values []}
+   :right sample-literal-2
    :value 9})
 
 (def sample-bin-op-on-literal-n-dice
@@ -90,13 +91,46 @@
    :left {:type :evaluated-bin-op
           :left sample-literal
           :op :add
-          :right {:type :literal, :value 5 :discarded false :previous-values []}
+          :right sample-literal-2
           :value 9}
    :op :multiply
    :right {:type :evaluated-dice
            :values (dies-factory [5 5 5 5] [true true true true] [[] [] [] []])
            :value 0}
    :value 0})
+
+(def sample-set
+  {:type :set
+   :values [sample-literal
+            sample-literal-2]})
+
+(def sample-set-with-operation
+  {:type :set
+   :values [sample-literal
+            sample-literal-2]
+   :operation sample-operation})
+
+(def evaluated-set-of-literals
+  {:type :evaluated-set
+   :values [sample-literal sample-literal-2]
+   :value 9})
+
+#_(def evaluated-set-of-literal-n-dice
+  {:type :evaluated-set
+   :values [sample-literal
+            sample-literal-2
+            {:type :evaluated-dice
+             :values '({:type :die, :num-faces 5, :value 3, :discarded true, :previous-values []}
+                       {:type :die, :num-faces 5, :value 1, :discarded false, :previous-values []}
+                       {:type :die, :num-faces 5, :value 3, :discarded true, :previous-values []}
+                       {:type :die, :num-faces 5, :value 5, :discarded true, :previous-values []})
+             :value 1}]
+   :value 10})
+
+#_(def evaluated-set-of-mix-entities
+  {:type :evaluated-set
+   :values []
+   :value nil})
 
 (deftest testing-data-structs
 
@@ -138,7 +172,13 @@
            (data-structs/build-bin-op
             sample-dice
             :add
-            sample-literal)))))
+            sample-literal))))
+  
+  (testing "data structure for set"
+    (is (= sample-set-with-operation
+          (data-structs/build-set
+           [sample-literal sample-literal-2]
+           sample-operation)))))
 
 (deftest operations-on-set
   (testing "keep"
@@ -210,3 +250,27 @@
                sample-bin-op-on-literals
                :multiply
                sample-dice)))))))
+
+(deftest eval-set
+  (testing "a Set of Literals "
+    (is (= evaluated-set-of-literals
+           (dice-roller/eval-set sample-set))))
+  
+  #_(testing "a Set of Literals and a Dice without any operation"
+    (with-redefs [utils/gen-rand-int (fn [x] x)]
+      (is (= evaluated-set-of-literal-n-dice
+           (dice-roller/eval-set (data-structs/build-set
+                                  [sample-literal sample-literal-2 sample-dice]
+                                  nil))))))
+  
+  #_(testing "a Set of Literals, a Dice and a Binary Operation without any operation"
+    (is (= evaluated-set-of-mix-entities
+           (dice-roller/eval-set (data-structs/build-set
+                                  [sample-literal sample-literal-2 sample-dice sample-bin-op-on-literals]
+                                  nil)))))
+  
+  #_(testing "a Set of Literals, a Dice and a Binary Operation with an operation"
+    (is (= ()
+           (dice-roller/eval-set (data-structs/build-set
+                                  [sample-literal sample-literal-2 sample-dice sample-bin-op-on-literals]
+                                  sample-operation))))))

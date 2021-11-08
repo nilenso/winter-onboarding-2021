@@ -29,6 +29,11 @@
    :num-faces num-faces
    :operation operation})
 
+(defn build-set [values operation]
+  {:type :set
+   :values values
+   :operation operation})
+
 ;; Represents Unary Operation
 ;; op tells us whether it is - or +
 (defn build-unary-op [op value]
