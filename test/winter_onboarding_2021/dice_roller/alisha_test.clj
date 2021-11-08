@@ -14,18 +14,13 @@
                              {:type :dice-roll-outcome :num-faces 4 :value 1}
                              {:type :dice-roll-outcome :num-faces 4 :value 4}))
 
-(def sample-dice-input {:type :dice-input :num-faces 4 :num-rolls 3})
-
-(def sample-dice-result {:type :dice-result :rolls small-sample-rolls})
-
-(def sample-dice-outcome {:type :dice-roll-outcome :value 1})
+(def sample-dice-input {:num-faces 4 :num-rolls 3})
 
 ;; Tests start -------
 
 (deftest build-dice-input
   (testing "to verify the structure of dice-input"
-    (is (= (data-struct/build-dice-input 3 4) {:type :dice-input 
-                                               :num-faces 3
+    (is (= (data-struct/build-dice-input 3 4) {:num-faces 3
                                                :num-rolls 4}))))
 
 (deftest build-dice-result

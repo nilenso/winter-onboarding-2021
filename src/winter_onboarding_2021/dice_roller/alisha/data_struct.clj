@@ -2,8 +2,7 @@
 
 ;;Build data structure for dice-roll (representation of dice-notation)
 (defn build-dice-input [num-faces num-rolls]
-  {:type :dice-input
-   :num-faces num-faces
+  {:num-faces num-faces
    :num-rolls num-rolls})
 
 ;; Build dice-result
