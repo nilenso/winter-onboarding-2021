@@ -1,10 +1,12 @@
 (ns winter-onboarding-2021.dice-roller.shivam.data-structs
   (:require [winter-onboarding-2021.dice-roller.shivam.utils :as utils]))
 
-(defn build-literal [num]
+(defn build-literal [value]
   (assert (number? num))
   {:type :literal
-   :value num})
+   :value value
+   :discarded false
+   :previous-values []})
 
 (defn build-die [num-faces value]
   (assert (>= num-faces value) "`value` can't be larger than `num-faces`")

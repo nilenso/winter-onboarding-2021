@@ -42,6 +42,13 @@
 (defn set-discarded-true [die-value]
   (assoc die-value :discarded true))
 
+(defn sum-non-discarded [values]
+  (reduce #(if (:discarded %2)
+             %1
+             (+ %1 (:value %2)))
+          0
+          values))
+
 (defn update-current-value
   "die-value: Die 
    new-value: Int
@@ -139,16 +146,13 @@
 
 (defn eval-dice-notation [{type :type :as expression}]
   (assert (= type :dice))
-  (let [{:keys [operation values num-rolls num-faces]} expression
+  (let [{:keys [operation num-rolls num-faces]} expression
         die-values (data-structs/generate-die-values num-rolls num-faces)
-        operated-set (operate operation die-values)]
+        operated-values (operate operation die-values)
+        value (sum-non-discarded operated-values)]
     {:type :evaluated-dice
-     :values operated-set
-     :value (reduce #(if (:discarded %2)
-                       %1
-                       (+ %1 (:value %2)))
-                    0
-                    operated-set)})) ;; returns a hashmap with `total` and entities tree
+     :values operated-values
+     :value value})) ;; returns a hashmap with `total` and entities tree
 
 (declare evaluate-by-type)
 

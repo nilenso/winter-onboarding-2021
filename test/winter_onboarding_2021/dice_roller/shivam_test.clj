@@ -6,6 +6,8 @@
 
 (def sample-literal
   {:type :literal
+   :discarded false
+   :previous-values []
    :value 4})
 
 (def sample-selector
@@ -25,17 +27,20 @@
    :discarded false
    :previous-values []})
 
-(def sample-with-redef-values-for-die
-  '({:type :die, :num-faces 5, :value 5 :discarded false :previous-values []}
-    {:type :die, :num-faces 5, :value 5 :discarded false :previous-values []}
-    {:type :die, :num-faces 5, :value 5 :discarded false :previous-values []}
-    {:type :die, :num-faces 5, :value 5 :discarded false :previous-values []}))
+#_(def sample-with-redef-values-for-die
+    '({:type :die, :num-faces 5, :value 5 :discarded false :previous-values []}
+      {:type :die, :num-faces 5, :value 5 :discarded false :previous-values []}
+      {:type :die, :num-faces 5, :value 5 :discarded false :previous-values []}
+      {:type :die, :num-faces 5, :value 5 :discarded false :previous-values []}))
 
-(defn dies-factory [discard-sequence previous-values-sequence]
-  [{:type :die :num-faces 5 :value 3 :discarded (nth discard-sequence 0) :previous-values (nth previous-values-sequence 0)}
-   {:type :die :num-faces 5 :value 5 :discarded (nth discard-sequence 1) :previous-values (nth previous-values-sequence 1)}
-   {:type :die, :num-faces 5, :value 3 :discarded (nth discard-sequence 2) :previous-values (nth previous-values-sequence 2)}
-   {:type :die, :num-faces 5, :value 2 :discarded (nth discard-sequence 3) :previous-values (nth previous-values-sequence 3)}])
+(defn dies-factory
+  ([discard-sequence previous-values-sequence]
+   (dies-factory [3 5 3 2] discard-sequence previous-values-sequence))
+  ([values discard-sequence previous-values-sequence]
+   [{:type :die :num-faces 5 :value (nth values 0) :discarded (nth discard-sequence 0) :previous-values (nth previous-values-sequence 0)}
+    {:type :die :num-faces 5 :value (nth values 1) :discarded (nth discard-sequence 1) :previous-values (nth previous-values-sequence 1)}
+    {:type :die, :num-faces 5, :value (nth values 2) :discarded (nth discard-sequence 2) :previous-values (nth previous-values-sequence 2)}
+    {:type :die, :num-faces 5, :value (nth values 3) :discarded (nth discard-sequence 3) :previous-values (nth previous-values-sequence 3)}]))
 
 (def sample-values-for-die
   '({:type :die, :num-faces 5, :value 3 :discarded false :previous-values []}
@@ -56,13 +61,13 @@
   {:type :binary-op
    :left sample-literal
    :op :add
-   :right {:type :literal :value 5}})
+   :right {:type :literal :value 5 :discarded false :previous-values []}})
 
 (def evaluated-bin-op-on-literals
   {:type :evaluated-bin-op
    :left sample-literal
    :op :add
-   :right {:type :literal :value 5}
+   :right {:type :literal :value 5 :discarded false :previous-values []}
    :value 9})
 
 (def sample-bin-op-on-literal-n-dice
@@ -71,27 +76,27 @@
    :op :add
    :right sample-literal})
 
-#_(def evaluated-sample-bin-op-on-literal-n-dice
+(def evaluated-sample-bin-op-on-literal-n-dice
   {:type :evaluated-bin-op
    :left {:type :evaluated-dice
-          :values sample-with-redef-values-for-die
-          :value 20}
+          :values (dies-factory [5 5 5 5] [true true true true] [[] [] [] []])
+          :value 0}
    :op :add
    :right sample-literal
-   :value 24})
+   :value 4})
 
-#_(def evaluated-nested-bin-op
+(def evaluated-nested-bin-op
   {:type :evaluated-bin-op
    :left {:type :evaluated-bin-op
-          :left {:type :literal, :value 4}
+          :left sample-literal
           :op :add
-          :right {:type :literal, :value 5}
+          :right {:type :literal, :value 5 :discarded false :previous-values []}
           :value 9}
    :op :multiply
    :right {:type :evaluated-dice
-           :values sample-with-redef-values-for-die
-           :value 20}
-   :value 180})
+           :values (dies-factory [5 5 5 5] [true true true true] [[] [] [] []])
+           :value 0}
+   :value 0})
 
 (deftest testing-data-structs
 
@@ -117,7 +122,8 @@
 
   (testing "generated values for die"
     (with-redefs [utils/gen-rand-int (fn [x] x)]
-      (is (= sample-with-redef-values-for-die (data-structs/generate-die-values 4 5)))))
+      (is (= (dies-factory [5 5 5 5] [false false false false] [[] [] [] []])
+             (data-structs/generate-die-values 4 5)))))
 
   (testing "data structure for dice"
     (is (= sample-dice (data-structs/build-dice 4 5 sample-operation))))
@@ -190,17 +196,17 @@
     (is (= evaluated-bin-op-on-literals
            (dice-roller/eval-bin-op sample-bin-op-on-literals))))
 
-  ;; Logic is OK but tests need to be fixed
-  #_(testing "Adding one literal and dice expression"
-      (with-redefs [utils/gen-rand-int (fn [x] x)]
-        (is (= evaluated-sample-bin-op-on-literal-n-dice
-               (dice-roller/eval-bin-op sample-bin-op-on-literal-n-dice)))))
+  (testing "Adding one literal and dice expression"
+    (with-redefs [utils/gen-rand-int (fn [x] x)]
+      (is (= evaluated-sample-bin-op-on-literal-n-dice
+             (dice-roller/eval-bin-op
+              sample-bin-op-on-literal-n-dice)))))
 
-  #_(testing "Nested binary operation -- left is a addition binary operation of literals & right is a dice"
-      (with-redefs [utils/gen-rand-int (fn [x] x)]
-        (is (= evaluated-nested-bin-op
-               (dice-roller/eval-bin-op
-                (data-structs/build-bin-op
-                 sample-bin-op-on-literals
-                 :multiply
-                 sample-dice)))))))
+  (testing "Nested binary operation -- left is a addition binary operation of literals & right is a dice"
+    (with-redefs [utils/gen-rand-int (fn [x] x)]
+      (is (= evaluated-nested-bin-op
+             (dice-roller/eval-bin-op
+              (data-structs/build-bin-op
+               sample-bin-op-on-literals
+               :multiply
+               sample-dice)))))))
