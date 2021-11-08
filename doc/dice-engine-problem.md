@@ -88,7 +88,7 @@ Set operations are applied with selectors. They act as a filter on the values in
 | \>X | greater than X | Values in the set that are greater than X |
 | \<X | lesser than X | Values in the set that are lesser than X |
 
-Similarly, `dlZ` is used to keep lowest Z dice. In the previous example,
+Similarly, `dlZ` is used to drop lowest Z dice. In the previous example,
 `3d10kl2` with the same rolls would amount to 3 + 8 => 11.
 
 These are `set operations`. A group of rolls of the form `NdX` can be
