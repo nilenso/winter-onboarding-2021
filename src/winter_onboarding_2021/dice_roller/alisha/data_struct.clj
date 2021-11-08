@@ -21,3 +21,21 @@
 (defn build-dice-roll-outcome [value]
   {:type :dice-roll-outcome
    :value value})
+
+(defn build-operation [op selector]
+  {:op op
+   :selector selector})
+
+(defn build-selector [op x]
+  {:op op
+   :x x})
+
+(defn build-bin-op [op left right]
+  {:type :bin-op
+   :op op
+   :left left
+   :right right})
+
+(defn build-numberic-struct [num]
+  {:type :numeric
+   :value num})

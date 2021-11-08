@@ -16,6 +16,8 @@
 
 (def sample-dice-input {:num-faces 4 :num-rolls 3})
 
+(def sample-selector {:op :< :x 10})
+
 ;; Tests start -------
 
 (deftest build-dice-input
@@ -36,3 +38,18 @@
 (deftest build-dice-roll-outcome
   (testing "to verify the structure of dice-roll-outcome"
     (is (= (data-struct/build-dice-roll-outcome 1) {:type :dice-roll-outcome :value 1}))))
+
+(deftest build-selector
+  (testing "to verify the structure of build selector"
+    (is (= (data-struct/build-selector :< 10) {:op :<
+                                               :x 10}))))
+
+(deftest build-operation
+  (testing "to verify the structure of operation"
+    (is (= (data-struct/build-operation :k sample-selector) {:op :k
+                                                            :selector sample-selector}))))
+
+(deftest build-numberic-struct
+  (testing "to verifythe structure of numeric values"
+    (is (= (data-struct/build-numberic-struct 10) {:type :numberic
+                                                    :value 20}))))
