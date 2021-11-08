@@ -16,30 +16,36 @@
     (not (= x list))))
 
 (defn my-drop
-  ([dice-roller]
-   (assoc dice-roller :states (conj (dice-roller :states) 
-                                    (remove (partial contains? 
-                                                     (set (case ((dice-roller :selector) :selector-type)
-                                                                              :greater (selectors/greater ((dice-roller :selector) :value) ((dice-roller :states) 1))
-                                                                              :lower (selectors/lower ((dice-roller :selector) :value) ((dice-roller :states) 1))
-                                                                              :highest (selectors/highest ((dice-roller :selector) :value) ((dice-roller :states) 1))
-                                                                              :lowest (selectors/lowest ((dice-roller :selector) :value) ((dice-roller :states) 1))
-                                                                              :equal-to (selectors/equal ((dice-roller :selector) :value) ((dice-roller :states) 1)))))
-                                                    ((dice-roller :states) 1))))))
+  ([dice-model]
+   (assoc dice-model :states (conj (dice-model :states)
+                                    (remove (partial contains?
+                                                     (set (case ((dice-model :selector) :selector-type)
+                                                            :greater (selectors/greater ((dice-model :selector) :value) ((dice-model :states) 1))
+                                                            :lower (selectors/lower ((dice-model :selector) :value) ((dice-model :states) 1))
+                                                            :highest (selectors/highest ((dice-model :selector) :value) ((dice-model :states) 1))
+                                                            :lowest (selectors/lowest ((dice-model :selector) :value) ((dice-model :states) 1))
+                                                            :equal-to (selectors/equal ((dice-model :selector) :value) ((dice-model :states) 1)))))
+                                            ((dice-model :states) 1))))))
 
 
 (defn my-keep
-  ([dice-roller]
-   (assoc dice-roller :states (conj (dice-roller :states) (case ((dice-roller :selector) :selector-type)
-                                                            :greater (selectors/greater ((dice-roller :selector) :value) ((dice-roller :states) 1))
-                                                            :lower (selectors/lower ((dice-roller :selector) :value) ((dice-roller :states) 1))
-                                                            :highest (selectors/highest ((dice-roller :selector) :value) ((dice-roller :states) 1))
-                                                            :lowest (selectors/lowest ((dice-roller :selector) :value) ((dice-roller :states) 1))
-                                                            :equal-to (selectors/equal ((dice-roller :selector) :value) ((dice-roller :states) 1)))))))
+  ([dice-model]
+   (assoc dice-model :states (conj (dice-model :states) (case ((dice-model :selector) :selector-type)
+                                                            :greater (selectors/greater ((dice-model :selector) :value) ((dice-model :states) 1))
+                                                            :lower (selectors/lower ((dice-model :selector) :value) ((dice-model :states) 1))
+                                                            :highest (selectors/highest ((dice-model :selector) :value) ((dice-model :states) 1))
+                                                            :lowest (selectors/lowest ((dice-model :selector) :value) ((dice-model :states) 1))
+                                                            :equal-to (selectors/equal ((dice-model :selector) :value) ((dice-model :states) 1)))))))
 
 
-(defn reroll [dice-roller]
-  )
 
-(reroll (my-roller 3 4))
+
+(defn reroll [dice-model]
+  (map (partial (fn [x y] (if (contains? x y) (rand-int (dice-model :num-faces)) y)) #{0 1})  [0 1 3]))
+
+
+3d10rr<3  
+
+
+
 

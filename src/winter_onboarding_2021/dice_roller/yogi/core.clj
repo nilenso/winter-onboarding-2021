@@ -4,6 +4,8 @@
 
 (def x (models/build-dice-model 6 5 :keep {:selector-type :equal-to :value 2}))
 
+x
+
 (defn init [dice-model]
   (assoc dice-model 
    :states 
@@ -19,7 +21,7 @@
     :drop (operations/my-drop dice-roller)
     :reroll (operations/reroll dice-roller)))
 
-
+(operations/reroll (init x))
 
 (defn eval-dice-model [dice-model]
   (apply-operation (init dice-model)))
