@@ -30,10 +30,9 @@
 
 (deftest build-dice-struct
   (testing "to verify the structure of dice-struct (i.e a structure with both input and result)"
-    (is (= (data-struct/build-dice-struct sample-dice-input sample-dice-result) {:type :dice-struct
-                                                                                 :input sample-dice-input
-                                                                                 :result sample-dice-result}))))
-
+    (is (= (data-struct/build-dice-struct sample-dice-input) {:type :dice-struct
+                                                              :num-faces 4
+                                                              :num-rolls 3}))))
 (deftest build-dice-roll-outcome
   (testing "to verify the structure of dice-roll-outcome"
     (is (= (data-struct/build-dice-roll-outcome 1) {:type :dice-roll-outcome :value 1}))))
