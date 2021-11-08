@@ -20,17 +20,14 @@
   ([y seq]
    (filter (partial check y) seq)))
 
-(defn my-drop 
+(defn my-drop
   ([selector x seq]
    (filter (partial rcheck (selector x seq)) seq))
   ([y seq]
    (filter (partial rcheck y) seq)))
 
-(defn solve [list]
-  (eval (conj (eval list) +)))
 
+(defmacro reroll [dicenotation]
+  dicenotation)
 
-(defn reroll [theexp]
-  theexp)
-
-
+(reroll (my-roller 3 4))
