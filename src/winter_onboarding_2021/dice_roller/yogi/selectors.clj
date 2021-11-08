@@ -14,3 +14,8 @@
   (filter
    (fn [y] (> x y))
    list))
+
+(defn equal [x list]
+  (filter
+   (fn [y] (= x y))
+   list))
