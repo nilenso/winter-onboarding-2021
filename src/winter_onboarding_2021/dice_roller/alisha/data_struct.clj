@@ -12,10 +12,14 @@
 
 ;;Build data structure for result, which contains input infor and outcomes
 ;;output -> sequence of dice-roll-outcomes
-(defn build-dice-struct [{:keys [num-faces num-rolls]}]
-  {:type :dice-struct
-   :num-faces num-faces
-   :num-rolls num-rolls})
+(defn build-dice-struct
+  ([{:keys [num-faces num-rolls]}] {:type :dice-struct
+                                   :num-faces num-faces
+                                   :num-rolls num-rolls})
+  ([{:keys [num-faces num-rolls]} operation] {:type :dice-struct
+                                              :num-faces num-faces
+                                              :num-rolls num-rolls
+                                              :operation operation}))
 
 ;;A single dice-roll is represented as dice-roll-outcome
 (defn build-dice-roll-outcome [value]
