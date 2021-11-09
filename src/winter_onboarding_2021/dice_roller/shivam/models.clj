@@ -1,15 +1,16 @@
-(ns winter-onboarding-2021.dice-roller.shivam.data-structs
+(ns winter-onboarding-2021.dice-roller.shivam.models
   (:require [winter-onboarding-2021.dice-roller.shivam.utils :as utils]))
 
 (defn build-literal [value]
-  (assert (number? num))
+  {:pre [(number? value)]}
   {:type :literal
    :value value
    :discarded false
    :previous-values []})
 
 (defn build-die [num-faces value]
-  (assert (>= num-faces value) "`value` can't be larger than `num-faces`")
+  #_(assert (>= num-faces value) "`value` can't be larger than `num-faces`")
+  {:pre [(>= num-faces value)]}
   {:type :die
    :num-faces num-faces
    :value value
@@ -51,7 +52,8 @@
 
 ;; Represents Set Operation
 (defn build-operation [op selector]
-  (assert (some #(= % op) utils/valid-ops) "Invalid Operator")
+  {:pre [(some #(= % op) utils/valid-ops)]}
+  #_(assert (some #(= % op) utils/valid-ops) "Invalid Operator")
   {:type :set-operation
    :op op ;; k, rr, d
    :selector selector})
@@ -59,7 +61,8 @@
 ;; Represents Set Selector
 ;; `criteria` can be "", "<", ">", "l", "h" 
 (defn build-selector [criteria num]
-  (assert (some #(= % criteria) utils/valid-selectors) "Invalid Selector")
+  {:pre [(some #(= % criteria) utils/valid-selectors)]}
+  #_(assert (some #(= % criteria) utils/valid-selectors) "Invalid Selector")
   {:type :set-selector
    :criteria criteria
    :num num})

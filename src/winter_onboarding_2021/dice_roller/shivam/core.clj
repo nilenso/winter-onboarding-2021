@@ -1,5 +1,5 @@
 (ns winter-onboarding-2021.dice-roller.shivam.core
-  (:require [winter-onboarding-2021.dice-roller.shivam.data-structs :as data-structs]
+  (:require [winter-onboarding-2021.dice-roller.shivam.models :as models]
             [winter-onboarding-2021.dice-roller.shivam.utils :as utils]))
 
 ;; Some sample dice expressions
@@ -147,9 +147,9 @@
       :reroll (reroll-in-set die-values criteria num))))
 
 (defn eval-dice-notation [{type :type :as expression}]
-  (assert (= type :dice))
+  {:pre [(= type :dice)]}
   (let [{:keys [operation num-rolls num-faces]} expression
-        die-values (data-structs/generate-die-values num-rolls num-faces)
+        die-values (models/generate-die-values num-rolls num-faces)
         operated-values (operate operation die-values)
         value (sum-non-discarded operated-values)]
     {:type :evaluated-dice
@@ -159,7 +159,7 @@
 (declare evaluate-by-type)
 
 (defn eval-bin-op [{:keys [type] :as bin-op-exp}]
-  (assert (= type :binary-op))
+  {:pre [(= type :binary-op)]}
   (let [{:keys [left op right]} bin-op-exp
         evaluated-left (evaluate-by-type left)
         evaluated-right (evaluate-by-type right)
@@ -177,7 +177,7 @@
 ; The `reroll` operation can't be applied to a Set
 ; because a Set is not a Dice i.e. Set doesnt have `num-faces`
 (defn eval-set [{:keys [type] :as st}]
-  (assert (= type :set))
+  {:pre [(= type :set)]}
   (let [{:keys [values operation]} st
         evaluated-values (map evaluate-by-type values)
         ;; if operation is nil, return values otherwise apply only allowed operations
@@ -202,21 +202,21 @@
       :literal entity
       :set (eval-set entity))))
 
-(def selector (data-structs/build-selector :greater-than 2))
+(def selector (models/build-selector :greater-than 2))
 
-(def operation (data-structs/build-operation :keep selector))
+(def operation (models/build-operation :keep selector))
 
-(def dice-ast (data-structs/build-dice 3 4 operation))
+(def dice-ast (models/build-dice 3 4 operation))
 
-(def bin-op (data-structs/build-bin-op
-             (data-structs/build-literal 3)
+(def bin-op (models/build-bin-op
+             (models/build-literal 3)
              :add
              dice-ast))
 
-(def st (data-structs/build-set
-         [(data-structs/build-literal 2)
-         (data-structs/build-literal 4)
-         (data-structs/build-literal 10)]
+(def st (models/build-set
+         [(models/build-literal 2)
+         (models/build-literal 4)
+         (models/build-literal 10)]
          operation))
 
 (eval-set st)

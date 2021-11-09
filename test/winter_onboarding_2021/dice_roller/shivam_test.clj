@@ -1,7 +1,7 @@
 (ns winter-onboarding-2021.dice-roller.shivam-test
   (:require [clojure.test :refer [deftest is testing]]
             [winter-onboarding-2021.dice-roller.shivam.utils :as utils]
-            [winter-onboarding-2021.dice-roller.shivam.data-structs :as data-structs]
+            [winter-onboarding-2021.dice-roller.shivam.models :as models]
             [winter-onboarding-2021.dice-roller.shivam.core :as dice-roller]))
 
 (def sample-literal
@@ -36,7 +36,6 @@
 (defn dies-factory
   ([discard-sequence previous-values-sequence]
    (dies-factory [3 5 3 2] discard-sequence previous-values-sequence))
-  
   ([values discard-sequence previous-values-sequence]
    [{:type :die :num-faces 5 :value (nth values 0) :discarded (nth discard-sequence 0) :previous-values (nth previous-values-sequence 0)}
     {:type :die :num-faces 5 :value (nth values 1) :discarded (nth discard-sequence 1) :previous-values (nth previous-values-sequence 1)}
@@ -132,51 +131,51 @@
    :values []
    :value nil})
 
-(deftest testing-data-structs
+(deftest testing-models
 
   (testing "data structre for a literal"
-    (is (= sample-literal (data-structs/build-literal 4))))
+    (is (= sample-literal (models/build-literal 4))))
 
   (testing "data structure for selector"
-    (is (thrown? java.lang.AssertionError (data-structs/build-selector :keep 2)))
-    (is (= sample-selector (data-structs/build-selector :lesser-than 2))))
+    (is (thrown? java.lang.AssertionError (models/build-selector :keep 2)))
+    (is (= sample-selector (models/build-selector :lesser-than 2))))
 
   (testing "data structure for operator"
     (is (thrown?
          java.lang.AssertionError
-         (data-structs/build-operation :wrong-keyword sample-selector)))
-    (is (= sample-operation (data-structs/build-operation :keep sample-selector))))
+         (models/build-operation :wrong-keyword sample-selector)))
+    (is (= sample-operation (models/build-operation :keep sample-selector))))
 
   (testing "data structure for die(not dice!)"
     ;; the num-faces are less than the value so it should throw an error
     (is (thrown?
          java.lang.AssertionError
-         sample-die (data-structs/build-die 5 6)))
-    (is (= sample-die (data-structs/build-die 5 3))))
+         sample-die (models/build-die 5 6)))
+    (is (= sample-die (models/build-die 5 3))))
 
   (testing "generated values for die"
     (with-redefs [utils/gen-rand-int (fn [x] x)]
       (is (= (dies-factory [5 5 5 5] [false false false false] [[] [] [] []])
-             (data-structs/generate-die-values 4 5)))))
+             (models/generate-die-values 4 5)))))
 
   (testing "data structure for dice"
-    (is (= sample-dice (data-structs/build-dice 4 5 sample-operation))))
+    (is (= sample-dice (models/build-dice 4 5 sample-operation))))
 
   (testing "data structure for binary operation"
     (is (= sample-bin-op-on-literals
-           (data-structs/build-bin-op
-            (data-structs/build-literal 4)
+           (models/build-bin-op
+            (models/build-literal 4)
             :add
-            (data-structs/build-literal 5))))
+            (models/build-literal 5))))
     (is (= sample-bin-op-on-literal-n-dice
-           (data-structs/build-bin-op
+           (models/build-bin-op
             sample-dice
             :add
             sample-literal))))
   
   (testing "data structure for set"
     (is (= sample-set-with-operation
-          (data-structs/build-set
+          (models/build-set
            [sample-literal sample-literal-2]
            sample-operation)))))
 
@@ -227,7 +226,7 @@
       #_(testing "X largest values"
           (is (= (dice-roller/reroll-in-set '(1 2 3 1 2 3) :highest 3) '(1 1 2))))
       (testing "throws error when the expression re-rolls more than 500 times"
-        (let [values4d1 (data-structs/generate-die-values 4 1)]
+        (let [values4d1 (models/generate-die-values 4 1)]
           (is (thrown? java.lang.AssertionError
                        (dice-roller/reroll-in-set values4d1 :lowest 4)))))))
 
@@ -246,7 +245,7 @@
     (with-redefs [utils/gen-rand-int (fn [x] x)]
       (is (= evaluated-nested-bin-op
              (dice-roller/eval-bin-op
-              (data-structs/build-bin-op
+              (models/build-bin-op
                sample-bin-op-on-literals
                :multiply
                sample-dice)))))))
@@ -259,18 +258,18 @@
   #_(testing "a Set of Literals and a Dice without any operation"
     (with-redefs [utils/gen-rand-int (fn [x] x)]
       (is (= evaluated-set-of-literal-n-dice
-           (dice-roller/eval-set (data-structs/build-set
+           (dice-roller/eval-set (models/build-set
                                   [sample-literal sample-literal-2 sample-dice]
                                   nil))))))
   
   #_(testing "a Set of Literals, a Dice and a Binary Operation without any operation"
     (is (= evaluated-set-of-mix-entities
-           (dice-roller/eval-set (data-structs/build-set
+           (dice-roller/eval-set (models/build-set
                                   [sample-literal sample-literal-2 sample-dice sample-bin-op-on-literals]
                                   nil)))))
   
   #_(testing "a Set of Literals, a Dice and a Binary Operation with an operation"
     (is (= ()
-           (dice-roller/eval-set (data-structs/build-set
+           (dice-roller/eval-set (models/build-set
                                   [sample-literal sample-literal-2 sample-dice sample-bin-op-on-literals]
                                   sample-operation))))))
