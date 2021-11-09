@@ -60,14 +60,16 @@
          :previous-values (conj previous-values value)
          :value new-value))
 
-(defn update-first [selector update-fn [x & xs]]
+(defn update-first 
   "Applies update-fn to only the first value which passes selector"
+  [selector update-fn [x & xs]]
   (if (selector x)
     (conj xs (update-fn x))
     (conj (update-first selector update-fn xs) x)))
 
-(defn discard-values [[v & vs] dice-rolls]
+(defn discard-values 
   "Sets the :discard flag to true of `dice-rolls` elements which match [v & vs]"
+  [[v & vs] dice-rolls]
   (if (some? v)
     (discard-values vs
                     (update-first
@@ -76,8 +78,9 @@
                      dice-rolls))
     dice-rolls))
 
-(defn keep-values [[v & vs] dice-rolls]
+(defn keep-values
   "Sets the :discard flag to false of `dice-rolls` elements which match [v & vs]"
+  [[v & vs] dice-rolls]
   (if (some? v)
     (keep-values vs
                  (update-first
@@ -188,8 +191,9 @@
      :values operated-values
      :value value}))
 
-(defn evaluate-by-type [entity]
+(defn evaluate-by-type 
   "If entity has :value, it means it's already evaluated"
+  [entity]
   (if (contains? entity :value)
     entity
     (case (:type entity)
