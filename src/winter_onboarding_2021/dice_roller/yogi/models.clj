@@ -9,12 +9,12 @@
    :num-dice num-dice   ;3
    :operation operation ;keep
    :selector selector ;2
-   :states [{}]})
+   :states [nil]})
 
 
 
 (defn build-selector-model [selector-type value]
   {:type selector-type ; literal-x greater-than-x
    :value value ;345 
-   })
+})
 
