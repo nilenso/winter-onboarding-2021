@@ -3,19 +3,18 @@
             [winter-onboarding-2021.dice-roller.alisha.core :as core]))
 
 ;;Sample Calls
-(def dice-input (data-struct/build-dice-input 5 6))
-(def rolls (core/generate-rolls {:num-rolls 5 :num-faces 6}))
-(def dice-result (data-struct/build-dice-result rolls))
-(data-struct/build-dice-struct dice-input dice-result)
-
+(def dice-input (data-struct/build-dice-input 3 4))
+(def selector (data-struct/build-selector :< 2))
+(def operation (data-struct/build-operation :k selector))
+(def dice-struct (data-struct/build-dice-struct dice-input operation))
+(core/generate-rolls dice-struct)
 
 ;;Sample data struct
-#_{:input {:type :dice-input, :num-faces 5, :num-rolls 6}
-   :result
-   {:type :dice-result
-    :rolls
-    ({:type :dice-roll-outcome, :value 2}
-     {:type :dice-roll-outcome, :value 4}
-     {:type :dice-roll-outcome, :value 5}
-     {:type :dice-roll-outcome, :value 3}
-     {:type :dice-roll-outcome, :value 4})}}
+#_{:type :dice-struct,
+   :num-faces 3,
+   :num-rolls 4,
+   :operation {:op :k, :selector {:op :<, :x 2}},
+   :rolls ({:type :dice-roll-outcome, :value 2}
+           {:type :dice-roll-outcome, :value 3}
+           {:type :dice-roll-outcome, :value 1}
+           {:type :dice-roll-outcome, :value 2})}
