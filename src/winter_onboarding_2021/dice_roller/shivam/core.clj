@@ -41,12 +41,12 @@
 (defn set-discarded-true [die-value]
   (assoc die-value :discarded true))
 
-(defn sum-non-discarded [values]
+(defn sum-non-discarded [operated-values]
   (reduce #(if (:discarded %2)
              %1
              (+ %1 (:value %2)))
           0
-          values))
+          operated-values))
 
 (defn update-current-value
   "die-value: Die 
@@ -191,6 +191,17 @@
      :values operated-values
      :value value}))
 
+(defn eval-unary-op [{:keys [type] :as unary-op}]
+  {:pre [(= type :unary-op)]}
+  (let [{:keys [op operand]} unary-op
+        evaluated-operand (evaluate-by-type operand)
+        value (if (= op :minus)
+               (- (:value evaluated-operand))
+               (:value evaluated-operand))]
+    (assoc unary-op
+           :type :evaluated-unary-op
+           :value value)))
+
 (defn evaluate-by-type 
   "If entity has :value, it means it's already evaluated"
   [entity]
@@ -200,7 +211,8 @@
       :dice (eval-dice-notation entity)
       :binary-op (eval-bin-op entity)
       :literal entity
-      :set (eval-set entity))))
+      :set (eval-set entity)
+      :unary-op (eval-unary-op entity))))
 
 (def selector (models/build-selector :greater-than 2))
 

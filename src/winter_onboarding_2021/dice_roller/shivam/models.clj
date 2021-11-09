@@ -39,7 +39,7 @@
 (defn build-unary-op [op value]
   {:type :unary-op
    :op op ;; :minus, :plus
-   :value value})
+   :operand value})
 
 ;; Represents Binary Operations like -, +, *, /
 ;; left and right represents the expressions on which the operartion will be applied
