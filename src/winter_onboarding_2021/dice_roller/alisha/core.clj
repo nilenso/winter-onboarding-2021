@@ -4,6 +4,9 @@
 (defn roll [num-faces] #(inc (rand-int num-faces)))
 
 ;;generate rolls
-(defn generate-rolls [{:keys [num-rolls num-faces]}]
-  (map #(data-struct/build-dice-roll-outcome %)
-       (repeatedly num-rolls (roll num-faces))))
+(defn generate-rolls [dice-struct]
+  (let [num-rolls (:num-rolls dice-struct)
+        num-faces (:num-faces dice-struct)
+        rolls (map #(data-struct/build-dice-roll-outcome %)
+                   (repeatedly num-rolls (roll num-faces)))]
+    (assoc dice-struct :rolls rolls)))
