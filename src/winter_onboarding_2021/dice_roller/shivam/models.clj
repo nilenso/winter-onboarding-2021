@@ -9,7 +9,6 @@
    :previous-values []})
 
 (defn build-die [num-faces value]
-  #_(assert (>= num-faces value) "`value` can't be larger than `num-faces`")
   {:pre [(>= num-faces value)]}
   {:type :die
    :num-faces num-faces
@@ -53,7 +52,6 @@
 ;; Represents Set Operation
 (defn build-operation [op selector]
   {:pre [(some #(= % op) utils/valid-ops)]}
-  #_(assert (some #(= % op) utils/valid-ops) "Invalid Operator")
   {:type :set-operation
    :op op ;; k, rr, d
    :selector selector})
@@ -62,7 +60,6 @@
 ;; `criteria` can be "", "<", ">", "l", "h" 
 (defn build-selector [criteria num]
   {:pre [(some #(= % criteria) utils/valid-selectors)]}
-  #_(assert (some #(= % criteria) utils/valid-selectors) "Invalid Selector")
   {:type :set-selector
    :criteria criteria
    :num num})
