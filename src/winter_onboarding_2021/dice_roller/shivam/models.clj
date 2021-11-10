@@ -53,7 +53,7 @@
 (defn build-operation [op selector]
   {:pre [(some #(= % op) utils/valid-ops)]}
   {:type :set-operation
-   :op op ;; k, rr, d
+   :op op ; :keep, :drop, :reroll
    :selector selector})
 
 ;; Represents Set Selector

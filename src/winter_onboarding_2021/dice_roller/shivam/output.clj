@@ -97,7 +97,14 @@
 
 (defn stringify-dice [dice]
   {:pre [(= (:type dice) :evaluated-dice)]}
-  nil)
+  (let [{:keys [num-rolls num-faces operation values value]} dice
+        stringified-die-values (format "(%s)" (string/join ", " (map stringify-die values)))]
+    (format "%sd%s%s: %s => %s"
+            num-rolls
+            num-faces
+            (stringify-operation operation)
+            stringified-die-values
+            value)))
 
 (defn stringify [entity]
   (if (string? entity)
