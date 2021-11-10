@@ -1,10 +1,24 @@
 (ns winter-onboarding-2021.dice-roller.shivam.output
-  (:require [clojure.string :as string]))
+  (:require [clojure.string :as string]
+            [winter-onboarding-2021.dice-roller.shivam.models :as models]))
+
+(def op-string-map
+  {:keep "k"
+   :drop "d"
+   :reroll "rr"})
+
+(def selector-string-map
+  {:equals ""
+   :lesser-than "<"
+   :greater-than ">"
+   :lowest "l"
+   :highest "h"})
 
 (defn add-discard-indicators [entity-string]
   {:pre [(string? entity-string)]}
   (format "~%s~" entity-string))
 
+;; previous-values is a collection of Numbers
 (defn stringify-previous-values [previous-values]
   (let [values-with-discard-indicators
         (map
@@ -41,6 +55,19 @@
                                previous-values-string))
       (join-value-and-previous-values value previous-values-string))))
 
+(defn stringify-selector [selector]
+  {:pre [(= (:type selector) :set-selector)]}
+  (let [{:keys [criteria num]} selector
+        criteria-string (criteria selector-string-map)]
+    (format "%s%s" criteria-string num)))
+
+(defn stringify-operation [operation]
+  {:pre [(= (:type operation) :set-operation)]}
+  (let [{:keys [op selector]} operation
+        operation-string (operation op-string-map)
+        selector-string (stringify-selector selector)]
+    (format "%s%s" operation-string selector-string)))
+
 (defn stringify-unary-op [unary-op]
   {:pre [(= (:type unary-op) :evaluated-unary-op)]}
   nil)
@@ -57,13 +84,7 @@
   {:pre [(= (:type dice) :evaluated-dice)]}
   nil)
 
-(defn stringify-operation [operation]
-  {:pre [(= (:type operation) :set-operation)]}
-  nil)
 
-(defn stringify-selector [selector]
-  {:pre [(= (:type selector) :set-selector)]}
-  nil)
 
 (defn stringify [entity]
   (if (string? entity)

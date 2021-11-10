@@ -60,14 +60,14 @@
          :previous-values (conj previous-values value)
          :value new-value))
 
-(defn update-first 
+(defn update-first
   "Applies update-fn to only the first value which passes selector"
   [selector update-fn [x & xs]]
   (if (selector x)
     (conj xs (update-fn x))
     (conj (update-first selector update-fn xs) x)))
 
-(defn discard-values 
+(defn discard-values
   "Sets the :discard flag to true of `dice-rolls` elements which match [v & vs]"
   [[v & vs] dice-rolls]
   (if (some? v)
@@ -125,11 +125,11 @@
 
 (defn generate-operation-handler [operator]
   (fn [die-values criteria number]
-      (case criteria
-        :equals (operator #(when (= % number) %) die-values)
-        :lesser-than (operator #(when (< % number) %) die-values)
-        :greater-than (operator #(when (> % number) %) die-values)
-        :lowest (operator (take-lowest-value-dies number die-values) die-values)
+    (case criteria
+      :equals (operator #(when (= % number) %) die-values)
+      :lesser-than (operator #(when (< % number) %) die-values)
+      :greater-than (operator #(when (> % number) %) die-values)
+      :lowest (operator (take-lowest-value-dies number die-values) die-values)
       :highest (operator (take-highest-value-dies number die-values) die-values))))
 
 (def keep-in-set (generate-operation-handler keep-op))
@@ -152,9 +152,11 @@
         die-values (models/generate-die-values num-rolls num-faces)
         operated-values (operate operation die-values)
         value (sum-non-discarded operated-values)]
-    {:type :evaluated-dice
-     :values operated-values
-     :value value})) ;; returns a hashmap with `total` and entities tree
+
+    (assoc expression
+           :type :evaluated-dice
+           :values operated-values
+           :value value))) ;; returns a hashmap with `total` and entities tree
 
 (declare evaluate-by-type)
 
@@ -184,25 +186,26 @@
         operated-values (if (nil? operation)
                           evaluated-values
                           (do (assert (some #(= (get-in st [:operation :op]) %) [:keep :drop])
-                                    "Only keep or drop operation is allowed on a Set")
-                            (operate operation evaluated-values)))
+                                      "Only keep or drop operation is allowed on a Set")
+                              (operate operation evaluated-values)))
         value (sum-non-discarded operated-values)]
-    {:type :evaluated-set
-     :values operated-values
-     :value value}))
+    (assoc st
+           :type :evaluated-set
+           :values operated-values
+           :value value)))
 
 (defn eval-unary-op [{:keys [type] :as unary-op}]
   {:pre [(= type :unary-op)]}
   (let [{:keys [op operand]} unary-op
         evaluated-operand (evaluate-by-type operand)
         value (if (= op :minus)
-               (- (:value evaluated-operand))
-               (:value evaluated-operand))]
+                (- (:value evaluated-operand))
+                (:value evaluated-operand))]
     (assoc unary-op
            :type :evaluated-unary-op
            :value value)))
 
-(defn evaluate-by-type 
+(defn evaluate-by-type
   "If entity has :value, it means it's already evaluated"
   [entity]
   (if (contains? entity :value)
@@ -227,8 +230,8 @@
 
 (def st (models/build-set
          [(models/build-literal 2)
-         (models/build-literal 4)
-         (models/build-literal 10)]
+          (models/build-literal 4)
+          (models/build-literal 10)]
          operation))
 
 (eval-set st)
@@ -236,4 +239,3 @@
 (eval-bin-op bin-op)
 
 (eval-dice-notation dice-ast)
-
