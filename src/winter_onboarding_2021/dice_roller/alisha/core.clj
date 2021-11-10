@@ -36,3 +36,9 @@
       := (map (wrapper-selector (partial equals x)) rolls)
       :highest (utils/mark-rolls-selected (highest-x x rolls) (utils/mark-rolls-unselected rolls))
       :lowest (utils/mark-rolls-selected (lowest-x x rolls) (utils/mark-rolls-unselected rolls)))))
+
+(defn keep [selector rolls]
+  (let [rolls-after-selector-op (selector-op selector rolls)]
+    (map utils/discard-if-not-selected rolls-after-selector-op)))
+
+#_(keep {:op :highest :x 10} rolls)

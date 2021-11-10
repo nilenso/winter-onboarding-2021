@@ -34,3 +34,8 @@
                                                       set-selected-true
                                                       rolls))
     rolls))
+
+(defn discard-if-not-selected [roll]
+   (if (:selected roll)
+       (assoc roll :discarded false)
+       (assoc roll :discarded true)))
