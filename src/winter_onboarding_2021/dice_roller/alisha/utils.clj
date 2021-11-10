@@ -44,3 +44,7 @@
   (if (:selected roll)
     (assoc roll :discarded true)
     (assoc roll :discarded false)))
+
+(defn none-selected? [rolls]
+  (let [selected-values (filter #(:selected %) rolls)]
+    (empty? selected-values)))

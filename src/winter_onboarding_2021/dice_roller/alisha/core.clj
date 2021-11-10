@@ -2,7 +2,7 @@
   (:require [winter-onboarding-2021.dice-roller.alisha.data_struct :as data-struct])
   (:require [winter-onboarding-2021.dice-roller.alisha.utils :as utils]))
 
-(defn roll [num-faces] #(inc (rand-int num-faces)))
+(defn roll [num-faces] (inc (rand-int num-faces)))
 
 ;;generate rolls
 (defn generate-rolls [dice-struct]
@@ -48,3 +48,21 @@
     (map utils/discard-if-selected rolls-after-selector-op)))
 
 #_(drop {:op :lowest :x 2} rolls)
+
+(defn reroll [selector rolls reroll-count num-faces]
+  (let [rolls-after-selector-op (selector-op selector rolls)
+        append-previous-values #(if (:selected %)
+                   (let [prev-roll-val (:value %)
+                         prev-vals (:previous-values %)
+                         outcome-with-prev-vals (if (not= prev-vals nil)
+                                                  (assoc % :previous-values (conj prev-vals prev-roll-val))
+                                                  (assoc % :previous-values (conj () prev-roll-val)))]
+                     (assoc outcome-with-prev-vals :value (roll num-faces)))
+                   %)]
+    (cond
+      (> reroll-count 100) (throw (Exception. "Reached maximum rerolls"))
+      (utils/none-selected? rolls-after-selector-op) rolls-after-selector-op
+      :else
+      (reroll selector (map append-previous-values rolls-after-selector-op) (inc reroll-count) num-faces))))
+
+#_(reroll {:op :> :x 2} rolls 0 4)
