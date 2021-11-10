@@ -41,4 +41,10 @@
   (let [rolls-after-selector-op (selector-op selector rolls)]
     (map utils/discard-if-not-selected rolls-after-selector-op)))
 
-#_(keep {:op :highest :x 10} rolls)
+#_(keep {:op :highest :x 2} rolls)
+
+(defn drop [selector rolls]
+  (let [rolls-after-selector-op (selector-op selector rolls)]
+    (map utils/discard-if-selected rolls-after-selector-op)))
+
+#_(drop {:op :lowest :x 2} rolls)

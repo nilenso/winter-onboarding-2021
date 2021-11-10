@@ -39,3 +39,8 @@
    (if (:selected roll)
        (assoc roll :discarded false)
        (assoc roll :discarded true)))
+
+(defn discard-if-selected [roll]
+  (if (:selected roll)
+    (assoc roll :discarded true)
+    (assoc roll :discarded false)))
