@@ -1,5 +1,6 @@
 (ns winter-onboarding-2021.dice-roller.alisha.core
-  (:require [winter-onboarding-2021.dice-roller.alisha.data_struct :as data-struct]))
+  (:require [winter-onboarding-2021.dice-roller.alisha.data_struct :as data-struct])
+  (:require [winter-onboarding-2021.dice-roller.alisha.utils :as utils]))
 
 (defn roll [num-faces] #(inc (rand-int num-faces)))
 
@@ -25,3 +26,12 @@
 
 (defn lowest-x [x rolls]
   (take x (sort-by :value rolls)))
+
+(defn selector-op [{:keys [op x]}
+                   rolls]
+  (let [wrapper-selector #(partial utils/append-selected %)]
+    (case op
+      :> (map (wrapper-selector (partial greater-than x)) rolls)
+      :< (map (wrapper-selector (partial lesser-than x)) rolls)
+      := (map (wrapper-selector (partial equals x)) rolls)
+      )))
