@@ -97,3 +97,25 @@ considered a set of values.
 # Problem statement
 
 Build a dice engine that can read this syntax and return the result
+
+### Output Format
+
+To recreate the emotions and experience of rolling physical dice and to accomodate rules that deal with discarded dice, the output should have more than the numerical result of the dice expression. You can use this format:
+
+
+set1: (val1, val2) => total
+set2: (val1, ~discarded_val2~, val3 (~previousrollval3~, ~previousrollval3'~)) => total
+
+Total: total
+
+Example:
+
+2d6kh1 + (3d20rr1 - (3*4))
+
+Could result in:
+
+2d6kh1: (~2~, 5) => 5
+3d20rr1: (2 (~1~), 19, 8) => 29
+
+Total: 22
+
