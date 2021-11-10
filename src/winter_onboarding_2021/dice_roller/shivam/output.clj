@@ -2,6 +2,8 @@
   (:require [clojure.string :as string]
             [winter-onboarding-2021.dice-roller.shivam.models :as models]))
 
+(declare stringify)
+
 (def op-string-map
   {:keep "k"
    :drop "d"
@@ -30,6 +32,13 @@
       ""
       (format " (%s)"
               (string/join ", " values-with-discard-indicators)))))
+
+(defn stringify-set-values [set-values]
+  (let [stringified-values (map stringify set-values)]
+    (if (= 0 (count stringified-values))
+      ""
+      (format "(%s)"
+              (string/join ", " stringified-values)))))
 
 (defn join-value-and-previous-values [value previous-values-string]
   {:pre [(or (number? value) (string? value))
@@ -62,11 +71,12 @@
     (format "%s%s" criteria-string num)))
 
 (defn stringify-operation [operation]
-  {:pre [(= (:type operation) :set-operation)]}
-  (let [{:keys [op selector]} operation
-        operation-string (operation op-string-map)
-        selector-string (stringify-selector selector)]
-    (format "%s%s" operation-string selector-string)))
+  (if (nil? operation)
+    ""
+    (let [{:keys [op selector]} operation
+          operation-string (op op-string-map)
+          selector-string (stringify-selector selector)]
+      (format "%s%s" operation-string selector-string))))
 
 (defn stringify-unary-op [unary-op]
   {:pre [(= (:type unary-op) :evaluated-unary-op)]}
@@ -78,13 +88,16 @@
 
 (defn stringify-set [st]
   {:pre [(= (:type st) :evaluated-set)]}
-  nil)
+  (let [{:keys [value values operation]} st]
+    (println operation)
+    (format "%s%s => %s"
+            (stringify-set-values values)
+            (stringify-operation operation)
+            value)))
 
 (defn stringify-dice [dice]
   {:pre [(= (:type dice) :evaluated-dice)]}
   nil)
-
-
 
 (defn stringify [entity]
   (if (string? entity)
