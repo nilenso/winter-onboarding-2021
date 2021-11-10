@@ -34,4 +34,5 @@
       :> (map (wrapper-selector (partial greater-than x)) rolls)
       :< (map (wrapper-selector (partial lesser-than x)) rolls)
       := (map (wrapper-selector (partial equals x)) rolls)
-      )))
+      :highest (utils/mark-rolls-selected (highest-x x rolls) (utils/mark-rolls-unselected rolls))
+      :lowest (utils/mark-rolls-selected (lowest-x x rolls) (utils/mark-rolls-unselected rolls)))))
