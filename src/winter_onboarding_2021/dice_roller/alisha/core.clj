@@ -10,3 +10,18 @@
         rolls (map #(data-struct/build-dice-roll-outcome %)
                    (repeatedly num-rolls (roll num-faces)))]
     (assoc dice-struct :rolls rolls)))
+
+(defn equals [x roll-outcome]
+  (= (:value roll-outcome) x))
+
+(defn lesser-than [x roll-outcome]
+  (< (:value roll-outcome) x))
+
+(defn greater-than [x roll-outcome]
+  (> (:value roll-outcome) x))
+
+(defn highest-x [x rolls]
+  (take x (reverse (sort-by :value rolls))))
+
+(defn lowest-x [x rolls]
+  (take x (sort-by :value rolls)))
