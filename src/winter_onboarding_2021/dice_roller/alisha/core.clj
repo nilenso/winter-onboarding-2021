@@ -66,3 +66,13 @@
       (reroll selector (map append-previous-values rolls-after-selector-op) (inc reroll-count) num-faces))))
 
 #_(reroll {:op :> :x 2} rolls 0 4)
+
+(defn operation [operation rolls num-faces]
+  (let [op (:op operation)
+        selector (:selector operation)]
+    (case op
+      :keep (keep selector rolls)
+      :drop (drop selector rolls)
+      :reroll (reroll selector rolls 0 num-faces))))
+
+#_(operation {:op :keep :selector {:op :highest :x 2}} rolls 4)
