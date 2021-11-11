@@ -9,7 +9,7 @@
   (let [num-rolls (:num-rolls dice-struct)
         num-faces (:num-faces dice-struct)
         rolls (map #(data-struct/build-dice-roll-outcome %)
-                   (repeatedly num-rolls (roll num-faces)))]
+                   (repeatedly num-rolls (partial roll num-faces)))]
     (assoc dice-struct :rolls rolls)))
 
 (defn equals [x roll-outcome]
@@ -67,7 +67,7 @@
 
 #_(reroll {:op :> :x 2} rolls 0 4)
 
-(defn operation [operation rolls num-faces]
+(defn operate [operation num-faces rolls]
   (let [op (:op operation)
         selector (:selector operation)]
     (case op
@@ -76,3 +76,34 @@
       :reroll (reroll selector rolls 0 num-faces))))
 
 #_(operation {:op :keep :selector {:op :highest :x 2}} rolls 4)
+
+;;Add rolls to dice-struct
+(defn add-oped-rolls-to-dice-struct [dice-struct]
+  (let [num-faces (:num-faces dice-struct)
+        dice-struct-with-rolls (generate-rolls dice-struct)]
+    (if (:operation dice-struct-with-rolls)
+      (update dice-struct-with-rolls :rolls (partial operate (:operation dice-struct) num-faces))
+      dice-struct-with-rolls)))
+
+;;Add all the value of the rolls
+(defn eval-rolls [rolls]
+  (let [add-dice-outcome-values #(+ %1 (:value %2))] ;;%1->accum %2->dice-roll-outcome
+    (reduce add-dice-outcome-values 0 rolls)))
+
+;;Add all the value of operated rolls
+(defn eval-operated-rolls [rolls]
+  (letfn [(add-non-discared-dice-outcomes [accum roll-outcome]
+            (if (and (not= (:discarded roll-outcome) nil) (:discarded roll-outcome))
+              (+ accum 0)             ;;discarded is false
+              (+ accum (:value roll-outcome))))] ;;not discarded & no discard prop(incase of reroll) 
+    (reduce add-non-discared-dice-outcomes 0 rolls)))
+
+
+;;Eval dice
+;;if it has operation, operate on the operation to compute dice-rolls (based on discarded)
+;;if it has no operation, compute the value of the rolls (based on the only value of outcome)
+(defn eval-dice-struct [dice-struct]
+  (let [new-dice-struct (add-oped-rolls-to-dice-struct dice-struct)]
+   (if(:operation dice-struct)
+   (assoc new-dice-struct :value (eval-operated-rolls (:rolls new-dice-struct)))
+   (assoc new-dice-struct :value (eval-rolls (:rolls new-dice-struct))))))
