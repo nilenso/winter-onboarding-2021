@@ -46,7 +46,7 @@
 (defn build-bin-op [left op right]
   {:type :binary-op
    :left left
-   :op op ;; :add, :subtract, :multiply, :divide
+   :op op ; :add, :subtract, :multiply, :divide
    :right right})
 
 ;; Represents Set Operation

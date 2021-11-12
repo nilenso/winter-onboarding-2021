@@ -138,7 +138,7 @@
 
 (def reroll-in-set (generate-operation-handler reroll-op))
 
-;; func `operate` will return us a new set where op(with criteria on number) is applied to raw-set
+;; `operate` will return us a new set where op(with criteria on number) is applied to die-values
 (defn operate [{:keys [op selector]} die-values]
   (let [{:keys [criteria num]} selector]
     (case op
