@@ -2,7 +2,6 @@
   (:require [clojure.test :refer [deftest is testing]]
             [winter-onboarding-2021.dice-roller.yogi.operations :as operations]))
 
-;dice-models
 
 (deftest keep-test
   (let [dice-1 {:num-faces 6
@@ -34,7 +33,7 @@
     (testing "if size of last element of states is less than or equal to previous"
       (is (<= (count (last (:states (operations/my-keep dice-3))))
               (count (second (reverse (operations/my-keep dice-3)))))))))
-;; => #'winter-onboarding-2021.dice-roller.yogi.operations-test/keep-test
+
 
 (deftest drop-test
   (let [dice-1 {:num-faces 6
@@ -67,8 +66,9 @@
       (is (<= (count (last (:states (operations/my-drop dice-3))))
               (count (second (reverse (operations/my-drop dice-3)))))))))
 
-(deftest reroll-test
 
+
+(deftest reroll-test
   (testing "reroll until condition met"
     (let [dice-1 {:num-faces 6
                   :num-dice 5
@@ -79,17 +79,34 @@
       (with-redefs [rand-int (fn [_]
                                (- (dice-1 :num-faces) 1))]
         (is (=  (last (:states (operations/reroll dice-1)))
-                '(6 4 6 3 6)))))
-    
-    (testing "number of elements of non-first states are equal"
-      (let [dice-1 {:num-faces 6
-                    :num-dice 6
-                    :operation :reroll
-                    :selector {:selector-type :lower
-                               :value 4}
-                    :states [nil '(1 4 2 3 1 3)]}]
-        (with-redefs [rand-int (fn [_]
-                                 (- (:num-faces dice-1) 1))]
-          (is (= (count (set (rest (map count ((operations/reroll dice-1) :states)))))
-                 1)))))))
+                '(6 4 6 3 6))))))
+
+  (testing "number of elements of non-first states are equal"
+    (let [dice-1 {:num-faces 6
+                  :num-dice 6
+                  :operation :reroll
+                  :selector {:selector-type :lower
+                             :value 4}
+                  :states [nil '(1 4 2 3 1 3)]}]
+      (with-redefs [rand-int (fn [_]
+                               (- (:num-faces dice-1) 1))]
+        (is (= (count (set (rest (map count ((operations/reroll dice-1) :states)))))
+               1)))))
+  (testing "reroll limit"
+    (let [dice-3 {:num-faces 6
+                  :num-dice 6
+                  :operation :reroll
+                  :selector {:selector-type :lowest
+                             :value 3}
+                  :states [nil '(3 4 5 1 2 3)]}]
+      (with-redefs [rand-int (fn [_]
+                               (- (:num-faces dice-3) 1))]
+
+          ;print ((operations/reroll dice-3) :states)
+        (is (<= (count ((operations/reroll dice-3) :states))
+                (+ 1 (dice-3 :num-dice))))))))
+
+
+
+ 
 

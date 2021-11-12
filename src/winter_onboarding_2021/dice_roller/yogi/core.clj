@@ -1,36 +1,41 @@
 (ns winter-onboarding-2021.dice-roller.yogi.core
-  (:require [winter-onboarding-2021.dice-roller.yogi.models :as models]
-            [winter-onboarding-2021.dice-roller.yogi.operations :as operations]))
+  (:require [winter-onboarding-2021.dice-roller.yogi.operations :as operations]))
 
-(def x {:num-faces 6
-        :num-dice 5
-        :operation :drop
-        :selector {:selector-type :equal-to
-                   :value 2}
-        :states [nil]})
-
-
-
-(defn init [dice-model]
-  (assoc dice-model
-         :states (conj (dice-model :states)
-                       (take (dice-model :num-dice)
-                             (repeatedly #(+ 1
-                                             (rand-int (dice-model :num-faces))))))))
-
+(declare eval-expr)
 
 (defn apply-operation [dice-roller]
   (case (dice-roller :operation)
     :keep (operations/my-keep dice-roller)
     :drop (operations/my-drop dice-roller)
-    :reroll (operations/reroll dice-roller)))
+    :reroll (operations/reroll dice-roller)
+    dice-roller))
 
+(defn get-dice-value [dice-model]
+  (reduce + (last (dice-model :states))))
 
 (defn eval-dice-model [dice-model]
-  (apply-operation (init dice-model)))
+  (let [partially-evald-expr (apply-operation dice-model)]
+    (assoc partially-evald-expr
+           :result
+           (get-dice-value partially-evald-expr))))
 
-(apply-operation x)
-(eval-dice-model x)
+(defn eval-set [set] set)
 
-;Tests
-;Binary Operations - +,-,
+(def ^:private operator-fns
+  {:plus +
+   :minus -
+   :multiply *
+   :divide /})
+
+(defn eval-bin-op [{:keys [left right operator]}]
+  (let [op (operator-fns operator)]
+    (assert op)
+    (op (eval-expr left) (eval-expr right))))
+
+(defn eval-expr [{:keys [type] :as expr}]
+  (case type
+    :dice-model (get-dice-value expr)
+    :bin-op (eval-bin-op expr)
+    :set (eval-set expr)
+    :literal (expr :value)))
+
