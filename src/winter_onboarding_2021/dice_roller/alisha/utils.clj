@@ -48,3 +48,9 @@
 (defn none-selected? [rolls]
   (let [selected-values (filter #(:selected %) rolls)]
     (empty? selected-values)))
+
+(defn dissoc-selected-from-roll-outcome [roll]
+  (dissoc roll :selected))
+
+(defn dissoc-selected-from-rolls [rolls]
+  (map dissoc-selected-from-roll-outcome rolls))

@@ -67,36 +67,39 @@
 
 #_(reroll {:op :> :x 2} rolls 0 4)
 
-(defn operate [operation num-faces rolls]
+(defn operate [{:keys [operation num-faces]} rolls]
   (let [op (:op operation)
-        selector (:selector operation)]
-    (case op
-      :keep (keep selector rolls)
-      :drop (drop selector rolls)
-      :reroll (reroll selector rolls 0 num-faces))))
+        selector (:selector operation)
+        oped-rolls (case op
+                     :keep (keep selector rolls)
+                     :drop (drop selector rolls)
+                     :reroll (reroll selector rolls 0 num-faces))]
+    (utils/dissoc-selected-from-rolls oped-rolls)))
 
 #_(operation {:op :keep :selector {:op :highest :x 2}} rolls 4)
 
 ;;Add rolls to dice-struct
-(defn add-oped-rolls-to-dice-struct [dice-struct]
-  (let [num-faces (:num-faces dice-struct)
-        dice-struct-with-rolls (generate-rolls dice-struct)]
+(defn add-rolls-to-dice-struct [dice-struct]
+  (let [dice-struct-with-rolls (generate-rolls dice-struct)]
     (if (:operation dice-struct-with-rolls)
-      (update dice-struct-with-rolls :rolls (partial operate (:operation dice-struct) num-faces))
+      (update dice-struct-with-rolls :rolls (partial operate dice-struct))
       dice-struct-with-rolls)))
-
 
 ;;Add all the value of operated rolls
 (defn eval-rolls [rolls]
   (letfn [(add-non-discared-dice-outcomes [accum roll-outcome]
             (if (and (not= (:discarded roll-outcome) nil) (:discarded roll-outcome))
-              (+ accum 0)             ;;discarded is false
+              (+ accum 0)             ;;discarded is true
               (+ accum (:value roll-outcome))))] ;;not discarded & no discard prop(incase of reroll) 
     (reduce add-non-discared-dice-outcomes 0 rolls)))
+
+(defn add-value-to-dice-struct [{:keys [rolls] :as dice-struct}]
+  (assoc dice-struct :value (eval-rolls rolls)))
 
 ;;Eval dice
 ;;if it has operation, operate on the operation to compute dice-rolls (based on discarded)
 ;;if it has no operation, compute the value of the rolls (based on the only value of outcome)
 (defn eval-dice-struct [dice-struct]
-  (let [new-dice-struct (add-oped-rolls-to-dice-struct dice-struct)]
-    (assoc new-dice-struct :value (eval-rolls (:rolls new-dice-struct)))))
+  (-> dice-struct
+      add-rolls-to-dice-struct
+      add-value-to-dice-struct))
