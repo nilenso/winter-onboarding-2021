@@ -2,7 +2,8 @@
   (:require [clojure.test :refer [deftest is testing]]
             [winter-onboarding-2021.dice-roller.shivam.utils :as utils]
             [winter-onboarding-2021.dice-roller.shivam.models :as models]
-            [winter-onboarding-2021.dice-roller.shivam.core :as dice-roller]))
+            [winter-onboarding-2021.dice-roller.shivam.core :as dice-roller]
+            [winter-onboarding-2021.dice-roller.shivam.output :as output]))
 
 (def sample-literal
   {:type :literal
@@ -114,11 +115,13 @@
    :values [sample-literal sample-literal-2]
    :value 9})
 
-#_(def evaluated-set-of-literal-n-dice
+(def evaluated-set-of-literal-n-dice
   {:type :evaluated-set
    :values [sample-literal
             sample-literal-2
             {:type :evaluated-dice
+             :num-faces 5
+             :num-rolls 4
              :values '({:type :die, :num-faces 5, :value 3, :discarded true, :previous-values []}
                        {:type :die, :num-faces 5, :value 1, :discarded false, :previous-values []}
                        {:type :die, :num-faces 5, :value 3, :discarded true, :previous-values []}
@@ -126,10 +129,9 @@
              :value 1}]
    :value 10})
 
-#_(def evaluated-set-of-mix-entities
-  {:type :evaluated-set
-   :values []
-   :value nil})
+(def evaluated-set-of-mix-entities
+  (assoc evaluated-set-of-literal-n-dice
+         :operation sample-operation))
 
 (deftest testing-models
 
@@ -273,3 +275,53 @@
            (dice-roller/eval-set (models/build-set
                                   [sample-literal sample-literal-2 sample-dice sample-bin-op-on-literals]
                                   sample-operation))))))
+;; (is (= (stringify-set foo-set-2) "..."))
+
+(deftest stringifiers
+  (testing "stringifier for a Literal"
+    (is (= "4" (output/stringify-literal sample-literal))) ; for non-discarded literal
+    (is (= "~4~"
+           (output/stringify-literal (assoc
+                                      sample-literal
+                                      :discarded true))))) ; for discarded literal
+
+  (testing "stringifier for a Die"
+    (is (= "3" ; for a simple Die
+           (output/stringify-die sample-die)))
+    (is (= "~3~"
+           (output/stringify-die (assoc ; for a discarded Die
+                                  sample-die
+                                  :discarded true))))
+    (is (= "3 (~1~, ~2~)"  ; for a Die with previous values
+           (output/stringify-die (assoc
+                                  sample-die
+                                  :previous-values [1 2])))))
+
+  (testing "stringifier for a Set Selector"
+    (is (= "<2"
+           (output/stringify-selector (models/build-selector :lesser-than 2)))))
+
+  (testing "stringifier for a Set Operation"
+    (is (= "k<2"
+           (output/stringify-operation (models/build-operation
+                                        :keep
+                                        (models/build-selector :lesser-than 2))))))
+
+  (testing "stringifier for a Set"
+    (is (= "(4, 4d5)k<2: (~4~, ~4~)"
+           (output/stringify-set evaluated-set-of-literal-n-dice))))
+
+  (testing "stringifier for a Dice"
+    (is (= "4d5k<2: (1, 1, ~3~, ~4~)"
+           (output/stringify-dice
+            (dice-roller/eval-dice-notation
+             (models/build-dice 4 5 (models/build-operation
+                                     :keep
+                                     (models/build-selector :lesser-than 2))))))))
+
+  #_(testing "stringifier for a Binary Operation"
+      (is (= ""
+             (output/stringify-bin-op sample-bin-op-on-literal-n-dice))))
+
+  #_(testing "stringifier for a Unary Operation"
+      (is (= true true))))

@@ -1,8 +1,8 @@
 (ns winter-onboarding-2021.dice-roller.shivam.output
-  (:require [clojure.string :as string]
-            [winter-onboarding-2021.dice-roller.shivam.models :as models]))
+  (:require [clojure.string :as string]))
 
-(declare stringify)
+(declare stringify-by-type)
+(declare flatten-by-type)
 
 (def op-string-map
   {:keep "k"
@@ -34,17 +34,11 @@
               (string/join ", " values-with-discard-indicators)))))
 
 (defn stringify-set-values [set-values]
-  (let [stringified-values (map stringify set-values)]
-    (if (= 0 (count stringified-values))
+  (let [stringified-values (map stringify-by-type set-values)]
+    (if (empty? stringified-values)
       ""
       (format "(%s)"
               (string/join ", " stringified-values)))))
-
-(defn join-value-and-previous-values [value previous-values-string]
-  {:pre [(or (number? value) (string? value))
-         (string? previous-values-string)]
-   :post [(string? %)]}
-  (format "%s%s" value previous-values-string))
 
 (defn stringify-literal [{:keys [type] :as literal}]
   {:pre [(= type :literal)]}
@@ -59,10 +53,8 @@
   (let [{:keys [value discarded previous-values]} die
         previous-values-string (stringify-previous-values previous-values)]
     (if discarded
-      (add-discard-indicators (join-value-and-previous-values
-                               value
-                               previous-values-string))
-      (join-value-and-previous-values value previous-values-string))))
+      (add-discard-indicators (str value previous-values-string))
+      (str value previous-values-string))))
 
 (defn stringify-selector [selector]
   {:pre [(= (:type selector) :set-selector)]}
@@ -78,41 +70,73 @@
           selector-string (stringify-selector selector)]
       (format "%s%s" operation-string selector-string))))
 
-(defn stringify-unary-op [unary-op]
-  {:pre [(= (:type unary-op) :evaluated-unary-op)]}
-  nil)
-
-(defn stringify-bin-op [bin-op]
-  {:pre [(= (:type bin-op) :evaluated-bin-op)]}
-  nil)
-
 (defn stringify-set [st]
   {:pre [(= (:type st) :evaluated-set)]}
   (let [{:keys [value values operation]} st]
-    (println operation)
-    (format "%s%s => %s"
-            (stringify-set-values values)
+    (format "%s%s: %s"
+            (format "(%s)" (string/join ", " (map #(-> %
+                                                       :value
+                                                       str) values)))
             (stringify-operation operation)
-            value)))
+            (stringify-set-values values))))
 
 (defn stringify-dice [dice]
   {:pre [(= (:type dice) :evaluated-dice)]}
   (let [{:keys [num-rolls num-faces operation values value]} dice
-        stringified-die-values (format "(%s)" (string/join ", " (map stringify-die values)))]
-    (format "%sd%s%s: %s => %s"
+        stringified-die-values (format "(%s)"
+                                       (string/join ", " (map stringify-die values)))]
+    (format "%sd%s%s: %s"
             num-rolls
             num-faces
             (stringify-operation operation)
-            stringified-die-values
-            value)))
+            stringified-die-values)))
 
-(defn stringify [entity]
+(defn stringify-by-type [entity]
   (if (string? entity)
     entity
     (case (:type entity)
       :evaluated-set (stringify-set entity)
-      :evaluated-bin-op (stringify-bin-op entity)
-      :evaluated-unary-op (stringify-unary-op entity)
-      :die (stringify-die entity)
       :evaluated-dice (stringify-dice entity)
       :literal (stringify-literal entity))))
+
+(defn extract-sets-from-unary-op [accumulator unary-op]
+  {:pre [(= (:type unary-op) :evaluated-unary-op)]}
+  (flatten-by-type accumulator (:operand unary-op)))
+
+(defn extract-sets-from-set [accumulator st]
+  {:pre [(= (:type st) :evaluated-set)]}
+  (let [{:keys [values]} st
+        accumulated-with-self (conj accumulator st)
+        accumulated-with-values (reduce (fn [accum, ele] (flatten-by-type accum ele))
+                                        accumulated-with-self
+                                        values)]
+    accumulated-with-values))
+
+(defn extract-sets-from-bin-op [accumulated bin-op]
+  {:pre [(= (:type bin-op) :evaluated-bin-op)]}
+  (let [{:keys [left right]} bin-op
+        left-with-accumulated (flatten-by-type accumulated left)
+        right-sets (flatten-by-type left-with-accumulated right)]
+    right-sets))
+
+(defn flatten-by-type [accumulated entity]
+  (case (:type entity)
+    :literal accumulated
+    :die accumulated
+    :evaluated-dice (conj accumulated entity) ;; conj because we are sure that entity is a hashmap & not a vector
+    :evaluated-bin-op (extract-sets-from-bin-op accumulated entity)
+    :evaluated-set (extract-sets-from-set accumulated entity)
+    :evaluated-unary-op (extract-sets-from-unary-op accumulated entity)))
+
+(defn generate-strings [flattened]
+  (map #(format "%s => %s"
+                (stringify-by-type %)
+                (:value %))
+       flattened))
+
+(defn append-total-to [generated-strings entity]
+  (format "%s\\nTotal: %s"
+          (string/join "\\n" generate-strings)
+          (:value entity)))
+
+
