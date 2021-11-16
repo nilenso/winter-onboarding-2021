@@ -1,4 +1,5 @@
-(ns winter-onboarding-2021.4clojure.yogi)
+(ns winter-onboarding-2021.4clojure.yogi
+  (:require [clojure.string :as str]))
 
 
 (defn problem4 [] true)
@@ -27,7 +28,7 @@
 
 (defn prob15 [x] (* 2 x))
 
-(defn prob16 [x] (clojure.string/join (conj ["Hello, " x, "!"])))
+(defn prob16 [x] (str/join (conj ["Hello, " x, "!"])))
 
 (defn prob17 [] '(6 7 8))
 
@@ -40,6 +41,6 @@
 
 (defn prob21  [x n] ((vec x) n))
 
-(defn prob22 [ip] (reduce (fn [x y] (inc x)) 0 ip))
+(defn prob22 [ip] (reduce (fn [x _y] (inc x)) 0 ip))
 
 (defn prob23 [ip] (reduce (fn [x y] (conj x y)) () ip))
