@@ -70,6 +70,11 @@ jobs:
     - name: Run tests
       run: lein cloverage
 
+    - uses: actions/upload-artifact@v2
+      with:
+        name: coverage__${{ github.sha }}
+        path: target/coverage
+
   build:
     name: Build Uberjar
     runs-on: ubuntu-latest
@@ -94,5 +99,5 @@ jobs:
 
     - uses: actions/upload-artifact@v2
       with:
-        name: winter-onboarding-2021
+        name: winter-onboarding-2021__${{ github.sha }}
         path: target/winter-onboarding-2021-*-standalone.jar
