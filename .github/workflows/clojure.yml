@@ -17,6 +17,7 @@ jobs:
       run: lein test
   build:
     runs-on: ubuntu-latest
+    needs: test
     steps:
     - uses: actions/checkout@v2
     - name: Install dependencies
