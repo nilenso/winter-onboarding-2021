@@ -23,8 +23,8 @@
     (is (= (solutions/problem8) #{:a :b :c :d}))))
 
 (deftest conj-on-sets
-  (testing "to check keys added to set using conj function")
-  (is (= (solutions/problem9) #{1 2 3 4})))
+  (testing "to check keys added to set using conj function"
+    (is (= (solutions/problem9) #{1 2 3 4}))))
 
 <<<<<<< HEAD
 (deftest hashmap-lookup
@@ -40,38 +40,38 @@
 >>>>>>> faebe0f (comment failing tests in alish_test.clj)
 
 (deftest conj-on-maps
-  (testing "to check keys added to map using conj function")
-  (is (= {:a 1, :b 2, :c 3} (conj {:a 1} (solutions/problem11) [:c 3]))))
+  (testing "to check keys added to map using conj function"
+    (is (= {:a 1, :b 2, :c 3} (conj {:a 1} (solutions/problem11) [:c 3])))))
 
 (deftest sequences
-  (testing "operation on sequences with functions first second last")
-  (is (= (solutions/problem12) (first '(3 2 1))))
-  (is (= (solutions/problem12) (second [2 3 4])))
-  (is (= (solutions/problem12) (last (list 1 2 3)))))
+  (testing "operation on sequences with functions first second last"
+    (is (= (solutions/problem12) (first '(3 2 1))))
+    (is (= (solutions/problem12) (second [2 3 4])))
+    (is (= (solutions/problem12) (last (list 1 2 3))))))
 
 (deftest rest-function
   (testing "to check return of rest function"
     (is (= (solutions/problem13) (rest [10 20 30 40])))))
 
 (deftest function-declarations
-  (testing "to check diff ways to declare functions")
-  (is (= (solutions/problem14) ((fn add-five [x] (+ x 5)) 3)))
-  (is (= (solutions/problem14) ((fn [x] (+ x 5)) 3)))
-  (is (= (solutions/problem14) (#(+ % 5) 3)))
-  (is (= (solutions/problem14) ((partial + 5) 3))))
+  (testing "to check diff ways to declare functions"
+    (is (= (solutions/problem14) ((fn add-five [x] (+ x 5)) 3)))
+    (is (= (solutions/problem14) ((fn [x] (+ x 5)) 3)))
+    (is (= (solutions/problem14) (#(+ % 5) 3)))
+    (is (= (solutions/problem14) ((partial + 5) 3)))))
 
 (deftest double-func
-  (testing "function to double the number")
-  (is (= ((solutions/problem15) 2) 4))
-  (is (= ((solutions/problem15) 3) 6))
-  (is (= ((solutions/problem15) 11) 22))
-  (is (= ((solutions/problem15) 7) 14)))
+  (testing "function to double the number"
+    (is (= ((solutions/problem15) 2) 4))
+    (is (= ((solutions/problem15) 3) 6))
+    (is (= ((solutions/problem15) 11) 22))
+    (is (= ((solutions/problem15) 7) 14))))
 
 (deftest personalised-greeting
-  (testing "personalised greeting")
-  (is (= ((solutions/problem16) "Dave") "Hello, Dave!"))
-  (is (= ((solutions/problem16) "Jenn") "Hello, Jenn!"))
-  (is (= ((solutions/problem16) "Rhea") "Hello, Rhea!")))
+  (testing "personalised greeting"
+    (is (= ((solutions/problem16) "Dave") "Hello, Dave!"))
+    (is (= ((solutions/problem16) "Jenn") "Hello, Jenn!"))
+    (is (= ((solutions/problem16) "Rhea") "Hello, Rhea!"))))
 
 (deftest map-function
   (testing "To understand map function"

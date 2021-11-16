@@ -49,7 +49,7 @@ jobs:
         restore-keys: ${{ runner.os }}-${{ env.cache-name }}
 
   test:
-    name: Run Tests
+    name: Run tests
     runs-on: ubuntu-latest
     needs: deps
     steps:
@@ -68,7 +68,7 @@ jobs:
       run: lein deps
 
     - name: Run tests
-      run: lein test
+      run: lein cloverage
 
   build:
     name: Build Uberjar
