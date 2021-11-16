@@ -14,9 +14,11 @@
                  [hiccup "1.0.5"]
                  [mount "0.1.16"]
                  [migratus "1.3.5"]]
-  :profiles {:dev {:source-paths ["dev"]
-                   :dependencies [[org.clojure/tools.namespace "0.2.3"]]}}
   :aliases {"migrations" ["run" "-m" "winter-onboarding-2021.fleet-management-service.migration/run-migratus"]}
-  :profiles {:uberjar {:aot :all}}
+  :profiles {:uberjar {:aot :all}
+             :test {:cloverage {:fail-threshold 50}}
+             :dev {:source-paths ["dev"]
+                   :dependencies [[org.clojure/tools.namespace "0.2.3"]]}}
+  :plugins [[lein-cloverage "1.2.2"]]
   :repl-options {:init-ns winter-onboarding-2021.core}
   :main winter-onboarding-2021.fleet-management-service.core)
