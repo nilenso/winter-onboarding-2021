@@ -1,5 +1,6 @@
 (ns winter-onboarding-2021.fleet-management-service.core
-  (:require [ring.adapter.jetty :as raj])
+  (:require [ring.adapter.jetty :as raj]
+            [winter-onboarding-2021.fleet-management-service.routes :as routes])
   (:gen-class))
 
 (defonce server (atom nil))
@@ -10,7 +11,7 @@
    :body "Hello from my API!"})
 
 (defn start-server []
-  (reset! server (raj/run-jetty hello-world
+  (reset! server (raj/run-jetty routes/ring-handler
                                 {:port 3000
                                  :join? false})))
 
