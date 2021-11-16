@@ -10,6 +10,7 @@
                  [aero "1.1.6"]
                  [com.github.seancorfield/next.jdbc "1.2.737"]
                  [hiccup "1.0.5"]
-                 [mount "0.1.16"]]
+                 [mount "0.1.16"]
+                 [aero "1.1.6"]]
   :repl-options {:init-ns winter-onboarding-2021.core}
   :main winter-onboarding-2021.fleet-management-service.core)
