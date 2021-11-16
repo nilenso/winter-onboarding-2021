@@ -8,7 +8,7 @@
                  [ring/ring-json "0.5.1"]
                  [bidi "2.1.6"]
                  [aero "1.1.6"]
-                 ; [com.github.seancorfield/next.jdbc "1.2.737"]
+                 [com.github.seancorfield/next.jdbc "1.2.737"]
                  [hiccup "1.0.5"]
                  [mount "0.1.16"]]
   :repl-options {:init-ns winter-onboarding-2021.core}
