@@ -1,6 +1,5 @@
 (ns winter-onboarding-2021.4clojure.shivam
-  (:require [clojure.set :as set]
-            [clojure.string :as str]))
+  (:require [clojure.string :as str]))
 
 (defn problem5 [] '(1 2 3 4))
 
@@ -65,7 +64,7 @@
 
 (defn problem26 [n]
   (reduce
-   (fn [acc, ele]
+   (fn [acc, _ele]
      (if (<= n 1)
        (vec (range n))
        (conj acc (+ (or (second (reverse acc)) 1) (last acc)))))
@@ -115,7 +114,7 @@
 ;; `iterations` is the number of elements in each seq
 ;; `accum` is the resultant seq
 (defn problem43 [my-seq n]
-  (let [iterations (/ (count my-seq) n) accum []]
+  (let [iterations (/ (count my-seq) n) _accum []]
     (conj (for [i (range iterations)]
             (for [j (range n)]
               ((vec my-seq) ((* i iterations) + j)))))))
