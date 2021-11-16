@@ -17,6 +17,8 @@
   :profiles {:dev {:source-paths ["dev"]
                    :dependencies [[org.clojure/tools.namespace "0.2.3"]]}}
   :aliases {"migrations" ["run" "-m" "winter-onboarding-2021.fleet-management-service.migration/run-migratus"]}
-  :profiles {:uberjar {:aot :all}}
+  :profiles {:uberjar {:aot :all}
+             :dev {:plugins [[com.github.clj-kondo/lein-clj-kondo "0.1.1"]
+                             [lein-cljfmt "0.8.0"]]}}
   :repl-options {:init-ns winter-onboarding-2021.core}
   :main winter-onboarding-2021.fleet-management-service.core)
