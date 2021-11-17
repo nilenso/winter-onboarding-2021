@@ -4,7 +4,8 @@
             [winter-onboarding-2021.fleet-management-service.handler :as handler]))
 
 (def routes ["/" {"cabs" handler/fetch-all-cabs
-                  "healthcheck" handler/health-check}])
+                  "healthcheck" handler/health-check
+                  "healthcheck-db" handler/health-check-db}])
 
 (def ring-handler (-> (br/make-handler routes)
                       wrap-json-response))

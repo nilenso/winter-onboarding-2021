@@ -1,5 +1,6 @@
 (ns winter-onboarding-2021.fleet-management-service.handler
-  (:require [ring.util.response :as response]))
+  (:require [ring.util.response :as response]
+            [winter-onboarding-2021.fleet-management-service.db.core :as db]))
 
 (def dummy-cabs
   [{:id 1
@@ -17,3 +18,8 @@
 (defn health-check [request]
   (response/response {:status 200
                       :message "Everything OK!"}))
+
+(defn health-check-db [request]
+  (response/response {:status 200
+                      :message "Everything OK!"
+                      :data (db/run-dummy-query)}))
