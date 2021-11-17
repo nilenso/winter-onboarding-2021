@@ -13,3 +13,7 @@
 
 (defn fetch-all-cabs [request]
   (response/response dummy-cabs))
+
+(defn health-check [request]
+  (response/response {:status 200
+                      :message "Everything OK!"}))
