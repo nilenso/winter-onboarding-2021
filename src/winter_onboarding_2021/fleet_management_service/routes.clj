@@ -3,7 +3,8 @@
             [ring.middleware.json :refer [wrap-json-response]]
             [winter-onboarding-2021.fleet-management-service.handler :as handler]))
 
-(def routes [["/cabs"] handler/fetch-all-cabs])
+(def routes ["/" {"cabs" handler/fetch-all-cabs
+                  "healthcheck" handler/health-check}])
 
 (def ring-handler (-> (br/make-handler routes)
                       wrap-json-response))
