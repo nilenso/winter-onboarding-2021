@@ -5,17 +5,13 @@
   {:num-faces num-faces
    :num-rolls num-rolls})
 
-;; Build dice-result
-(defn build-dice-result [rolls]
-  {:type :dice-result
-   :rolls rolls})
 
 ;;Build data structure for result, which contains input infor and outcomes
 ;;output -> sequence of dice-roll-outcomes
 (defn build-dice-struct
   ([{:keys [num-faces num-rolls]}] {:type :dice-struct
-                                   :num-faces num-faces
-                                   :num-rolls num-rolls})
+                                    :num-faces num-faces
+                                    :num-rolls num-rolls})
   ([{:keys [num-faces num-rolls]} operation] {:type :dice-struct
                                               :num-faces num-faces
                                               :num-rolls num-rolls
@@ -33,12 +29,6 @@
 (defn build-selector [op x]
   {:op op
    :x x})
-
-(defn build-bin-op [op left right]
-  {:type :bin-op
-   :op op
-   :left left
-   :right right})
 
 (defn build-numberic-struct [num]
   {:type :numeric
