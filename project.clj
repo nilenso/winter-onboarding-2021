@@ -13,6 +13,9 @@
                  [com.github.seancorfield/next.jdbc "1.2.737"]
                  [hiccup "1.0.5"]
                  [mount "0.1.16"]
-                 [aero "1.1.6"]]
+                 [migratus "1.3.5"]]
+  :plugins [[migratus-lein "0.7.3"]]
+  :migratus {:store :database
+             :migration-dir "migrations"}
   :repl-options {:init-ns winter-onboarding-2021.core}
   :main winter-onboarding-2021.fleet-management-service.core)
