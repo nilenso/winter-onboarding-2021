@@ -5,7 +5,8 @@
 
 (def routes ["/" {"cabs" handler/fetch-all-cabs
                   "healthcheck" handler/health-check
-                  "healthcheck-db" handler/health-check-db}])
+                  "healthcheck-db" handler/health-check-db
+                  "index" handler/index}])
 
 (def ring-handler (-> (br/make-handler routes)
                       wrap-json-response))

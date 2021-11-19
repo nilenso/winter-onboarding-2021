@@ -2,12 +2,17 @@
   (:require [ring.adapter.jetty :as raj]
             [winter-onboarding-2021.fleet-management-service.routes :as routes]
             [ring.logger :as logger]
-            [mount.core :as mount :refer [defstate]])
+            [mount.core :as mount :refer [defstate]]
+            [ring.middleware.resource :refer [wrap-resource]])
   (:gen-class))
+
+(def middleware
+  (-> (wrap-resource routes/ring-handler "bootstrap")
+      logger/wrap-with-logger))
 
 (defn start-server []
   (raj/run-jetty
-   (logger/wrap-with-logger routes/ring-handler)
+   middleware
    {:port 3000
     :join? false}))
 

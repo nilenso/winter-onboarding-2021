@@ -1,6 +1,8 @@
 (ns winter-onboarding-2021.fleet-management-service.handler
   (:require [ring.util.response :as response]
-            [winter-onboarding-2021.fleet-management-service.db.core :as db]))
+            [winter-onboarding-2021.fleet-management-service.db.core :as db]
+            [winter-onboarding-2021.fleet-management-service.views.content :as content]
+            [winter-onboarding-2021.fleet-management-service.views.layout :as layout]))
 
 (def dummy-cabs
   [{:id 1
@@ -13,7 +15,12 @@
     :name "Cab 4"}])
 
 (defn fetch-all-cabs [request]
-  (response/response dummy-cabs))
+  (response/response (layout/application "Fleet Management Service"
+                                         (content/show-cabs dummy-cabs))))
+
+(defn index [request]
+  (response/response (layout/application "Fleet Management Service"
+                                         (content/index))))
 
 (defn health-check [request]
   (response/response {:status 200
