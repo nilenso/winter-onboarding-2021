@@ -28,8 +28,8 @@
 
 (deftest hashmap-lookup
   (testing "to check keys added to set using conj function")
-  (is (= (solutions/problem10) (hash-map :a 10, :b 20, :c 30) :b))
-  ((is (= (solutions/problem10) (:b {:a 10, :b 20, :c 30})))))
+  (is (=  (solutions/problem10) ((hash-map :a 10, :b 20, :c 30) :b)))
+  (is (=  (solutions/problem10) (:b {:a 11, :b 20, :c 30}))))
 
 (deftest conj-on-maps
   (testing "to check keys added to map using conj function")
@@ -93,8 +93,9 @@
     (is (= ((solutions/problem22) '(13)) 1))
     (is (= ((solutions/problem22) '(:a :b :c)) 3))))
 
-(comment (deftest sequence-reverse
-      (testing "To reverse a sequence"
-        (is ((= (solutions/problem23 [1 2 3 4 5]) [5 4 3 2 1])))
-        (is ((= (solutions/problem23 (sorted-set 5 7 2 7)) '(7 5 2))))
-        (is ((= (solutions/problem23 [[1 2] [3 4] [5 6]]) [[5 6] [3 4] [1 2]]))))))
+(deftest sequence-reverse
+  (testing "To reverse a sequence"
+    (is (= (solutions/problem23 [1 2 3 4 5]) [5 4 3 2 1]))
+    (is (= (solutions/problem23 (sorted-set 5 7 2 7)) '(7 5 2)))
+    (is (= (solutions/problem23 [[1 2] [3 4] [5 6]]) [[5 6] [3 4] [1 2]]))))
+    
