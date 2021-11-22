@@ -1,14 +1,17 @@
 (ns winter-onboarding-2021.fleet-management-service.core
   (:require [ring.adapter.jetty :as raj]
-            [winter-onboarding-2021.fleet-management-service.routes :as routes]
             [ring.logger :as logger]
+            [bidi.ring :as br]
             [mount.core :as mount :refer [defstate]]
-            [ring.middleware.resource :refer [wrap-resource]])
+            [ring.middleware.json :refer [wrap-json-response]]
+            [winter-onboarding-2021.fleet-management-service.routes :as r])
   (:gen-class))
 
 (def middleware
-  (-> (wrap-resource routes/ring-handler "bootstrap")
-      logger/wrap-with-logger))
+  (->
+   (br/make-handler r/routes)
+   wrap-json-response
+   logger/wrap-with-logger))
 
 (defn start-server []
   (raj/run-jetty
@@ -24,6 +27,6 @@
   :stop (stop-server server))
 
 (defn -main
-  []
+  [& args]
   (println "this is from fleet")
   (mount/start))

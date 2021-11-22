@@ -24,9 +24,5 @@
 
 (defn health-check [request]
   (response/response {:status 200
-                      :message "Everything OK!"}))
-
-(defn health-check-db [request]
-  (response/response {:status 200
                       :message "Everything OK!"
-                      :data (db/run-dummy-query)}))
+                      :data (db/healthcheck-query)}))

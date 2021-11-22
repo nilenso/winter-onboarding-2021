@@ -5,8 +5,9 @@
 (defn application [title & content]
   (html5 [:head
           [:title title]
-          (include-css "/css/bootstrap.min.css")
-          (include-js "/js/jquery-3.6.0.min.js")
-          (include-js "/js/bootstrap.bundle.min.js")
+          [:link {:rel "icon" :href "public/favicon.ico" :type "image/x-icon"}]
+          (include-css "public/css/bootstrap.min.css")
+          (include-js "public/js/jquery-3.6.0.min.js")
+          (include-js "public/js/bootstrap.bundle.min.js")
           [:body
            [:div {:class "container"} content]]]))
