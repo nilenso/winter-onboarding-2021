@@ -1,8 +1,6 @@
-name: Clojure CI
+name: Validate pull requests
 
 on:
-  push:
-    branches: [ main ]
   pull_request:
     branches: [ main ]
 
@@ -74,30 +72,3 @@ jobs:
       with:
         name: coverage__${{ github.sha }}
         path: target/coverage
-
-  build:
-    name: Build Uberjar
-    runs-on: ubuntu-latest
-    needs: test
-    steps:
-    - uses: actions/checkout@v2
-
-    - name: Cache lein dependencies
-      uses: actions/cache@v2
-      env:
-        cache-name: lein-dependencies
-      with:
-        path: ~/.m2/repository
-        key: ${{ runner.os }}-${{ env.cache-name }}-${{ hashFiles('project.clj') }}
-        restore-keys: ${{ runner.os }}-${{ env.cache-name }}
-
-    - name: Install dependencies
-      run: lein deps
-
-    - name: Build uberjar
-      run: lein uberjar
-
-    - uses: actions/upload-artifact@v2
-      with:
-        name: winter-onboarding-2021__${{ github.sha }}
-        path: target/winter-onboarding-2021-*-standalone.jar
