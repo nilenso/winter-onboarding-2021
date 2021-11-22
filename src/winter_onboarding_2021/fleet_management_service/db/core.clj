@@ -15,7 +15,7 @@
   :start (connect-db)
   :stop (disconnect-db db-conn))
 
-(defn run-dummy-query []
+(defn healthcheck-query []
   (jdbc/execute! db-conn
-                 ["select * from users limit 2"]
+                 ["SELECT 1 AS check"]
                  {:builder-fn rs/as-unqualified-lower-maps}))
