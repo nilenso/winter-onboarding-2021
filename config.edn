@@ -1,4 +1,0 @@
-{:db-spec {:dbtype "postgresql"
-           :dbname "fleet_management"
-           :host   "localhost"
-           :port   5432}}

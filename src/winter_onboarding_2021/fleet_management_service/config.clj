@@ -3,4 +3,5 @@
             [aero.core :refer (read-config)]))
 
 (defstate config
-  :start (read-config "config.edn"))
+  :start (read-config "config/config.edn" {:profile "dev"})
+  :stop nil)

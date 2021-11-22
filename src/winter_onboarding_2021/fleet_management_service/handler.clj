@@ -23,6 +23,5 @@
                                          (content/index))))
 
 (defn health-check [request]
-  (response/response {:status 200
-                      :message "Everything OK!"
+  (response/response {:message "Everything OK!"
                       :data (db/healthcheck-query)}))
