@@ -14,6 +14,8 @@
                  [hiccup "1.0.5"]
                  [mount "0.1.16"]
                  [migratus "1.3.5"]]
+  :profiles {:dev {:source-paths ["dev"]
+                   :dependencies [[org.clojure/tools.namespace "0.2.3"]]}}
   :plugins [[migratus-lein "0.7.3"]]
   :migratus {:store :database
              :migration-dir "migrations"}

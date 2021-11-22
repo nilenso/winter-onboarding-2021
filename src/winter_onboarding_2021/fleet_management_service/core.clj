@@ -23,10 +23,6 @@
   :start (start-server)
   :stop (stop-server server))
 
-(defn restart-server []
-  (mount/stop)
-  (mount/start))
-
 (defn -main
   []
   (println "this is from fleet")
