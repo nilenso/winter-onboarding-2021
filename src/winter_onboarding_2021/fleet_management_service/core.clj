@@ -28,5 +28,4 @@
 
 (defn -main
   [& args]
-  (println "this is from fleet")
   (mount/start))
