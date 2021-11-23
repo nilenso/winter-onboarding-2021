@@ -18,7 +18,7 @@
   :profiles {:uberjar {:aot :all}
              :test {:cloverage {:fail-threshold 50}}
              :dev {:source-paths ["dev"]
-                   :dependencies [[org.clojure/tools.namespace "0.2.3"]]}}
+                   :dependencies [[org.clojure/tools.namespace "1.0.0"]]}}
   :plugins [[lein-cloverage "1.2.2"]]
   :repl-options {:init-ns winter-onboarding-2021.core}
   :main winter-onboarding-2021.fleet-management-service.core)
