@@ -7,7 +7,6 @@
 (use-fixtures :once fixtures/config fixtures/db-connection)
 (use-fixtures :each fixtures/clear-db)
 
-
 (deftest healthcheck
   (testing "Healthcheck for DB"
     (is (= {:status 200
