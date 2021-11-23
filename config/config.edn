@@ -1,4 +1,4 @@
-{:secrets #include "secrets.edn"
- :db-spec
- #profile {:test #ref [:secrets :test-db]
-           :dev #ref [:secrets :dev-db]}}
+{:port #or [#env PORT 3000]
+ :secrets #include "secrets.edn"
+ :db-spec #profile {:test #ref [:secrets :test-db]
+                    :dev #ref [:secrets :dev-db]}}
