@@ -1,0 +1,3 @@
+DROP IF EXISTS TABLE cabs;
+--;;
+DROP IF EXISTS EXTENSION "uuid-ossp";
