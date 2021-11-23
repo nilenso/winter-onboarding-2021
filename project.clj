@@ -16,8 +16,6 @@
                  [migratus "1.3.5"]]
   :profiles {:dev {:source-paths ["dev"]
                    :dependencies [[org.clojure/tools.namespace "0.2.3"]]}}
-  :plugins [[migratus-lein "0.7.3"]]
-  :migratus {:store :database
-             :migration-dir "migrations"}
+  :aliases {"migrations" ["run" "-m" "winter-onboarding-2021.fleet-management-service.migration/run-migratus"]}
   :repl-options {:init-ns winter-onboarding-2021.core}
   :main winter-onboarding-2021.fleet-management-service.core)
