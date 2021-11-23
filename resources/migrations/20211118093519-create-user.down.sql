@@ -1,3 +1,0 @@
-DROP TABLE IF EXISTS test_users;
---;;
-DROP TYPE IF EXISTS role;
