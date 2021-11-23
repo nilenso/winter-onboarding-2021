@@ -19,7 +19,7 @@
   (mount/stop #'db/db-conn))
 
 (defn clear-db [f]
-  (jdbc/execute! db/db-conn  [])
+  (jdbc/execute! db/db-conn  ["SELECT 1"])
   (f))
 
 ;; config doubt --> pass config via CLI?

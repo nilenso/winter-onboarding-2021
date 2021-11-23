@@ -15,10 +15,13 @@
    logger/wrap-with-logger))
 
 (defn start-server []
-  (println (str "Starting server on port:") (:port config))
-  (raj/run-jetty middleware
-                 {:port (Integer/parseInt (:port config))
-                  :join? false}))
+  (let [port (if (int? (:port config))
+               (:port config)
+               (Integer/parseInt (:port config)))]
+    (println (str "Starting server on port:") port)
+    (raj/run-jetty middleware
+                   {:port port
+                    :join? false})))
 
 (defn stop-server [server]
   (when server (.stop server)))

@@ -26,18 +26,10 @@
   (testing "to check keys added to set using conj function"
     (is (= (solutions/problem9) #{1 2 3 4}))))
 
-<<<<<<< HEAD
 (deftest hashmap-lookup
   (testing "to check keys added to set using conj function")
   (is (=  (solutions/problem10) ((hash-map :a 10, :b 20, :c 30) :b)))
   (is (=  (solutions/problem10) (:b {:a 11, :b 20, :c 30}))))
-=======
-(comment
-  (deftest hashmap-lookup
-    (testing "to check keys added to set using conj function")
-    (is (= (solutions/problem10) (hash-map :a 10, :b 20, :c 30) :b))
-    ((is (= (solutions/problem10) (:b {:a 10, :b 20, :c 30}))))))
->>>>>>> faebe0f (comment failing tests in alish_test.clj)
 
 (deftest conj-on-maps
   (testing "to check keys added to map using conj function"
