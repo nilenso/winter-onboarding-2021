@@ -1,12 +1,4 @@
-{:db-spec #profile {:test {:dbtype "postgresql"
-                           :dbname "fleet_management_test"
-                           :host   "localhost"
-                           :port   5432}
-                    :dev {:dbtype "postgresql"
-                          :dbname "fleet_management"
-                          :host   "localhost"
-                          :port   5432}
-                    :default {:dbtype "postgresql"
-                              :dbname "fleet_management"
-                              :host   "localhost"
-                              :port   5432}}}
+{:secrets #include "secrets.edn"
+ :db-spec
+ #profile {:test #ref [:secrets :test-db]
+           :dev #ref [:secrets :dev-db]}}
