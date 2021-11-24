@@ -26,6 +26,9 @@ jobs:
         key: ${{ runner.os }}-${{ env.cache-name }}-${{ hashFiles('project.clj') }}
         restore-keys: ${{ runner.os }}-${{ env.cache-name }}
 
+    - name: Install Dependencies
+      run: lein deps
+
   test:
     name: Run tests
     runs-on: ubuntu-latest
