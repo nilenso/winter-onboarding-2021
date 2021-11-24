@@ -22,4 +22,5 @@
   :plugins [[lein-cloverage "1.2.2"]]
   :repl-options {:init-ns winter-onboarding-2021.core}
   :resource-paths ["config"]
+  :uberjar-name "winter-onboarding-2021-standalone.jar"
   :main winter-onboarding-2021.fleet-management-service.core)
