@@ -3,13 +3,15 @@
             [ring.logger :as logger]
             [bidi.ring :as br]
             [mount.core :as mount :refer [defstate]]
-            [ring.middleware.json :refer [wrap-json-response]]
+            [ring.middleware.json :refer [wrap-json-response wrap-json-body]]
             [winter-onboarding-2021.fleet-management-service.routes :as r])
   (:gen-class))
 
 (def middleware
   (->
-   (br/make-handler r/routes)
+   r/routes
+   br/make-handler
+   (wrap-json-body {:keywords? true :bigdecimals? true})
    wrap-json-response
    logger/wrap-with-logger))
 
