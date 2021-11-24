@@ -21,4 +21,5 @@
                    :dependencies [[org.clojure/tools.namespace "1.0.0"]]}}
   :plugins [[lein-cloverage "1.2.2"]]
   :repl-options {:init-ns winter-onboarding-2021.core}
+  :resource-paths ["config"]
   :main winter-onboarding-2021.fleet-management-service.core)

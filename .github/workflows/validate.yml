@@ -57,11 +57,13 @@ jobs:
       ENV: test
       POSTGRES_PASSWORD: postgres
       POSTGRES_DB: fleet_management_test
+      POSTGRES_USER: postgres
     services:
       postgres:
         env:
           POSTGRES_PASSWORD: ${{ env.POSTGRES_PASSWORD }}
           POSTGRES_DB: ${{ env.POSTGRES_DB }}
+          POSTGRES_USER: ${{ env.POSTGRES_USER }}
         image: postgres:14.1
         options: >-
           --health-cmd pg_isready
@@ -82,9 +84,6 @@ jobs:
         path: ~/.m2/repository
         key: ${{ runner.os }}-${{ env.cache-name }}-${{ hashFiles('project.clj') }}
         restore-keys: ${{ runner.os }}-${{ env.cache-name }}
-
-    - name: Copy secrets file
-      run: cp config/ci.edn config/secrets.edn
 
     - name: Install dependencies
       run: lein deps
