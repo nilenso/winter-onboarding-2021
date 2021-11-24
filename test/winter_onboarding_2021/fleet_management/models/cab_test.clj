@@ -1,7 +1,8 @@
 (ns winter-onboarding-2021.fleet-management.models.cab-test
   (:require [clojure.test :refer [deftest is testing use-fixtures]]
             [winter-onboarding-2021.fleet-management-service.models.cab :as cab]
-            [winter-onboarding-2021.fleet-management.fixtures :as fixtures]))
+            [winter-onboarding-2021.fleet-management.fixtures :as fixtures])
+  (:import [org.postgresql.util PSQLException]))
 
 (use-fixtures :once fixtures/config fixtures/db-connection)
 (use-fixtures :each fixtures/clear-db)
@@ -17,4 +18,10 @@
              (dissoc created-cab
                      :cabs/id
                      :cabs/created_at
-                     :cabs/updated_at))))))
+                     :cabs/updated_at)))))
+
+  (testing "Should fail to create a cab because of invalid cab"
+    (is (thrown-with-msg?
+         PSQLException
+         #"null value in column \"licence_plate\" of relation \"cabs\""
+         (cab/create {:name "Kia"})))))
