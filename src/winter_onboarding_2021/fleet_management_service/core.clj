@@ -5,6 +5,7 @@
             [mount.core :as mount :refer [defstate]]
             [ring.middleware.json :refer [wrap-json-response]]
             [winter-onboarding-2021.fleet-management-service.routes :as r]
+            [winter-onboarding-2021.fleet-management-service.migration :as migration]
             [winter-onboarding-2021.fleet-management-service.config :refer [config]])
   (:gen-class))
 
@@ -30,6 +31,7 @@
   :start (start-server)
   :stop (stop-server server))
 
-(defn -main
-  [& args]
-  (mount/start))
+(defn -main [command & rest]
+  (if (= "migrations" command)
+    (apply migration/run-migratus rest)
+    (mount/start)))
