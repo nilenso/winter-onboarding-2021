@@ -8,11 +8,11 @@
   (response/response (layout/application "Fleet Management Service"
                                          (content/index))))
 
-(defn health-check [request]
-  (response/response {:message "Everything OK!"
-                      :data (db/healthcheck-query)}))
+(defn health-check [_]
+  (response/response (str {:message "Everything OK!"
+                           :data (db/healthcheck-query)})))
 
-(defn add-cab [request]
-  (println "shivam" request)
-  (response/response {:body "hello"}))
-
+(comment "extract body from request")
+(comment "run validations on body")
+(comment "save it to DB ") #_(db/insert-into-db :cabs data)
+(comment "return the new cab with 200 status")
