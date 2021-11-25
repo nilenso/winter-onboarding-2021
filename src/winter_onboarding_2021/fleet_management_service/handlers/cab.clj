@@ -25,3 +25,10 @@
           (response/status 400))
       (do (cab/create validated-cab)
           (response/redirect "/cabs/new")))))
+
+(defn get-cabs [x]
+  (let [cabs (cab/select)]
+    (do
+      (println cabs)
+      (response/response cabs))))
+
