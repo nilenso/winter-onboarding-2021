@@ -6,7 +6,7 @@
 (def routes
   ["/" [["public" (br/->Resources {:prefix "/bootstrap"})]
         ["cabs" {:post {"/" cab/add}
-                 "/new" (fn [_] {:status 200 :body "New cab form page"})}]
+                 "/new" cab/serve-add-cab-form}]
         ["healthcheck" handler/health-check]
         ["index" handler/index]
         [true (fn [_] {:status 404 :body "Not found"})]]])
