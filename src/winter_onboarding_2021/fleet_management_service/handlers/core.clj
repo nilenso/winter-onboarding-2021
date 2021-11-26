@@ -1,12 +1,12 @@
-(ns winter-onboarding-2021.fleet-management-service.handler
+(ns winter-onboarding-2021.fleet-management-service.handlers.core
   (:require [ring.util.response :as response]
             [winter-onboarding-2021.fleet-management-service.db.core :as db]
-            [winter-onboarding-2021.fleet-management-service.views.content :as content]
+            [winter-onboarding-2021.fleet-management-service.views.core :as view]
             [winter-onboarding-2021.fleet-management-service.views.layout :as layout]))
 
 (defn index [request]
   (response/response (layout/application "Fleet Management Service"
-                                         (content/index))))
+                                         (view/index))))
 
 (defn health-check [_]
   (response/response (str {:message "Everything OK!"

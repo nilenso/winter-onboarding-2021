@@ -1,7 +1,9 @@
 (ns winter-onboarding-2021.fleet-management-service.handlers.cab
   (:require [ring.util.response :as response]
             [clojure.spec.alpha :as s]
-            [winter-onboarding-2021.fleet-management-service.models.cab :as cab]))
+            [winter-onboarding-2021.fleet-management-service.db.cab :as cab]
+            [winter-onboarding-2021.fleet-management-service.views.layout :as layout]
+            [winter-onboarding-2021.fleet-management-service.views.cab :as cab-view]))
 
 (s/def :cab/name string?)
 (s/def :cab/licence_plate string?)
@@ -28,7 +30,5 @@
 
 (defn get-cabs [x]
   (let [cabs (cab/select)]
-    (do
-      (println cabs)
-      (response/response cabs))))
+    (response/response (layout/application "Cabs" (cab-view/show-cabs cabs)))))
 

@@ -2,7 +2,7 @@
   (:require [bidi.ring :as br]
             [winter-onboarding-2021.fleet-management-service.handlers.cab :as cab]
             [ring.middleware.json :refer [wrap-json-response]]
-            [winter-onboarding-2021.fleet-management-service.handler :as handler]))
+            [winter-onboarding-2021.fleet-management-service.handlers.core :as handler]))
 
 (def routes
   ["/" [["public" (br/->Resources {:prefix "/bootstrap"})]

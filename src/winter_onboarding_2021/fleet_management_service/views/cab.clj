@@ -1,11 +1,7 @@
-(ns winter-onboarding-2021.fleet-management-service.views.content)
-
-(defn index []
-  [:div {:id "content"}
-   [:h1 {:class "text-success"} "Hello Hiccup & Bootstrap"]])
+(ns winter-onboarding-2021.fleet-management-service.views.cab)
 
 (defn show-cabs [cabs]
-  (let [head [:id :name]]
+  (let [head [:id :name :licence-plate :distance-travelled :created-at :updated-at]]
     [:table {:class "table table-dark"}
      [:thead
       [:tr
