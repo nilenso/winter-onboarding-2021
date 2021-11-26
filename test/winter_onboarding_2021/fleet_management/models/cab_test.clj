@@ -9,16 +9,17 @@
 
 (deftest create-cab
   (testing "Should add a cab"
-    (let [created-cab (cab/create {:licence_plate "HR20X 6710"
+    ;; NOTE: the cab/create input needs to be auto kebab'ised, need to use honeysql for this
+    (let [created-cab (cab/create {:licence_plate "HR20X 6710" 
                                    :name "Maruti Celerio"
                                    :distance_travelled 2333})]
-      (is (= #:cabs{:licence_plate "HR20X 6710"
+      (is (= #:cabs{:licence-plate "HR20X 6710"
                     :name "Maruti Celerio"
-                    :distance_travelled 2333}
+                    :distance-travelled 2333}
              (dissoc created-cab
                      :cabs/id
-                     :cabs/created_at
-                     :cabs/updated_at)))))
+                     :cabs/created-at
+                     :cabs/updated-at)))))
 
   (testing "Should fail to create a cab because of invalid cab"
     (is (thrown-with-msg?

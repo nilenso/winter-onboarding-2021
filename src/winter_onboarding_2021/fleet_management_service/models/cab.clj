@@ -1,6 +1,6 @@
 (ns winter-onboarding-2021.fleet-management-service.models.cab
-  (:require [next.jdbc.sql :as sql]
-            [winter-onboarding-2021.fleet-management-service.db.core :as db]))
+  (:require  [winter-onboarding-2021.fleet-management-service.db.core :as db]
+             [winter-onboarding-2021.fleet-management-service.models.core :as m-core]))
 
 (defn create [cab]
-  (sql/insert! db/db-conn :cabs cab))
+  (m-core/insert! db/db-conn :cabs cab))
