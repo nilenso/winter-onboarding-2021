@@ -1,6 +1,8 @@
 (ns winter-onboarding-2021.fleet-management-service.handlers.cab
   (:require [ring.util.response :as response]
+            [ring.middleware.params :as params]
             [clojure.spec.alpha :as s]
+            [clojure.walk :as walk]
             [winter-onboarding-2021.fleet-management-service.db.cab :as cab]
             [winter-onboarding-2021.fleet-management-service.views.layout :as layout]
             [winter-onboarding-2021.fleet-management-service.views.cab :as cab-view]))
@@ -28,7 +30,12 @@
       (do (cab/create validated-cab)
           (response/redirect "/cabs/new")))))
 
-(defn get-cabs [x]
-  (let [cabs (cab/select)]
-    (response/response (layout/application "Cabs" (cab-view/show-cabs cabs)))))
-
+(defn get-cabs [res]
+  (let [{:keys [offset limit]} (:query-params (-> res
+                                                  params/params-request
+                                                  walk/keywordize-keys))
+        cabs (cab/select
+              (if (nil? offset) 0 offset)
+              (if (nil? limit) 10 limit))]
+    (response/response (layout/application "Cabs"
+                                           (cab-view/show-cabs cabs)))))

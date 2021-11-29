@@ -8,6 +8,9 @@
 (use-fixtures :once fixtures/config fixtures/db-connection)
 (use-fixtures :each fixtures/clear-db)
 
+(defn vectors-contain-same-elements? [x y]
+  (= (set x) (set y)))
+
 (deftest create-cab
   (testing "Should add a cab"
     (let [created-cab (cab/create {:licence_plate "HR20X 6710"
@@ -33,12 +36,27 @@
           :cabs/created-at
           :cabs/updated-at))
 
-(deftest cab-handler-test
-  (testing "returns redered cabs list"))
-
 (deftest list-cabs
-  (testing "Returns a list of cabs"
+  (testing "Shoudld return a list of cabs"
     (let [cabs-list (factories/create-cabs 3)]
       (doall (map cab/create cabs-list))
       (is (= cabs-list
              (map dissoc-cab (cab/select)))))))
+
+(deftest pagination
+  (let [cabs (factories/create-cabs 12)]
+    (doall (map cab/create cabs))
+    (testing "Should return last 2 cabs from a table of 12 cabs"
+      (let [offset 10
+            limit 2]
+        (is (vectors-contain-same-elements?  (take limit (reverse cabs))
+                                             (map dissoc-cab
+                                                  (cab/select offset limit))))))
+    (testing "Should return first 10 cabs from 12 cabs"
+      (let [offset 0
+            limit 10]
+        (is (vectors-contain-same-elements?  (take limit cabs)
+                                             (map dissoc-cab
+                                                  (cab/select offset limit))))))))
+
+

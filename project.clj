@@ -16,7 +16,8 @@
                  [mount "0.1.16"]
                  [org.clojure/spec.alpha "0.3.214"]
                  [migratus "1.3.5"]
-                 [camel-snake-kebab "0.4.2"]]
+                 [camel-snake-kebab "0.4.2"]
+                 [honeysql "1.0.461"]]
   :profiles {:dev {:source-paths ["dev"]
                    :dependencies [[org.clojure/tools.namespace "0.2.3"]]}}
   :aliases {"migrations" ["run" "-m" "winter-onboarding-2021.fleet-management-service.migration/run-migratus"]}
