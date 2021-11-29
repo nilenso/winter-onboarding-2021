@@ -11,5 +11,6 @@
           (include-js "/public/js/bootstrap.bundle.min.js")
           [:body
            [:div {:class "container"}
-            [:div {:class (get-in request [:flash :style-class])} (get-in request [:flash :message])]
+            (when (:flash request)
+              [:div {:class (get-in request [:flash :style-class])} (get-in request [:flash :message])])
             content]]]))
