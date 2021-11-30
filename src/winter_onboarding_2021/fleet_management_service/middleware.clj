@@ -6,7 +6,7 @@
   (fn [request]
     (try
       (handler request)
-      (catch Exception e
+      (catch Exception _
         (-> (response/response {:error "Internal Server Error"})
             (response/status 500))))))
 

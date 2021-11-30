@@ -29,10 +29,12 @@
 (defn stop-server [server]
   (when server (.stop server)))
 
+#_:clj-kondo/ignore
 (defstate server
   :start (start-server)
   :stop (stop-server server))
 
+#_:clj-kondo/ignore ;; to ignore unused `args` warning
 (defn -main
-  [& args]
+  [& args] 
   (mount/start))

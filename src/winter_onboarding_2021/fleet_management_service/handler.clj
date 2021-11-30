@@ -4,7 +4,7 @@
             [winter-onboarding-2021.fleet-management-service.views.content :as content]
             [winter-onboarding-2021.fleet-management-service.views.layout :as layout]))
 
-(defn index [request]
+(defn index [_]
   (response/response (layout/application "Fleet Management Service"
                                          (content/index))))
 

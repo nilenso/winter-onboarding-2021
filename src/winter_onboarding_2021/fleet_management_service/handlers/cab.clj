@@ -14,7 +14,7 @@
            :style-class "alert alert-success"
            :message "Cab added successfully!"}})
 
-(defn add [{:keys [multipart-params] :as request}]
+(defn add [{:keys [multipart-params]}]
   (let [validated-cab (s/conform ::cab/create-cab-request
                                  multipart-params)]
     (if (s/invalid? validated-cab)
