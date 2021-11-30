@@ -1,6 +1,5 @@
 (ns winter-onboarding-2021.fleet-management-service.views.layout
-  (:use [hiccup.page :only (html5 include-css include-js)]
-        [winter-onboarding-2021.fleet-management-service.views.content :as content]))
+  (:require [hiccup.page :refer [html5 include-css include-js]]))
 
 (defn application [request title & content]
   (html5 [:head
