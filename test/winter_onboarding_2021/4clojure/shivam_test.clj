@@ -1,5 +1,6 @@
 (ns winter-onboarding-2021.4clojure.shivam-test
   (:require [clojure.test :refer [deftest is testing]]
+            [clojure.set :as set]
             [winter-onboarding-2021.4clojure.shivam :as solutions]))
 
 (deftest list-conj
@@ -19,7 +20,7 @@
 (deftest sets-contruction
   (testing "Construction of & to sets")
   (is (= (solutions/problem8) (set '(:a :a :b :c :c :c :c :d :d))))
-  (is (= (solutions/problem8) (clojure.set/union #{:a :b :c} #{:b :c :d}))))
+  (is (= (solutions/problem8) (set/union #{:a :b :c} #{:b :c :d}))))
 
 (deftest set-conjuction
   (testing "Conjuction of vectors")

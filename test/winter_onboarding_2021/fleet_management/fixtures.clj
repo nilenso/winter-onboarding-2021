@@ -3,12 +3,15 @@
             [mount.core :as mount]
             [aero.core :refer [read-config]]
             [winter-onboarding-2021.fleet-management-service.config :as config]
-            [winter-onboarding-2021.fleet-management-service.db.core :as db]))
+            [winter-onboarding-2021.fleet-management-service.db.core :as db]
+            [clojure.java.io :as io]))
 
 (defn config [f]
   (mount/stop #'config/config)
   (mount/start-with
-   {#'config/config (read-config "config/config.edn" {:profile :test})})
+   {#'config/config (read-config
+                     (io/resource "config.edn")
+                     {:profile :test})})
   (f)
   (mount/stop #'config/config))
 

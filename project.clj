@@ -15,8 +15,14 @@
                  [mount "0.1.16"]
                  [migratus "1.3.5"]
                  [camel-snake-kebab "0.4.2"]]
-  :profiles {:dev {:source-paths ["dev"]
-                   :dependencies [[org.clojure/tools.namespace "0.2.3"]]}}
   :aliases {"migrations" ["run" "-m" "winter-onboarding-2021.fleet-management-service.migration/run-migratus"]}
+  :profiles {:uberjar {:aot :all}
+             :test {:cloverage {:fail-threshold 90}}
+             :dev {:source-paths ["dev"]
+                   :dependencies [[org.clojure/tools.namespace "1.0.0"]]}}
+  :plugins [[lein-cloverage "1.2.2"]]
   :repl-options {:init-ns winter-onboarding-2021.core}
-  :main winter-onboarding-2021.fleet-management-service.core)
+  :resource-paths ["config"]
+  :uberjar-name "winter-onboarding-2021-standalone.jar"
+  :main winter-onboarding-2021.fleet-management-service.core
+  :min-lein-version "2.0.0")

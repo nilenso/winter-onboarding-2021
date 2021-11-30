@@ -7,7 +7,9 @@
             [ring.middleware.flash :refer [wrap-flash]]
             [ring.middleware.session :refer [wrap-session]]
             [winter-onboarding-2021.fleet-management-service.routes :as r]
-            [winter-onboarding-2021.fleet-management-service.middleware :as middleware])
+            [winter-onboarding-2021.fleet-management-service.middleware :as middleware]
+            [winter-onboarding-2021.fleet-management-service.config :as config]
+            [winter-onboarding-2021.fleet-management-service.migration :as migration])
   (:gen-class))
 
 (def middleware
@@ -21,10 +23,13 @@
    logger/wrap-with-logger))
 
 (defn start-server []
-  (raj/run-jetty
-   middleware
-   {:port 3000
-    :join? false}))
+  (let [port (if (int? (:port config/config))
+               (:port config/config)
+               (Integer/parseInt (:port config/config)))]
+    (println (str "Starting server on port:") port)
+    (raj/run-jetty middleware
+                   {:port port
+                    :join? false})))
 
 (defn stop-server [server]
   (when server (.stop server)))
@@ -34,7 +39,7 @@
   :start (start-server)
   :stop (stop-server server))
 
-#_:clj-kondo/ignore ;; to ignore unused `args` warning
-(defn -main
-  [& args] 
-  (mount/start))
+(defn -main [command & rest]
+  (if (= "migrations" command)
+    (apply migration/run-migratus rest)
+    (mount/start)))

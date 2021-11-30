@@ -14,4 +14,6 @@ pom.xml.asc
 .calva/
 .clj-kondo/.cache
 .lsp/
-*secret*
+*.tfvars
+.terraform/
+.terraform.*
