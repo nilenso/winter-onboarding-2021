@@ -23,4 +23,5 @@
   :repl-options {:init-ns winter-onboarding-2021.core}
   :resource-paths ["config"]
   :uberjar-name "winter-onboarding-2021-standalone.jar"
-  :main winter-onboarding-2021.fleet-management-service.core)
+  :main winter-onboarding-2021.fleet-management-service.core
+  :min-lein-version "2.0.0")
