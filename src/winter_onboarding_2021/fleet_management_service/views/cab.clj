@@ -1,42 +1,33 @@
-(ns winter-onboarding-2021.fleet-management-service.views.cab)
+(ns winter-onboarding-2021.fleet-management-service.views.cab
+  (:require [camel-snake-kebab.core :as csk]))
 
-(defn labelled-text-input [label-class label inp-class inp-name inp-type required value]
-  [:div
-   [:label {:for label :class label-class} label]
-   [:input {:type inp-type
-            :name inp-name
-            :class inp-class
-            :required required
-            :value value}]])
+(defn labelled-text-input [label & args]
+  (let [options (apply hash-map args)
+        name (csk/->snake_case_string label)]
+    [:div
+     [:label {:for label :class "form-label"} label]
+     [:input (merge {:class "form-control" :type "text" :name name}
+                    options)]]))
 
-(defn cab-form [data]
+(defn cab-form [{:keys [name distance_travelled licence_plate]}]
   [:div {:id "content"}
    [:h1 {:class "text-success"} "This is the form page"]
    [:form {:action "/cabs/" :method "POST" :enctype "multipart/form-data"}
     [:div {:class "mb-3"}
      (labelled-text-input
-      "form-label"
       "Cab Name"
-      "form-control"
-      "name"
-      "text"
-      true (:name data))]
+      :name "name"
+      :required true
+      :value name)]
     [:div {:class "mb-3"}
      (labelled-text-input
-      "form-label"
       "Licence Plate"
-      "form-control"
-      "licence_plate"
-      "text"
-      true
-      (:licence_plate data))]
+      :required true
+      :value licence_plate)]
     [:div {:class "mb-3"}
      (labelled-text-input
-      "form-label"
       "Distance Travelled"
-      "form-control"
-      "distance_travelled"
-      "text"
-      true
-      (:distance_travelled data))]
+      :type "number"
+      :required true
+      :value distance_travelled)]
     [:button {:type "submit" :class "btn btn-primary"} "Submit"]]])

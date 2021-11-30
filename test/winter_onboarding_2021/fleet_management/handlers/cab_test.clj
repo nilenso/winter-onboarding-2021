@@ -14,9 +14,9 @@
                     :message "Cab added successfully!"}
             :headers {"Location" "/cabs/new"}
             :body ""}
-           (cab/add {:multipart-params {:name "Test cab"
-                                        :licence_plate "KA20X1234"
-                                        :distance_travelled "1223"}}))))
+           (cab/create {:multipart-params {:name "Test cab"
+                                           :licence_plate "KA20X1234"
+                                           :distance_travelled "1223"}}))))
 
   (testing "POST /cabs/ endpoint with invalid cab data, should redirect to '/cabs/new?error=true"
     (let [invalid-cab {:name "Test cab"
@@ -28,4 +28,4 @@
                       :data invalid-cab}
               :headers {"Location" "/cabs/new"}
               :body ""}
-             (cab/add {:multipart-params invalid-cab}))))))
+             (cab/create {:multipart-params invalid-cab}))))))

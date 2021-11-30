@@ -5,9 +5,9 @@
             [winter-onboarding-2021.fleet-management-service.handler :as handler]))
 
 (def routes
-  ["/" [["public" (br/->Resources {:prefix "/bootstrap"})]
-        ["cabs" {:post {"/" cab/add}
-                 "/new" cab/serve-add-cab-form}]
-        ["healthcheck" (wrap-json-response handler/health-check)]
-        ["index" handler/index]
+  ["/" [["public" {:get (br/->Resources {:prefix "/bootstrap"})}]
+        ["cabs" {:post {"/" cab/create}
+                 :get {"/new" cab/new}}]
+        ["healthcheck" {:get (wrap-json-response handler/health-check)}]
+        ["index" {:get handler/index}]
         [true (fn [_] {:status 404 :body "Not found"})]]])
