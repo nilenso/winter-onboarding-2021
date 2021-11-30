@@ -2,7 +2,7 @@ name: Deploy to Heroku staging server
 
 on:
   push:
-    branches: [ main, setup-ci ]
+    branches: [ main ]
 
 env:
   build_name: winter-onboarding-2021

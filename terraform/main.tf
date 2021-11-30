@@ -28,7 +28,3 @@ resource "heroku_addon" "winter_onboarding_db" {
     app = heroku_app.winter_onboarding.name
     plan = "heroku-postgresql:hobby-dev"
 }
-
-resource "null_resource" "test" {
-
-}
