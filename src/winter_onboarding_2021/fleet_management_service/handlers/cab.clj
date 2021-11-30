@@ -7,6 +7,7 @@
             [winter-onboarding-2021.fleet-management-service.views.layout :as layout]
             [winter-onboarding-2021.fleet-management-service.views.cab :as cab-view]))
 
+(def page-size 3)
 (s/def :cab/name string?)
 (s/def :cab/licence_plate string?)
 
@@ -30,12 +31,20 @@
       (do (cab/create validated-cab)
           (response/redirect "/cabs/new")))))
 
-(defn get-cabs [res]
-  (let [{:keys [offset limit]} (:query-params (-> res
-                                                  params/params-request
-                                                  walk/keywordize-keys))
-        cabs (cab/select
-              (if (nil? offset) 0 offset)
-              (if (nil? limit) 10 limit))]
-    (response/response (layout/application "Cabs"
-                                           (cab-view/show-cabs cabs)))))
+(defn get-cabs [req]
+  (try (let [{:keys [page]} (:query-params (-> req
+                                               params/params-request
+                                               walk/keywordize-keys))
+             page-int (Integer/parseInt (or page "0"))
+             offset (* page-size page-int)
+             cabs (cab/select offset
+                              page-size)]
+         (response/response (layout/application "Cabs"
+                                                (cab-view/show-cabs cabs page-int))))
+       (catch Exception e
+         (response/response (layout/application "Cabs"
+                                                (str "Enter valid page number or 
+                                                      something went wrong. <br>"
+                                                     (.getMessage e)))))))
+
+ 

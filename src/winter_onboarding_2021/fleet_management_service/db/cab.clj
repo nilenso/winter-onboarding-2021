@@ -13,7 +13,7 @@
   (sql/insert! db/db-conn :cabs cab sql-opts))
 
 (defn sqlmap [offset limit]
-  {:select [:*]
+  {:select [:name :licence-plate :distance-travelled :created-at :updated-at]
    :from   [:cabs]
    :limit (keyword (str limit))
    :offset (keyword (str offset))})
