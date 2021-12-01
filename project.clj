@@ -24,7 +24,7 @@
                                   [hiccup-find "1.0.1"]]}}
   :plugins [[lein-cloverage "1.2.2"]]
   :repl-options {:init-ns winter-onboarding-2021.core}
-  :resource-paths ["config"]
+  :resource-paths ["config" "resources"]
   :uberjar-name "winter-onboarding-2021-standalone.jar"
   :main winter-onboarding-2021.fleet-management-service.core
   :min-lein-version "2.0.0")
