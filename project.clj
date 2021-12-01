@@ -17,7 +17,7 @@
                  [camel-snake-kebab "0.4.2"]]
   :aliases {"migrations" ["run" "-m" "winter-onboarding-2021.fleet-management-service.migration/run-migratus"]}
   :profiles {:uberjar {:aot :all}
-             :test {:cloverage {:fail-threshold 90
+             :test {:cloverage {:fail-threshold 70
                                 :ns-exclude-regex [#"user"]}}
              :dev {:source-paths ["dev"]
                    :dependencies [[org.clojure/tools.namespace "1.0.0"]
