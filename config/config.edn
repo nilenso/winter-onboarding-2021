@@ -1,4 +1,5 @@
 {:secrets #include "secrets.edn"
  :db-spec
  #profile {:test #ref [:secrets :test-db]
-           :dev #ref [:secrets :dev-db]}}
+           :dev #ref [:secrets :dev-db]}
+ :default-page-limit 10}

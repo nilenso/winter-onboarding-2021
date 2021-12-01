@@ -26,3 +26,9 @@
                              (honeysql/format (sqlmap offset limit))
                              sql-opts)))
 
+(defn cabs-count []
+  (sql/query db/db-conn
+                (honeysql/format {:select [:%count.*]
+                                  :as [:count]
+                                  :from   [:cabs]})
+                sql-opts))

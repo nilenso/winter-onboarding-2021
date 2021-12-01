@@ -1,8 +1,8 @@
 (ns winter-onboarding-2021.fleet-management-service.views.cab)
 
-(defn show-cabs [cabs page-num]
-  (let [head [:Name :Licence-plate :Distance-travelled :created-at :updated-at]
-        next-page-query (str "?page=" (+ page-num 1))]
+(defn show-cabs [cabs page-num show-next-page?]
+  (let [head [:name :licence-plate :distance-travelled :created-at :updated-at]
+        next-page-query (str "?page=" (inc page-num))]
     [:div
      [:table {:class "table table-dark min-vh-40"}
       [:thead
@@ -13,4 +13,5 @@
          [:tr
           (for [cell row] [:td cell])])]]
      [:div {:class "text-end"}
-      [:a {:id "cab-next-page" :href next-page-query}  "Next Page > "]]]))
+     (if show-next-page?
+            [:a {:id "cab-next-page" :href next-page-query}  "Next Page > "] ())]]))

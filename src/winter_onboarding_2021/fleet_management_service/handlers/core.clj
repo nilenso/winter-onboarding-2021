@@ -5,8 +5,7 @@
             [winter-onboarding-2021.fleet-management-service.views.layout :as layout]))
 
 (defn index [request]
-  (response/response (layout/application "Fleet Management Service"
-                                         (view/index))))
+  (view/index))
 
 (defn health-check [_]
   (response/response (str {:message "Everything OK!"
