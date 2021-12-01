@@ -13,12 +13,15 @@
                  [com.github.seancorfield/next.jdbc "1.2.737"]
                  [hiccup "1.0.5"]
                  [mount "0.1.16"]
-                 [migratus "1.3.5"]]
+                 [migratus "1.3.5"]
+                 [camel-snake-kebab "0.4.2"]]
   :aliases {"migrations" ["run" "-m" "winter-onboarding-2021.fleet-management-service.migration/run-migratus"]}
   :profiles {:uberjar {:aot :all}
-             :test {:cloverage {:fail-threshold 50}}
+             :test {:cloverage {:fail-threshold 70
+                                :ns-exclude-regex [#"user"]}}
              :dev {:source-paths ["dev"]
-                   :dependencies [[org.clojure/tools.namespace "1.0.0"]]}}
+                   :dependencies [[org.clojure/tools.namespace "1.0.0"]
+                                  [hiccup-find "1.0.1"]]}}
   :plugins [[lein-cloverage "1.2.2"]]
   :repl-options {:init-ns winter-onboarding-2021.core}
   :resource-paths ["config"]

@@ -3,22 +3,29 @@
             [ring.logger :as logger]
             [bidi.ring :as br]
             [mount.core :as mount :refer [defstate]]
-            [ring.middleware.json :refer [wrap-json-response]]
+            [ring.middleware.multipart-params :refer [wrap-multipart-params]]
+            [ring.middleware.flash :refer [wrap-flash]]
+            [ring.middleware.session :refer [wrap-session]]
             [winter-onboarding-2021.fleet-management-service.routes :as r]
-            [winter-onboarding-2021.fleet-management-service.migration :as migration]
-            [winter-onboarding-2021.fleet-management-service.config :refer [config]])
+            [winter-onboarding-2021.fleet-management-service.middleware :as middleware]
+            [winter-onboarding-2021.fleet-management-service.config :as config]
+            [winter-onboarding-2021.fleet-management-service.migration :as migration])
   (:gen-class))
 
 (def middleware
   (->
-   (br/make-handler r/routes)
-   wrap-json-response
+   r/routes
+   br/make-handler
+   wrap-flash
+   middleware/keywordize-multipart-params
+   wrap-multipart-params
+   wrap-session
    logger/wrap-with-logger))
 
 (defn start-server []
-  (let [port (if (int? (:port config))
-               (:port config)
-               (Integer/parseInt (:port config)))]
+  (let [port (if (int? (:port config/config))
+               (:port config/config)
+               (Integer/parseInt (:port config/config)))]
     (println (str "Starting server on port:") port)
     (raj/run-jetty middleware
                    {:port port
@@ -27,6 +34,7 @@
 (defn stop-server [server]
   (when server (.stop server)))
 
+#_:clj-kondo/ignore
 (defstate server
   :start (start-server)
   :stop (stop-server server))

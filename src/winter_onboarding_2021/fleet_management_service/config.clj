@@ -3,10 +3,13 @@
             [aero.core :refer (read-config)]
             [clojure.java.io :as io]))
 
+(defn env []
+  (get (System/getenv) "ENV"))
+
 (defn profile []
-  (or (keyword (get (System/getenv) "ENV"))
-      :dev))
+  (or (keyword (env)) :dev))
 
 (defstate config
-  :start (read-config (io/resource "config.edn") {:profile (profile)})
+  :start (read-config (io/resource "config.edn")
+                      {:profile (profile)})
   :stop nil)

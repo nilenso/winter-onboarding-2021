@@ -113,7 +113,7 @@
 ;; `n` is the number of seqs in the resultant seq
 ;; `iterations` is the number of elements in each seq
 ;; `accum` is the resultant seq
-(defn problem43 [my-seq n]
+#_(defn problem43 [my-seq n]
   (let [iterations (/ (count my-seq) n) _accum []]
     (conj (for [i (range iterations)]
             (for [j (range n)]
@@ -123,7 +123,7 @@
 ;; build one child seq at one time and then conj that child seq to parent seq `accum`
 ;; my-seq: the flattened seq
 
-(defn problem43'
+#_(defn problem43'
   [flattened-seq num-child]
   ;; `n`is the number of child seqs & `iterations` is the number of elemnents in each child seq
   (let [desearlize (fn [acc, [index values]] (assoc acc index (map second values)))]
