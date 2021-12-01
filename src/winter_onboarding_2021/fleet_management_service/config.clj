@@ -8,5 +8,6 @@
       :dev))
 
 (defstate config
-  :start (read-config (io/resource "config.edn") {:profile (profile)})
+  :start (read-config (io/resource "config.edn")
+                      {:profile (profile)})
   :stop nil)
