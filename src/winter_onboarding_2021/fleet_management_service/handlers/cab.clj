@@ -42,7 +42,7 @@
              offset (* page-size (- page-int 1)) ;;offset is 0 for for page 1
              cabs (cab-model/select offset
                                     page-size)
-             rows-count (:count ((cab-model/count) 0))
+             rows-count (:count ((cab-model/cabs-count) 0))
              show-next-page? (<= (* page-int page-size) rows-count)]
          
          (cab-views/show-cabs cabs

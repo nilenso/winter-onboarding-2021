@@ -8,5 +8,5 @@
   ([] (cab-db/select 0 10))
   ([offset limit] (cab-db/select offset limit)))
 
-(defn count []
+(defn cabs-count []
   (cab-db/cabs-count))
