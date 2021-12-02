@@ -1,6 +1,5 @@
 (ns winter-onboarding-2021.4clojure.shivam
-  (:require [clojure.set :as set]
-            [clojure.string :as str]))
+  (:require [clojure.string :as str]))
 
 (defn problem5 [] '(1 2 3 4))
 
@@ -65,7 +64,7 @@
 
 (defn problem26 [n]
   (reduce
-   (fn [acc, ele]
+   (fn [acc, _ele]
      (if (<= n 1)
        (vec (range n))
        (conj acc (+ (or (second (reverse acc)) 1) (last acc)))))
@@ -114,8 +113,8 @@
 ;; `n` is the number of seqs in the resultant seq
 ;; `iterations` is the number of elements in each seq
 ;; `accum` is the resultant seq
-(defn problem43 [my-seq n]
-  (let [iterations (/ (count my-seq) n) accum []]
+#_(defn problem43 [my-seq n]
+  (let [iterations (/ (count my-seq) n) _accum []]
     (conj (for [i (range iterations)]
             (for [j (range n)]
               ((vec my-seq) ((* i iterations) + j)))))))
@@ -124,7 +123,7 @@
 ;; build one child seq at one time and then conj that child seq to parent seq `accum`
 ;; my-seq: the flattened seq
 
-(defn problem43'
+#_(defn problem43'
   [flattened-seq num-child]
   ;; `n`is the number of child seqs & `iterations` is the number of elemnents in each child seq
   (let [desearlize (fn [acc, [index values]] (assoc acc index (map second values)))]

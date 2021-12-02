@@ -10,6 +10,7 @@
    :up migratus/up
    :down migratus/down})
 
+#_:clj-kondo/ignore
 (defn run-migratus [command-name & args]
   (mount/start #'config)
   (let [command (keyword command-name)

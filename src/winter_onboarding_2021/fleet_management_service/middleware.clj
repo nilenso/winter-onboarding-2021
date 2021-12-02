@@ -1,14 +1,5 @@
 (ns winter-onboarding-2021.fleet-management-service.middleware
-  (:require [ring.util.response :as response]
-            [clojure.walk :as walk]))
-
-(defn wrap-exception-logging [handler]
-  (fn [request]
-    (try
-      (handler request)
-      (catch Exception e
-        (-> (response/response {:error "Internal Server Error"})
-            (response/status 500))))))
+  (:require [clojure.walk :as walk]))
 
 (defn keywordize-multipart-params [handler]
   (fn [{:keys [multipart-params] :as request}]

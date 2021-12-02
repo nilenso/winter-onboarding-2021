@@ -12,6 +12,8 @@ pom.xml.asc
 .hgignore
 .hg/
 .calva/
-.clj-kondo/
+.clj-kondo/.cache
 .lsp/
-*secret*
+*.tfvars
+.terraform/
+.terraform.*
