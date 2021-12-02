@@ -22,8 +22,11 @@
       (-> error-flash
           (assoc-in [:flash :data] multipart-params)
           (merge (response/redirect "/cabs/new")))
-      (do (cab-model/create validated-cab)
-          (merge success-flash (response/redirect "/cabs/new"))))))
+      (let [created-cab (cab-model/create validated-cab)]
+        (merge success-flash (response/redirect
+                              (format
+                               "/cabs/%s"
+                               (:cabs/id created-cab))))))))
 
 (defn new [request]
   (response/response
