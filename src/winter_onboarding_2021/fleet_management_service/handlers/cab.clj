@@ -4,9 +4,7 @@
             [clojure.spec.alpha :as s]
             [clojure.walk :as walk]
             [aero.core :refer (read-config)]
-            [winter-onboarding-2021.fleet-management-service.db.cab :as cab]
             [winter-onboarding-2021.fleet-management-service.views.cab :as cab-views]
-            [winter-onboarding-2021.fleet-management-service.views.layout :as layout]
             [winter-onboarding-2021.fleet-management-service.models.cab :as cab-model]
             [winter-onboarding-2021.fleet-management-service.specs :as specs]))
             
@@ -33,12 +31,8 @@
           (merge success-flash (response/redirect "/cabs/new"))))))
 
 (defn new [request]
-  (response/response
-   (layout/application
-    request
-    "Add a cab"
-    (cab-views/cab-form
-     (get-in request [:flash :data])))))
+  (cab-views/cab-form
+   (get-in request [:flash :data])))
 
 (defn get-cabs [req]
   (try (let [{:keys [page]} (:query-params (-> req
@@ -46,13 +40,14 @@
                                                walk/keywordize-keys))
              page-int (Integer/parseInt (or page "1"))
              offset (* page-size (- page-int 1)) ;;offset is 0 for for page 1
-             cabs (cab/select offset
-                              page-size)
-             rows-count (:count ((cab/cabs-count) 0))
+             cabs (cab-model/select offset
+                                    page-size)
+             rows-count (:count ((cab-model/count) 0))
              show-next-page? (<= (* page-int page-size) rows-count)]
+         
          (cab-views/show-cabs cabs
-                             page-int
-                             show-next-page?))
+                              page-int
+                              show-next-page?))
        (catch Exception e
          (str "Enter valid page number or something went wrong. <br>"
               (.getMessage e)))))

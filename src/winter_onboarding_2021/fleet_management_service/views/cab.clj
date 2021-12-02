@@ -12,7 +12,7 @@
 (defn cab-form [{:keys [name distance_travelled licence_plate]}]
   [:div {:id "content"}
    [:h1 {:class "text-success"} "This is the form page"]
-   [:form {:action "/cabs/" :method "POST" :enctype "multipart/form-data"}
+   [:form {:action "/cabs" :method "POST" :enctype "multipart/form-data"}
     [:div {:class "mb-3"}
      (labelled-text-input
       "Cab Name"

@@ -1,6 +1,6 @@
 (ns winter-onboarding-2021.fleet-management.db.cab-test
   (:require [clojure.test :refer [deftest is testing use-fixtures]]
-            [winter-onboarding-2021.fleet-management-service.db.cab :as cab]
+            [winter-onboarding-2021.fleet-management-service.models.cab :as cab]
             [winter-onboarding-2021.fleet-management.fixtures :as fixtures]
             [winter-onboarding-2021.fleet-management.factories :as factories])
   (:import [org.postgresql.util PSQLException]))
@@ -58,5 +58,3 @@
         (is (vectors-contain-same-elements?  (take limit cabs)
                                              (map dissoc-cab
                                                   (cab/select offset limit))))))))
-
-

@@ -14,10 +14,8 @@
 (def routes
   ["/" [["public" {:get (br/->Resources {:prefix "/bootstrap"})}]
         ["cabs" [["" {:get (wrap-layout cab/get-cabs "Cabs")
-                      :post cab/create}]
+                       :post cab/create}]
                  ["/new" {:get (wrap-layout cab/new "Add new cab")}]]]
         ["healthcheck" {:get (wrap-json-response handler/health-check)}]
-        ["index" {:get handler/index}]
+        ["index" {:get (wrap-layout handler/index "Homepage")}]
         [true (fn [_] {:status 404 :body "Not found"})]]])
-
-
