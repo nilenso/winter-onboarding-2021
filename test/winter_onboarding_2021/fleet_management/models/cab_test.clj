@@ -10,7 +10,7 @@
 (deftest create-cab
   (testing "Should add a cab"
     ;; NOTE: the cab/create input needs to be auto kebab'ised, need to use honeysql for this
-    (let [created-cab (cab/create {:licence_plate "HR20X 6710" 
+    (let [created-cab (cab/create {:licence_plate "HR20X 6710"
                                    :name "Maruti Celerio"
                                    :distance_travelled 2333})]
       (is (= #:cabs{:licence-plate "HR20X 6710"
@@ -26,3 +26,15 @@
          PSQLException
          #"null value in column \"licence_plate\" of relation \"cabs\""
          (cab/create {:name "Kia"})))))
+
+(deftest get-single-cab
+  (testing "Should get details of a single cab with a certain ID"
+    (let [cab (cab/create {:licence-plate "HR20X 9999"
+                           :name "Maruti Celerio 12"
+                           :distance-travelled 12221})]
+      (is (= cab
+             (cab/get-by-id (str (:cabs/id cab)))))))
+
+  (testing "Should return nil if there is no row with a id"
+    (is (= nil
+           (cab/get-by-id (str (java.util.UUID/randomUUID)))))))
