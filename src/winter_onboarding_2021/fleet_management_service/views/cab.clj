@@ -31,3 +31,13 @@
       :required true
       :value distance_travelled)]
     [:button {:type "submit" :class "btn btn-primary"} "Submit"]]])
+
+(defn single-cab [cab]
+  [:div {:id "content" :class "p-5"}
+   [:h2 (:cabs/name cab)]
+   [:div {:class "mt-5"}
+    [:div "Licence Plate"]
+    [:h3 (:cabs/licence-plate cab)]]
+   [:div {:class "mt-5"}
+    [:div "Distance Travlled"]
+    [:h3 (:cabs/distance-travelled cab)]]])
