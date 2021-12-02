@@ -32,3 +32,11 @@
     "Add a cab"
     (cab-views/cab-form
      (get-in request [:flash :data])))))
+
+(defn view-cab [request]
+  (let [cab (cab-model/get-by-id (get-in request [:params :slug]))]
+    (response/response
+     (layout/application
+      request
+      (:cabs/name cab)
+      (cab-views/single-cab cab)))))
