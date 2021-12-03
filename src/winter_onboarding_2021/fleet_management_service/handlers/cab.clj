@@ -8,7 +8,6 @@
             [winter-onboarding-2021.fleet-management-service.models.cab :as cab-model]
             [winter-onboarding-2021.fleet-management-service.specs :as specs]))
             
-(def page-size ((read-config "config/config.edn") :default-page-limit))
 
 (def error-flash
   {:flash {:error true
@@ -35,16 +34,14 @@
    (get-in request [:flash :data])))
 
 (defn get-cabs [req]
-  (try (let [{:keys [page]} (:query-params (-> req
-                                               params/params-request
-                                               walk/keywordize-keys))
+  (try (let [{:keys [page]} (:params req)
+             page-size (config/get-page-size)
              page-int (Integer/parseInt (or page "1"))
              offset (* page-size (- page-int 1)) ;;offset is 0 for for page 1
              cabs (cab-model/select offset
                                     page-size)
              rows-count (:count ((cab-model/cabs-count) 0))
              show-next-page? (<= (* page-int page-size) rows-count)]
-         
          (cab-views/show-cabs cabs
                               page-int
                               show-next-page?))
