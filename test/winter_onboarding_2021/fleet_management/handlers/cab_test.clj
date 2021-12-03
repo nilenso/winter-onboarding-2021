@@ -4,7 +4,8 @@
             [winter-onboarding-2021.fleet-management.fixtures :as fixtures]
             [hiccup-find.core :as hf]
             [winter-onboarding-2021.fleet-management.factories :as factories]
-            [winter-onboarding-2021.fleet-management-service.models.cab :as cab]))
+            [winter-onboarding-2021.fleet-management-service.models.cab :as cab]
+            [winter-onboarding-2021.fleet-management-service.config :as config]))
 
 (use-fixtures :once fixtures/config fixtures/db-connection)
 (use-fixtures :each fixtures/clear-db)
@@ -36,18 +37,19 @@
 (deftest list-cabs-handler
   (testing "Should return a list of 3 rows of cabs"
     (let [cabs (factories/create-cabs 3)]
-      (doall (map cab/create cabs))
-      (is (= 3 (count (hf/hiccup-find [:tbody :tr] (cab-handler/get-cabs {})))))
-      (is (= 0 (count (hf/hiccup-find [:a] (cab-handler/get-cabs {})))))))
+        (doall (map cab/create cabs))
+      (with-redefs [config/get-page-size (constantly 2)]
+        (is (= 2 (count (hf/hiccup-find [:tbody :tr] (cab-handler/get-cabs {})))))
+        (is (not-empty (hf/hiccup-find [:a] (cab-handler/get-cabs {})))))))
 
-  (testing "Should return a list of 12 rows of cabs with next Page link"
+  (testing "Should return a list of 10 rows of cabs with next Page link"
     (let [cabs (factories/create-cabs 12)]
       (doall (map cab/create cabs))
       (is (= 10 (count (hf/hiccup-find [:tbody :tr] (cab-handler/get-cabs {})))))
       (is (= 1 (count (hf/hiccup-find [:a] (cab-handler/get-cabs {})))))))
 
   (testing "Should return 8 rows of cabs in page number 2"
-    (is (= 5 (count (hf/hiccup-find [:tbody :tr] (cab-handler/get-cabs {:query-params
+    (is (= 10 (count (hf/hiccup-find [:tbody :tr] (cab-handler/get-cabs {:query-params
                                                                     {:page "2"}})))))
     (is (= 0 (count (hf/hiccup-find [:a] (cab-handler/get-cabs {:query-params
                                                             {:page "2"}}))))))
