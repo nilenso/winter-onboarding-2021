@@ -1,5 +1,7 @@
 # winter-onboarding-2021
 
+![example workflow](https://github.com/nilenso/winter-onboarding-2021/actions/workflows/deploy-staging.yml/badge.svg)
+
 Contains the code written by onboardees of Winter 2021:
 1. Alisha
 2. Yogi
