@@ -10,4 +10,4 @@
   ([offset limit] (cab-db/select offset limit)))
 
 (defn cabs-count []
-  (cab-db/cabs-count))
+  (cab-db/get-count))

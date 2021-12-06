@@ -32,17 +32,14 @@
    (get-in request [:flash :data])))
 
 (defn get-cabs [req]
-  (try (let [{:keys [page]} (:params req)
-             page-size (config/get-page-size)
-             page-int (Integer/parseInt (or page "1"))
-             offset (* page-size (- page-int 1)) ;;offset is 0 for for page 1
-             cabs (cab-model/select offset
-                                    page-size)
-             rows-count (:count (first (cab-model/cabs-count)))
-             show-next-page? (<= (* page-int page-size) rows-count)]
-         (cab-views/show-cabs cabs
-                              page-int
-                              show-next-page?))
-       (catch Exception e
-         (str "Enter valid page number or something went wrong. <br>"
-              (.getMessage e)))))
+  (let [{:keys [page]} (:params req)
+        page-size (config/get-page-size)
+        page-int (Integer/parseInt (or page "1"))
+        offset (* page-size (- page-int 1)) ;;offset is 0 for for page 1
+        cabs (cab-model/select offset
+                               page-size)
+        rows-count (:count (first (cab-model/cabs-count)))
+        show-next-page? (<= (* page-int page-size) rows-count)]
+    (cab-views/show-cabs cabs
+                         page-int
+                         show-next-page?)))

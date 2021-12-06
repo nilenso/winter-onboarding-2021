@@ -7,5 +7,5 @@
   (view/index))
 
 (defn health-check [_]
-  (response/response (str {:message "Everything OK!"
-                           :data (healthcheck/healthcheck-query)})))
+  (response/response {:message "Everything OK!"
+                      :data (healthcheck/healthcheck-query)}))

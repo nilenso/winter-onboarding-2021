@@ -31,6 +31,3 @@
            output-html
            (format "<div class=\"alert alert-danger\">%s</div>" error-msg))))))
 
-(deftest list-cabs
-  (testing "Should return list of cabs"
-    (is true)))

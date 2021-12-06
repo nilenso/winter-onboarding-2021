@@ -2,19 +2,20 @@
   (:require [winter-onboarding-2021.fleet-management-service.db.core :as db]
             [honeysql.core :as honeysql]))
 
-(defn cab-select-query [offset limit]
+(defn select-query [offset limit]
   {:select [:name :licence-plate :distance-travelled :created-at :updated-at]
    :from   [:cabs]
-   :limit (keyword (str limit))
-   :offset (keyword (str offset))})
+   :limit limit
+   :offset offset
+   :order-by [:created-at]})
 
 (defn create [cabs]
   (db/insert! :cabs cabs))
 
 (defn select [offset limit]
-  (db/query (honeysql/format (cab-select-query offset limit))))
+  (db/query (honeysql/format (select-query offset limit))))
 
-(defn cabs-count []
+(defn get-count []
   (db/query (honeysql/format {:select [:%count.*]
                                   :as [:count]
                                   :from   [:cabs]})))

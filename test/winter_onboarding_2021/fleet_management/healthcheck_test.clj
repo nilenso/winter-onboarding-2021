@@ -10,6 +10,6 @@
   (testing "Healthcheck for DB"
     (is (= {:status 200
             :headers {}
-            :body (str {:message "Everything OK!"
-                        :data [{:check 1}]})}
+            :body {:message "Everything OK!"
+                   :data [{:check 1}]}}
            (handlers/health-check {})))))

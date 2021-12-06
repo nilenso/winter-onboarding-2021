@@ -9,12 +9,12 @@
 (defn wrap-layout [handler title]
   (fn [request]
     (let [content (handler request)]
-       (response/response (layout/application request title content)))))
+      (response/response (layout/application request title content)))))
 
 (def routes
   ["/" [["public" {:get (br/->Resources {:prefix "/bootstrap"})}]
         ["cabs" [["" {:get (wrap-layout cab/get-cabs "Cabs")
-                       :post cab/create}]
+                      :post cab/create}]
                  ["/new" {:get (wrap-layout cab/new "Add new cab")}]]]
         ["healthcheck" {:get (wrap-json-response handler/health-check)}]
         ["index" {:get (wrap-layout handler/index "Homepage")}]
