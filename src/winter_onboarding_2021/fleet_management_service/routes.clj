@@ -8,7 +8,7 @@
   ["/" [["public" {:get (br/->Resources {:prefix "/bootstrap"})}]
         ["cabs/" {"" {:post cab/create}
                   "new" {:get cab/new}
-                  ["" :slug] {:get cab/view-cab}}]
+                  [:id] {:get cab/view-cab}}]
         ["healthcheck" {:get (wrap-json-response handler/health-check)}]
         ["index" {:get handler/index}]
         [true (fn [_] {:status 404 :body "Not found"})]]])

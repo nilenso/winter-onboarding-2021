@@ -51,9 +51,9 @@
                               :distance-travelled 19191})
           output-html (layout/application {}
                                           (:cabs/name cab)
-                                          (views/single-cab cab))]
+                                          (views/cab cab))]
       (is (= {:status 200
               :body output-html}
-             (-> {:params {:slug (str (:cabs/id cab))}}
+             (-> {:params {:id (str (:cabs/id cab))}}
                  handlers/view-cab
                  (select-keys [:status :body])))))))

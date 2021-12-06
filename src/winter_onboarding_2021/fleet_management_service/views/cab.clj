@@ -32,7 +32,7 @@
       :value distance_travelled)]
     [:button {:type "submit" :class "btn btn-primary"} "Submit"]]])
 
-(defn single-cab [cab]
+(defn cab [cab]
   [:div {:id "content" :class "p-5"}
    [:h2 (:cabs/name cab)]
    [:div {:class "mt-5"}

@@ -40,6 +40,7 @@
   :stop (stop-server server))
 
 (defn -main [command & rest]
+  (println "holaa" command)
   (if (= "migrations" command)
     (apply migration/run-migratus rest)
     (mount/start)))

@@ -39,7 +39,7 @@
           output-html (layout/application
                        {} ; request is empty
                        (format "Cab %s" (:name cab))
-                       (cab/single-cab cab))]
+                       (cab/cab cab))]
 
       (is (str/includes? output-html (:cabs/name cab)))
 
