@@ -1,11 +1,9 @@
 (ns winter-onboarding-2021.fleet-management-service.handlers.cab
   (:require [ring.util.response :as response]
-            [ring.middleware.params :as params]
             [clojure.spec.alpha :as s]
-            [clojure.walk :as walk]
-            [aero.core :refer (read-config)]
             [winter-onboarding-2021.fleet-management-service.views.cab :as cab-views]
             [winter-onboarding-2021.fleet-management-service.models.cab :as cab-model]
+            [winter-onboarding-2021.fleet-management-service.config :as config]
             [winter-onboarding-2021.fleet-management-service.specs :as specs]))
             
 
@@ -20,7 +18,7 @@
            :message "Cab added successfully!"}})
 
 (defn create [{:keys [multipart-params]}]
-  (let [validated-cab (s/conform ::specs/create-cab-request
+  (let [validated-cab (s/conform ::specs/create-cab-form
                                  multipart-params)]
     (if (s/invalid? validated-cab)
       (-> error-flash
@@ -40,7 +38,7 @@
              offset (* page-size (- page-int 1)) ;;offset is 0 for for page 1
              cabs (cab-model/select offset
                                     page-size)
-             rows-count (:count ((cab-model/cabs-count) 0))
+             rows-count (:count (first (cab-model/cabs-count)))
              show-next-page? (<= (* page-int page-size) rows-count)]
          (cab-views/show-cabs cabs
                               page-int

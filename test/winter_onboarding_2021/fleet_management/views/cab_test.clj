@@ -12,7 +12,7 @@
                                 :style-class "alert alert-success"
                                 :message success-msg}}
                        "Add a cab"
-                       (cab/cab-form {:licence_plate "" :name "" :distance_travelled ""}))]
+                       (cab/cab-form {:licence-plate "" :name "" :distance-travelled ""}))]
       (is (str/includes?
            output-html
            (format
@@ -26,7 +26,7 @@
                                 :style-class "alert alert-danger"
                                 :message error-msg}}
                        "Add a cab"
-                       (cab/cab-form {:licence_plate "" :name "" :distance_travelled ""}))]
+                       (cab/cab-form {:licence-plate "" :name "" :distance-travelled ""}))]
       (is (str/includes?
            output-html
            (format "<div class=\"alert alert-danger\">%s</div>" error-msg))))))
