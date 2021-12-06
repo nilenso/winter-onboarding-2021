@@ -24,9 +24,8 @@
               :message "Cab added successfully!"}
              (:flash response)))
 
-      (is (= true (-> response
-                      (get-in [:headers "Location"])
-                      (= (str "/cabs/" (:cabs/id cab))))))
+      (is (= (str "/cabs/" (:cabs/id cab))
+             (get-in response [:headers "Location"])))
 
       (is (= "" (:body response))))))
 
