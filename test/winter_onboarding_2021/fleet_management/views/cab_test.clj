@@ -30,3 +30,19 @@
       (is (str/includes?
            output-html
            (format "<div class=\"alert alert-danger\">%s</div>" error-msg))))))
+
+(deftest view-single-cab
+  (testing "Shold have the details like name, licence plate and distance travelled of single cab"
+    (let [cab #:cabs{:name "Maruti Cab"
+                     :licence-plate "HR20A 1234"
+                     :distance-travelled 12333}
+          output-html (layout/application
+                       {} ; request is empty
+                       (format "Cab %s" (:name cab))
+                       (cab/cab cab))]
+
+      (is (str/includes? output-html (:cabs/name cab)))
+
+      (is (str/includes? output-html (:cabs/licence-plate cab)))
+
+      (is (str/includes? output-html (str (:cabs/distance-travelled cab)))))))

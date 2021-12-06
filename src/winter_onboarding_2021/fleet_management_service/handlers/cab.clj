@@ -1,9 +1,9 @@
 (ns winter-onboarding-2021.fleet-management-service.handlers.cab
   (:require [ring.util.response :as response]
             [clojure.spec.alpha :as s]
-            [winter-onboarding-2021.fleet-management-service.models.cab :as cab-model]
+            [winter-onboarding-2021.fleet-management-service.models.cab :as models]
             [winter-onboarding-2021.fleet-management-service.views.layout :as layout]
-            [winter-onboarding-2021.fleet-management-service.views.cab :as cab-views]
+            [winter-onboarding-2021.fleet-management-service.views.cab :as views]
             [winter-onboarding-2021.fleet-management-service.specs :as specs]))
 
 (def error-flash
@@ -22,13 +22,24 @@
       (-> error-flash
           (assoc-in [:flash :data] multipart-params)
           (merge (response/redirect "/cabs/new")))
-      (do (cab-model/create validated-cab)
-          (merge success-flash (response/redirect "/cabs/new"))))))
+      (let [created-cab (models/create validated-cab)]
+        (merge success-flash (response/redirect
+                              (format
+                               "/cabs/%s"
+                               (:cabs/id created-cab))))))))
 
 (defn new [request]
   (response/response
    (layout/application
     request
     "Add a cab"
-    (cab-views/cab-form
+    (views/cab-form
      (get-in request [:flash :data])))))
+
+(defn view-cab [request]
+  (let [cab (models/get-by-id (get-in request [:params :id]))]
+    (response/response
+     (layout/application
+      request
+      (:cabs/name cab)
+      (views/cab cab)))))
