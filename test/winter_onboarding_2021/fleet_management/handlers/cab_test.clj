@@ -1,6 +1,5 @@
 (ns winter-onboarding-2021.fleet-management.handlers.cab-test
   (:require [clojure.test :refer [deftest is testing use-fixtures]]
-            [clojure.string :as str]
             [winter-onboarding-2021.fleet-management-service.handlers.cab :as handlers]
             [winter-onboarding-2021.fleet-management-service.views.cab :as views]
             [winter-onboarding-2021.fleet-management-service.models.cab :as models]
@@ -15,7 +14,9 @@
     (let [response (handlers/create {:multipart-params
                                      {:name "Test cab"
                                       :licence_plate "KA20X1234"
-                                      :distance_travelled "1223"}})]
+                                      :distance_travelled "1223"}})
+          cab (first (models/find-by-keys {:licence-plate "KA20X1234"}))]
+
       (is (= 302 (:status response)))
 
       (is (= {:success true
@@ -25,10 +26,7 @@
 
       (is (= true (-> response
                       (get-in [:headers "Location"])
-                      (str/split #"/") ; Could be better if we use regex
-                      (nth 2)
-                      count
-                      (= 36))))
+                      (= (str "/cabs/" (:cabs/id cab))))))
 
       (is (= "" (:body response))))))
 

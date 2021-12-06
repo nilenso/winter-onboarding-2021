@@ -38,3 +38,13 @@
   (testing "Should return nil if there is no row with a id"
     (is (= nil
            (cab/get-by-id (str (java.util.UUID/randomUUID)))))))
+
+(deftest find-by-key
+  (testing "Should find a row with a specific licence-plate"
+    (let [sample-cab {:licence-plate "HR20X 9999"
+                      :name "Maruti Celerio 12"
+                      :distance-travelled 12221}
+          created-cab (cab/create sample-cab)
+          selected-cab (cab/find-by-keys (select-keys sample-cab [:distance-travelled]))]
+
+      (is (= created-cab (first selected-cab))))))

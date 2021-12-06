@@ -11,3 +11,9 @@
                  :cabs
                  (java.util.UUID/fromString id)
                  m-core/sql-opts))
+
+(defn find-by-keys [key-map]
+  (sql/find-by-keys db/db-conn
+                    :cabs
+                    key-map
+                    m-core/sql-opts))
