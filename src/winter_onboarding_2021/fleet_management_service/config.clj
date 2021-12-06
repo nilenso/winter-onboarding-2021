@@ -15,4 +15,4 @@
   :stop nil)
 
 (defn get-page-size []
-  (:default-page-limit config))
+  (:default-page-size config))

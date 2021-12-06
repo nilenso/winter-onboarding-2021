@@ -18,7 +18,7 @@
           :cabs/updated-at))
 
 (deftest list-cabs
-  (testing "Shoudld return a list of cabs"
+  (testing "Should return a list of cabs"
     (let [cabs-list (factories/create-cabs 3)
           offset 0
           page-length 10]

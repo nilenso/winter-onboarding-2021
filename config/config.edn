@@ -4,4 +4,4 @@
                     :dev #ref [:secrets :dev-db]
                     :prod #ref [:secrets :prod-db]
                     :ci #ref [:secrets :ci-db]}
- :default-page-limit 10}
+ :default-page-size 10}

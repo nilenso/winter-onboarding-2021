@@ -34,12 +34,12 @@
 (defn get-cabs [req]
   (let [{:keys [page]} (:params req)
         page-size (config/get-page-size)
-        page-int (Integer/parseInt (or page "1"))
-        offset (* page-size (- page-int 1)) ;;offset is 0 for for page 1
+        current-page (Integer/parseInt (or page "1"))
+        offset (* page-size (- current-page 1)) ;;offset is 0 for for page 1
         cabs (cab-model/select offset
                                page-size)
-        rows-count (:count (first (cab-model/cabs-count)))
-        show-next-page? (<= (* page-int page-size) rows-count)]
+        rows-count (cab-model/cabs-count)
+        show-next-page? (<= (* current-page page-size) rows-count)]
     (cab-views/show-cabs cabs
-                         page-int
+                         current-page
                          show-next-page?)))

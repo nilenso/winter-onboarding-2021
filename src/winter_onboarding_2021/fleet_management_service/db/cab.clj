@@ -3,7 +3,11 @@
             [honeysql.core :as honeysql]))
 
 (defn select-query [offset limit]
-  {:select [:name :licence-plate :distance-travelled :created-at :updated-at]
+  {:select [:name
+            :licence-plate
+            :distance-travelled
+            :created-at
+            :updated-at]
    :from   [:cabs]
    :limit limit
    :offset offset
@@ -17,6 +21,6 @@
 
 (defn get-count []
   (db/query (honeysql/format {:select [:%count.*]
-                                  :as [:count]
-                                  :from   [:cabs]})))
+                              :as [:count]
+                              :from   [:cabs]})))
 
