@@ -9,14 +9,17 @@
 (defn wrap-layout [handler]
   (fn [request]
     (let [data (handler request)]
-      (response/response (layout/application request (:title data) (:content data))))))
+      (response/response (layout/application
+                          request
+                          (:title data)
+                          (:content data))))))
 
 (def routes
   ["/" [["public" {:get (br/->Resources {:prefix "/bootstrap"})}]
         ["cabs" {"" {:get (wrap-layout handlers/get-cabs)
                      :post handlers/create}
                  "/new" {:get (wrap-layout handlers/new)}
-                 [:id] {:get handlers/view-cab}}]
+                 ["/" :id] {:get (wrap-layout handlers/view-cab)}}]
         ["healthcheck" {:get (wrap-json-response handler/health-check)}]
         ["index" {:get (wrap-layout handler/index)}]
         [true (fn [_] {:status 404 :body "Not found"})]]])

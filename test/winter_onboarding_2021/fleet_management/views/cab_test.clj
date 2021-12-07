@@ -4,6 +4,11 @@
             [winter-onboarding-2021.fleet-management-service.views.cab :as cab]
             [winter-onboarding-2021.fleet-management-service.views.layout :as layout]))
 
+(deftest header-formatting
+  (testing "Should convert a namespaced keyword into human string"
+    (is (= "Distance travelled"
+           (cab/format-header :cabs/distance-travelled)))))
+
 (deftest add-cab-view
   (testing "Should have alert success bubble after adding a valid cab"
     (let [success-msg "Cab added successfully!"
