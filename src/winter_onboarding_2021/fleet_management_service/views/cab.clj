@@ -1,9 +1,10 @@
 (ns winter-onboarding-2021.fleet-management-service.views.cab
-  (:require [camel-snake-kebab.core :as csk]))
+  (:require [clojure.string :as string]
+            [camel-snake-kebab.core :as csk]))
 
 (defn labelled-text-input [label & args]
   (let [options (apply hash-map args)
-        name (csk/->snake_case_string label)]
+        name (csk/->kebab-case-string label)]
     [:div
      [:label {:for label :class "form-label"} label]
      [:input (merge {:class "form-control" :type "text" :name name}
@@ -42,19 +43,30 @@
     [:div "Distance Travlled"]
     [:h3 (:cabs/distance-travelled cab)]]])
 
+(def headers
+  [:cabs/name
+   :cabs/distance-travelled
+   :cabs/licence-plate
+   :cabs/created-at
+   :cabs/updated-at])
+
+(defn format-header [namespaced-header]
+  (-> namespaced-header
+      name
+      (string/replace "-" " ")
+      string/capitalize))
+
+(defn gen-cab-row [row]
+  [:tr (map (fn [header] [:td (header row)])
+            headers)])
+
 (defn show-cabs [cabs page-num show-next-page?]
-  (let [head [:name :licence-plate :distance-travelled :created-at :updated-at]
-        next-page-query (str "?page=" (inc page-num))]
+  (let [next-page-query (str "?page=" (inc page-num))]
     [:div
      [:table {:class "table table-dark min-vh-40"}
-      [:thead [:tr
-               (map (fn [col] [:th (str col)])
-                    head)]]
-      [:tbody (map
-               (fn [row] [:tr (map
-                               (fn [cell] [:td (str cell)])
-                               row)])
-               cabs)]]
+      [:thead [:tr (map (fn [header] [:th (format-header header)])
+                        headers)]]
+      [:tbody (map gen-cab-row cabs)]]
      [:div {:class "text-end"}
       (if show-next-page?
         [:a {:id "cab-next-page" :href next-page-query}  "Next Page > "] ())]]))
