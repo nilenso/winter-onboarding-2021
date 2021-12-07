@@ -54,6 +54,7 @@
               :content content}
              (handlers/view-cab {:params {:id (str (:cabs/id cab))}}))))))
 
+(comment "Trigger CI/CD tests to see if they are failing")
 (deftest list-cabs-handler
   (testing "Should return a list of 3 rows of cabs"
     (let [cabs (factories/create-cabs 3)]
