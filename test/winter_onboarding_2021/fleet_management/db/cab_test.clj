@@ -24,7 +24,7 @@
           page-length 10]
       (doall (map cab-db/create cabs-list))
       (is (= cabs-list
-             (map dissoc-irrelevant-keys (cab-db/select offset page-length)))))))
+             (map dissoc-irrelevant-keys (cab-db/select! offset page-length)))))))
 
 (deftest pagination
   (let [cabs (factories/create-cabs 12)]
@@ -34,10 +34,10 @@
             limit 2]
         (is (vectors-contain-same-elements?  (take limit (reverse cabs))
                                              (map dissoc-irrelevant-keys
-                                                  (cab-db/select offset limit))))))
+                                                  (cab-db/select! offset limit))))))
     (testing "Should return first 10 cabs from 12 cabs"
       (let [offset 0
             limit 10]
         (is (vectors-contain-same-elements?  (take limit cabs)
                                              (map dissoc-irrelevant-keys
-                                                  (cab-db/select offset limit))))))))
+                                                  (cab-db/select! offset limit))))))))

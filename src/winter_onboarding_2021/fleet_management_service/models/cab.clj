@@ -12,8 +12,8 @@
   (cab-db/create cab))
 
 (defn select
-  ([] (cab-db/select 0 (config/get-page-size)))
-  ([offset limit] (cab-db/select offset limit)))
+  ([] (cab-db/select! 0 (config/get-page-size)))
+  ([offset limit] (cab-db/select! offset limit)))
 
 (defn cabs-count []
   (:count (first (cab-db/get-count))))
