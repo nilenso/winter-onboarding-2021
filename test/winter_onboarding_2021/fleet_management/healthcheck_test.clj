@@ -1,6 +1,6 @@
 (ns winter-onboarding-2021.fleet-management.healthcheck-test
   (:require [clojure.test :refer [deftest is testing use-fixtures]]
-            [winter-onboarding-2021.fleet-management-service.handler :as handlers]
+            [winter-onboarding-2021.fleet-management-service.handlers.core :as handlers]
             [winter-onboarding-2021.fleet-management.fixtures :as fixtures]))
 
 (use-fixtures :once fixtures/config fixtures/db-connection)

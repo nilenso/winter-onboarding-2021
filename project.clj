@@ -12,9 +12,12 @@
                  [aero "1.1.6"]
                  [com.github.seancorfield/next.jdbc "1.2.737"]
                  [hiccup "1.0.5"]
+                 [org.clojure/test.check "1.1.0"]
                  [mount "0.1.16"]
+                 [org.clojure/spec.alpha "0.3.214"]
                  [migratus "1.3.5"]
-                 [camel-snake-kebab "0.4.2"]]
+                 [camel-snake-kebab "0.4.2"]
+                 [honeysql "1.0.461"]]
   :aliases {"migrations" ["run" "-m" "winter-onboarding-2021.fleet-management-service.migration/run-migratus"]}
   :profiles {:uberjar {:aot :all}
              :test {:cloverage {:fail-threshold 70

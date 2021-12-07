@@ -1,19 +1,19 @@
 (ns winter-onboarding-2021.fleet-management-service.models.cab
-  (:require [winter-onboarding-2021.fleet-management-service.db.core :as db]
-            [winter-onboarding-2021.fleet-management-service.models.core :as m-core]
-            [next.jdbc.sql :as sql]))
-
-(defn create [cab]
-  (m-core/insert! db/db-conn :cabs cab))
+  (:require [winter-onboarding-2021.fleet-management-service.db.cab :as cab-db]
+            [winter-onboarding-2021.fleet-management-service.config :as config]))
 
 (defn get-by-id [id]
-  (sql/get-by-id db/db-conn
-                 :cabs
-                 (java.util.UUID/fromString id)
-                 m-core/sql-opts))
+  (cab-db/get-by-id (java.util.UUID/fromString id)))
 
 (defn find-by-keys [key-map]
-  (sql/find-by-keys db/db-conn
-                    :cabs
-                    key-map
-                    m-core/sql-opts))
+  (cab-db/find-by-keys key-map))
+
+(defn create [cab]
+  (cab-db/create cab))
+
+(defn select
+  ([] (cab-db/select 0 (config/get-page-size)))
+  ([offset limit] (cab-db/select offset limit)))
+
+(defn cabs-count []
+  (:count (first (cab-db/get-count))))

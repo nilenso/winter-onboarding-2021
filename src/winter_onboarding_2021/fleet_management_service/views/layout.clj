@@ -4,7 +4,7 @@
 (defn application [request title & content]
   (html5 [:head
           [:title title]
-          [:link {:rel "icon" :href "public/favicon.ico" :type "image/x-icon"}]
+          [:link {:rel "icon" :href "/public/favicon.ico" :type "image/x-icon"}]
           (include-css "/public/css/bootstrap.min.css")
           (include-js "/public/js/jquery-3.6.0.min.js")
           (include-js "/public/js/bootstrap.bundle.min.js")

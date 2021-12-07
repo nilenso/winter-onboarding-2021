@@ -3,4 +3,5 @@
  :db-spec #profile {:test #ref [:secrets :test-db]
                     :dev #ref [:secrets :dev-db]
                     :prod #ref [:secrets :prod-db]
-                    :ci #ref [:secrets :ci-db]}}
+                    :ci #ref [:secrets :ci-db]}
+ :default-page-size 10}

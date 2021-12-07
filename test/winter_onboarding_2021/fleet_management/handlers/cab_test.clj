@@ -1,10 +1,13 @@
 (ns winter-onboarding-2021.fleet-management.handlers.cab-test
-  (:require [clojure.test :refer [deftest is testing use-fixtures]]
-            [winter-onboarding-2021.fleet-management-service.handlers.cab :as handlers]
-            [winter-onboarding-2021.fleet-management-service.views.cab :as views]
+  (:require [hiccup-find.core :as hf]
+            [clojure.string :as str]
+            [clojure.test :refer [deftest is testing use-fixtures]]
+            [winter-onboarding-2021.fleet-management.fixtures :as fixtures]
+            [winter-onboarding-2021.fleet-management.factories :as factories]
+            [winter-onboarding-2021.fleet-management-service.config :as config]
             [winter-onboarding-2021.fleet-management-service.models.cab :as models]
-            [winter-onboarding-2021.fleet-management-service.views.layout :as layout]
-            [winter-onboarding-2021.fleet-management.fixtures :as fixtures]))
+            [winter-onboarding-2021.fleet-management-service.views.cab :as views]
+            [winter-onboarding-2021.fleet-management-service.handlers.cab :as handlers]))
 
 (use-fixtures :once fixtures/config fixtures/db-connection)
 (use-fixtures :each fixtures/clear-db)
@@ -13,8 +16,8 @@
   (testing "POST /cabs/ endpoint with valid cab data, shoudld redirect to '/cabs/<<uuid of new cab>> "
     (let [response (handlers/create {:multipart-params
                                      {:name "Test cab"
-                                      :licence_plate "KA20X1234"
-                                      :distance_travelled "1223"}})
+                                      :licence-plate "KA20X1234"
+                                      :distance-travelled "1223"}})
           cab (first (models/find-by-keys {:licence-plate "KA20X1234"}))]
 
       (is (= 302 (:status response)))
@@ -27,30 +30,62 @@
       (is (= (str "/cabs/" (:cabs/id cab))
              (get-in response [:headers "Location"])))
 
-      (is (= "" (:body response))))))
+      (is (= "" (:body response)))))
 
-(testing "POST /cabs/ endpoint with invalid cab data, should redirect to '/cabs/new"
-  (let [invalid-cab {:name "Test cab"
-                     :licence_plate "KA20X1234"}]
-    (is (= {:status 302
-            :flash {:error true
-                    :style-class "alert alert-danger"
-                    :message "Could not add cab, try again!"
-                    :data invalid-cab}
-            :headers {"Location" "/cabs/new"}
-            :body ""}
-           (handlers/create {:multipart-params invalid-cab})))))
+  (testing "POST /cabs/ endpoint with invalid cab data, should redirect to '/cabs/new"
+    (let [invalid-cab {:name "Test cab"
+                       :licence-plate "KA20X1234"}]
+      (is (= {:status 302
+              :flash {:error true
+                      :style-class "alert alert-danger"
+                      :message "Could not add cab, try again!"
+                      :data invalid-cab}
+              :headers {"Location" "/cabs/new"}
+              :body ""}
+             (handlers/create {:multipart-params invalid-cab}))))))
 
 (deftest view-single-cab
   (testing "Should return 200 code with the HTML of the single cab details view"
     (let [cab (models/create {:name "Foo cab"
                               :licence-plate "Foo Licence Plate"
                               :distance-travelled 19191})
-          output-html (layout/application {}
-                                          (:cabs/name cab)
-                                          (views/cab cab))]
-      (is (= {:status 200
-              :body output-html}
-             (-> {:params {:id (str (:cabs/id cab))}}
-                 handlers/view-cab
-                 (select-keys [:status :body])))))))
+          content (views/cab cab)]
+      (is (= {:title (:name cab)
+              :content content}
+             (handlers/view-cab {:params {:id (str (:cabs/id cab))}}))))))
+
+(deftest list-cabs-handler
+  (testing "Should return a list of 3 rows of cabs"
+    (let [cabs (factories/create-cabs 3)]
+      (doall (map models/create cabs))
+      (with-redefs [config/get-page-size (constantly 2)]
+        (is (= 2 (count (hf/hiccup-find [:tbody :tr] (handlers/get-cabs {})))))
+        (is (not-empty (hf/hiccup-find [:#cab-next-page] (handlers/get-cabs {})))))))
+
+  (testing "Should return a list of 10 rows of cabs with next Page link"
+    (let [cabs (factories/create-cabs 12)]
+      (doall (map models/create cabs))
+      (is (= 10 (count (hf/hiccup-find [:tbody :tr] (handlers/get-cabs {})))))
+      (is (= 1 (count (hf/hiccup-find [:#cab-next-page] (handlers/get-cabs {})))))))
+
+  (testing "Should return 8 rows of cabs in page number 2"
+    (is (= 5 (count (hf/hiccup-find [:tbody :tr]
+                                    (handlers/get-cabs
+                                     {:params
+                                      {:page "2"}})))))
+    (is (= 0 (count (hf/hiccup-find [:#cab-next-page]
+                                    (handlers/get-cabs
+                                     {:params
+                                      {:page "2"}}))))))
+
+  (testing "Should return 5 colums for :name :distance-travelled :licence-plate 
+            :created-at :updated-at"
+    (let [cabs-list (handlers/get-cabs {})
+          hiccup-text (hf/hiccup-text cabs-list)]
+      (is (= 5 (count (hf/hiccup-find [:thead :tr :th]
+                                      cabs-list))))
+      (is (str/includes? hiccup-text "name"))
+      (is (str/includes? hiccup-text "distance-travelled"))
+      (is (str/includes? hiccup-text "licence-plate"))
+      (is (str/includes? hiccup-text "created-at"))
+      (is (str/includes? hiccup-text "updated-at")))))

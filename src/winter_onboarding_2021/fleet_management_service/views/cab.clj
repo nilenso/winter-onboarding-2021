@@ -9,10 +9,10 @@
      [:input (merge {:class "form-control" :type "text" :name name}
                     options)]]))
 
-(defn cab-form [{:keys [name distance_travelled licence_plate]}]
+(defn cab-form [{:keys [name distance-travelled licence-plate]}]
   [:div {:id "content"}
    [:h1 {:class "text-success"} "This is the form page"]
-   [:form {:action "/cabs/" :method "POST" :enctype "multipart/form-data"}
+   [:form {:action "/cabs" :method "POST" :enctype "multipart/form-data"}
     [:div {:class "mb-3"}
      (labelled-text-input
       "Cab Name"
@@ -23,13 +23,13 @@
      (labelled-text-input
       "Licence Plate"
       :required true
-      :value licence_plate)]
+      :value licence-plate)]
     [:div {:class "mb-3"}
      (labelled-text-input
       "Distance Travelled"
       :type "number"
       :required true
-      :value distance_travelled)]
+      :value distance-travelled)]
     [:button {:type "submit" :class "btn btn-primary"} "Submit"]]])
 
 (defn cab [cab]
@@ -41,3 +41,20 @@
    [:div {:class "mt-5"}
     [:div "Distance Travlled"]
     [:h3 (:cabs/distance-travelled cab)]]])
+
+(defn show-cabs [cabs page-num show-next-page?]
+  (let [head [:name :licence-plate :distance-travelled :created-at :updated-at]
+        next-page-query (str "?page=" (inc page-num))]
+    [:div
+     [:table {:class "table table-dark min-vh-40"}
+      [:thead [:tr
+               (map (fn [col] [:th (str col)])
+                    head)]]
+      [:tbody (map
+               (fn [row] [:tr (map
+                               (fn [cell] [:td (str cell)])
+                               row)])
+               cabs)]]
+     [:div {:class "text-end"}
+      (if show-next-page?
+        [:a {:id "cab-next-page" :href next-page-query}  "Next Page > "] ())]]))

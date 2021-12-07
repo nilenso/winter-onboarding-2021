@@ -5,6 +5,8 @@
             [mount.core :as mount :refer [defstate]]
             [ring.middleware.multipart-params :refer [wrap-multipart-params]]
             [ring.middleware.flash :refer [wrap-flash]]
+            [ring.middleware.params :refer [wrap-params]]
+            [ring.middleware.keyword-params :refer [wrap-keyword-params]]
             [ring.middleware.session :refer [wrap-session]]
             [winter-onboarding-2021.fleet-management-service.routes :as r]
             [winter-onboarding-2021.fleet-management-service.middleware :as middleware]
@@ -19,6 +21,8 @@
    wrap-flash
    middleware/keywordize-multipart-params
    wrap-multipart-params
+   wrap-keyword-params
+   wrap-params
    wrap-session
    logger/wrap-with-logger))
 

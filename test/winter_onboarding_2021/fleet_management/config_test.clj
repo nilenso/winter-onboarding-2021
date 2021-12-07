@@ -1,5 +1,5 @@
 (ns winter-onboarding-2021.fleet-management.config-test
-  (:require [clojure.test :refer [deftest is testing use-fixtures]]
+  (:require [clojure.test :refer [deftest is testing]]
             [winter-onboarding-2021.fleet-management-service.config :as config]))
 
 (deftest profile

@@ -13,3 +13,6 @@
   :start (read-config (io/resource "config.edn")
                       {:profile (profile)})
   :stop nil)
+
+(defn get-page-size []
+  (:default-page-size config))

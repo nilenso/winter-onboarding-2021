@@ -1,4 +1,4 @@
-(ns winter-onboarding-2021.fleet-management-service.views.content)
+(ns winter-onboarding-2021.fleet-management-service.views.core)
 
 (defn index []
   [:div {:id "content"}
