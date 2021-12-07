@@ -15,7 +15,7 @@
   ["/" [["public" {:get (br/->Resources {:prefix "/bootstrap"})}]
         ["cabs" {"" {:get (wrap-layout handlers/get-cabs)
                      :post handlers/create}
-                 "new" {:get (wrap-layout handlers/new)}
+                 "/new" {:get (wrap-layout handlers/new)}
                  [:id] {:get handlers/view-cab}}]
         ["healthcheck" {:get (wrap-json-response handler/health-check)}]
         ["index" {:get (wrap-layout handler/index)}]
