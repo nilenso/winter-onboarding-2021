@@ -3,7 +3,10 @@
             [clojure.spec.alpha :as s]
             [winter-onboarding-2021.fleet-management-service.specs :as specs]))
 
-(defn generate-cab [] (gen/generate (s/gen ::specs/cabs)))
+(defn generate-cab [num]
+  (s/gen (s/coll-of ::specs/cabs
+                    :distinct :true
+                    :count num)))
 
 (defn create-cabs [num]
-  (take num (repeatedly generate-cab)))
+  (gen/generate (generate-cab num)))

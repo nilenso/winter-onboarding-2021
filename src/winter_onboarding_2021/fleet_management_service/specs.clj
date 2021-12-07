@@ -2,7 +2,7 @@
   (:require [clojure.spec.alpha :as s]))
 
 (s/def :cabs/name string?)
-(s/def :cabs/licence-plate string?)
+(s/def :cabs/licence-plate (s/and string? not-empty))
 (s/def :cabs/distance-travelled (s/int-in 0 100000000000))
 (s/def :cabs-form/distance-travelled (s/conformer
                                       #(try (Long/parseLong %)
