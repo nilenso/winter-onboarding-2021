@@ -47,7 +47,8 @@
         :data-bs-dismiss "modal"
         :type "button"}]]
      [:div {:class "modal-body"} (:body data)]
-     [:div {:class "modal-footer"}]]]])
+     [:div {:class "modal-footer"}
+      (:footer data)]]]])
 
 (defn cab [cab]
   [:div {:id "content" :class "p-5"}
