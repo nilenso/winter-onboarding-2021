@@ -72,3 +72,8 @@
         (models/update! id validated-cab)
         (merge update-success-flash
                (response/redirect (format "/cabs/%s" id)))))))
+
+(defn update-cab-view [req]
+  (let [cab (models/get-by-id (get-in req [:params :id]))]
+    {:title "Update cab"
+     :content (views/update-cab-form cab)}))

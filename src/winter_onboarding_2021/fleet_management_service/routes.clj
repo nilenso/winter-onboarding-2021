@@ -16,7 +16,9 @@
         ["cabs" {"" {:get (wrap-layout handlers/get-cabs)
                      :post handlers/create}
                  "/new" {:get (wrap-layout handlers/new)}
-                 [:id] {:get handlers/view-cab}}]
+                 ["/" :id] {"/edit" {:get (wrap-layout handlers/update-cab-view)}
+                            :get (wrap-layout handlers/view-cab)
+                            :post handlers/update-cab}}]
         ["healthcheck" {:get (wrap-json-response handler/health-check)}]
         ["index" {:get (wrap-layout handler/index)}]
         [true (fn [_] {:status 404 :body "Not found"})]]])

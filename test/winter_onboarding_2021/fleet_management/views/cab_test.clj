@@ -56,7 +56,7 @@
                     :licence-plate "HR20A 1234"
                     :distance-travelled 12333}
          output-view (cab/update-cab-form cab)]
-     (is (= 3 (count (hf/hiccup-find [:input.form-control] output-view))))
+     (is (= 2 (count (hf/hiccup-find [:input.form-control] output-view))))
      (is (str/includes? (html5 output-view) (:cabs/name cab)))
      (is (str/includes? (html5 output-view) (str (:cabs/distance-travelled cab))))
-     (is (str/includes? (html5 output-view) (:cabs/licence-plate cab))))))
+     (is (= false (str/includes? (html5 output-view) (:cabs/licence-plate cab)))))))
