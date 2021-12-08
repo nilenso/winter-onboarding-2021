@@ -15,6 +15,11 @@
            :style-class "alert alert-success"
            :message "Cab added successfully!"}})
 
+(def update-success-flash
+  {:flash {:success true
+           :style-class "alert alert-success"
+           :message "Cab updated successfully!"}})
+
 (defn create [{:keys [multipart-params]}]
   (let [validated-cab (s/conform ::specs/create-cab-form
                                  multipart-params)]
@@ -49,3 +54,19 @@
     (views/show-cabs cabs
                      current-page
                      show-next-page?)))
+(defn update-cab [req]
+  (let [cab (req :multipart-params)
+        id (get-in req [:params :id])
+        validated-cab (s/conform ::specs/create-cab-form
+                                 cab)]
+    (println "This is id" id)
+    (if (s/invalid? validated-cab)
+      (-> error-flash
+          (assoc-in [:flash :data] cab)
+          (merge (response/redirect "/cabs/new")))
+      (do
+        (models/update! id validated-cab)
+        (merge update-success-flash (response/redirect
+                              (format
+                               "/cabs/%s"
+                               id)))))))

@@ -3,7 +3,7 @@
 
 (defn labelled-text-input [label & args]
   (let [options (apply hash-map args)
-        name (csk/->snake_case_string label)]
+        name (csk/->kebab-case-string label)]
     [:div
      [:label {:for label :class "form-label"} label]
      [:input (merge {:class "form-control" :type "text" :name name}
@@ -58,3 +58,28 @@
      [:div {:class "text-end"}
       (if show-next-page?
         [:a {:id "cab-next-page" :href next-page-query}  "Next Page > "] ())]]))
+
+(defn update-cab-form [{:cabs/keys [id name licence-plate distance-travelled]}]
+  (let [route (str "/cabs/" id)]
+    [:div {:id "content"}
+     [:h1 {:class "text-success"} "Update Cab"]
+     [:form {:action route :method "POST" :enctype "multipart/form-data"}
+      [:div
+       [:div {:class "mb-3"}
+        (labelled-text-input
+         "Cab Name"
+         :name "name"
+         :required true
+         :value name)]
+       [:div {:class "mb-3"}
+        (labelled-text-input
+         "Licence Plate"
+         :required true
+         :value licence-plate)]
+       [:div {:class "mb-3"}
+        (labelled-text-input
+         "Distance Travelled"
+         :type "number"
+         :required true
+         :value distance-travelled)]
+       [:button {:type "submit" :class "btn btn-primary"} "Update"]]]]))

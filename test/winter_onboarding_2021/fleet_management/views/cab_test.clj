@@ -1,6 +1,8 @@
 (ns winter-onboarding-2021.fleet-management.views.cab-test
   (:require [clojure.test :refer [deftest is testing]]
             [clojure.string :as str]
+            [hiccup-find.core :as hf]
+            [hiccup.page :refer [html5]]
             [winter-onboarding-2021.fleet-management-service.views.cab :as cab]
             [winter-onboarding-2021.fleet-management-service.views.layout :as layout]))
 
@@ -32,7 +34,7 @@
            (format "<div class=\"alert alert-danger\">%s</div>" error-msg))))))
 
 (deftest view-single-cab
-  (testing "Shold have the details like name, licence plate and distance travelled of single cab"
+  (testing "Should have the details like name, licence plate and distance travelled of single cab"
     (let [cab #:cabs{:name "Maruti Cab"
                      :licence-plate "HR20A 1234"
                      :distance-travelled 12333}
@@ -40,9 +42,21 @@
                        {} ; request is empty
                        (format "Cab %s" (:name cab))
                        (cab/cab cab))]
-
+      
       (is (str/includes? output-html (:cabs/name cab)))
 
       (is (str/includes? output-html (:cabs/licence-plate cab)))
 
       (is (str/includes? output-html (str (:cabs/distance-travelled cab)))))))
+
+(deftest update-cab-form
+ (testing "Should have form labels name, licence plate and distance travelled"
+   (let [cab #:cabs{:id (java.util.UUID/randomUUID)
+                    :name "Maruti Cab"
+                    :licence-plate "HR20A 1234"
+                    :distance-travelled 12333}
+         output-view (cab/update-cab-form cab)]
+     (is (= 3 (count (hf/hiccup-find [:input.form-control] output-view))))
+     (is (str/includes? (html5 output-view) (:cabs/name cab)))
+     (is (str/includes? (html5 output-view) (str (:cabs/distance-travelled cab))))
+     (is (str/includes? (html5 output-view) (:cabs/licence-plate cab))))))

@@ -17,3 +17,6 @@
 
 (defn cabs-count []
   (:count (first (cab-db/get-count))))
+
+(defn update! [id cab]
+  (cab-db/update! (java.util.UUID/fromString id) cab))
