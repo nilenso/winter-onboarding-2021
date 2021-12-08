@@ -96,17 +96,21 @@
     (let [cab {:name "Maruti Cab"
                :licence-plate "HR20A 1234"
                :distance-travelled 12333}
-          id (str ((models/create cab) :cabs/id))
+          cab-id (str (:cabs/id (models/create cab)))
           new-cab {:name "Maruti Cab"
-                      :distance-travelled "13000"}
-          response (handlers/update-cab {:params {:id id}
+                   :distance-travelled "13000"}
+          response (handlers/update-cab {:params {:id cab-id}
                                          :multipart-params new-cab})]
       (is (= 302 (response :status)))
       (is (= {:success true
               :style-class "alert alert-success"
               :message "Cab updated successfully!"} (response :flash)))
-      (is (= (str "/cabs/" id)
-             (get-in response [:headers "Location"])))))
+      (is (= (str "/cabs/" cab-id)
+             (get-in response [:headers "Location"])))
+      (is (= {:cabs/name "Maruti Cab"
+              :cabs/distance-travelled 13000}
+             (select-keys (models/get-by-id cab-id)
+                          [:cabs/name :cabs/distance-travelled])))))
 
   (testing "Should redirect with an error message when update fails"
     (let [cab-id (:cabs/id (models/create {:name "Some name"
@@ -116,4 +120,8 @@
                                          :multipart-params {:foo "boo"}})]
       (is (= 302 (:status response)))
       (is (= true (get-in response [:flash :error])))
-      (is (re-find #"(?i)could not update" (get-in response [:flash :message]))))))
+      (is (re-find #"(?i)could not update" (get-in response [:flash :message])))
+      (is (= {:cabs/name "Some name"
+              :cabs/distance-travelled 123}
+             (select-keys (models/get-by-id (str cab-id))
+                          [:cabs/name :cabs/distance-travelled]))))))
