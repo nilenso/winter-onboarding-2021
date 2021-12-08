@@ -50,7 +50,7 @@
                               :licence-plate "Foo Licence Plate"
                               :distance-travelled 19191})
           content (views/cab cab)]
-      (is (= {:title (:cabs/name cab)
+      (is (= {:title (str "Cab - "(:cabs/name cab))
               :content content}
              (handlers/view-cab {:params {:id (str (:cabs/id cab))}}))))))
 
