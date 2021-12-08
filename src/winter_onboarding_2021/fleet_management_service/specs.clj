@@ -15,6 +15,10 @@
                    :cabs/licence-plate
                    :cabs-form/distance-travelled]))
 
+(s/def ::update-cab-form
+  (s/keys :req-un [:cabs/name
+                   :cabs-form/distance-travelled]))
+
 (s/def ::cabs
   (s/keys :req [:cabs/name
                 :cabs/licence-plate

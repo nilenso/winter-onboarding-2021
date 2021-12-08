@@ -78,7 +78,7 @@
                                      {:params
                                       {:page "2"}}))))))
 
-  (testing "Should return 5 colums for :name :distance-travelled :licence-plate 
+  (testing "Should return 5 colums for :name :distance-travelled :licence-plate
             :created-at :updated-at"
     (let [cabs-list (handlers/get-cabs {})
           hiccup-text (hf/hiccup-text cabs-list)]
@@ -91,14 +91,13 @@
       (is (str/includes? hiccup-text "updated-at")))))
 
 (deftest update-cab
-  (testing "Should redirect to /cabs:id with success flash 
+  (testing "Should redirect to /cabs:id with success flash
             after successfull update of cab with given id and cab data"
     (let [cab {:name "Maruti Cab"
                :licence-plate "HR20A 1234"
                :distance-travelled 12333}
           id (str ((models/create cab) :cabs/id))
           new-cab {:name "Maruti Cab"
-                      :licence-plate "HR20A 1234"
                       :distance-travelled "13000"}
           response (handlers/update-cab {:params {:id id}
                                          :multipart-params new-cab})]
@@ -114,9 +113,7 @@
                                            :licence-plate "License plate"
                                            :distance-travelled 123}))
           response (handlers/update-cab {:params {:id (str cab-id)}
-                                         :multipart-params {:name "foo"
-                                                            :distance-travelled 234
-                                                            :licence-plate "something"}})]
+                                         :multipart-params {:foo "boo"}})]
       (is (= 302 (:status response)))
       (is (= true (get-in response [:flash :error])))
       (is (re-find #"(?i)could not update" (get-in response [:flash :message]))))))

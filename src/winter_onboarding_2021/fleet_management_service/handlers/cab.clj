@@ -63,7 +63,7 @@
 (defn update-cab [req]
   (let [cab (:multipart-params req)
         id (get-in req [:params :id])
-        validated-cab (s/conform ::specs/create-cab-form cab)]
+        validated-cab (s/conform ::specs/update-cab-form cab)]
     (if (s/invalid? validated-cab)
       (-> update-error-flash
           (assoc-in [:flash :data] cab)
