@@ -58,9 +58,20 @@
   (testing "Should return a list of 2 rows of cabs"
     (with-redefs [config/get-page-size (constantly 2)]
       (let [cabs (factories/create-cabs 3)
-            _ (doall (map models/create cabs))
+            db-cabs (doall (map models/create cabs))
             output (handlers/get-cabs {})]
         (is (= 2 (count (hf/hiccup-find [:tbody :tr] (:content output)))))
+        (is (= [[:tr [[:td (:cabs/name (first db-cabs))]
+                      [:td (:cabs/distance-travelled (first db-cabs))]
+                      [:td (:cabs/licence-plate (first db-cabs))]
+                      [:td (:cabs/created-at (first db-cabs))]
+                      [:td (:cabs/updated-at (first db-cabs))]]]
+                [:tr [[:td (:cabs/name (second db-cabs))]
+                      [:td (:cabs/distance-travelled (second db-cabs))]
+                      [:td (:cabs/licence-plate (second db-cabs))]
+                      [:td (:cabs/created-at (second db-cabs))]
+                      [:td (:cabs/updated-at (second db-cabs))]]]]
+               (hf/hiccup-find [:tbody :tr] (:content output))))
         (is (not-empty (hf/hiccup-find [:#cab-next-page] (:content output)))))))
 
   (testing "Should return a list of 10 rows of cabs with next Page link"
