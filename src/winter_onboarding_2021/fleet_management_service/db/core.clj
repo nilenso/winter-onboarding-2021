@@ -35,3 +35,6 @@
 
 (defn find-by-keys! [table key-map]
   (sql/find-by-keys db-conn table key-map sql-opts))
+
+(defn delete! [table where-params]
+  (sql/delete! db-conn table where-params sql-opts))

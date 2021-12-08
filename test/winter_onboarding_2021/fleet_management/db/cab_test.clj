@@ -2,7 +2,8 @@
   (:require [clojure.test :refer [deftest is testing use-fixtures]]
             [winter-onboarding-2021.fleet-management-service.db.cab :as cab-db]
             [winter-onboarding-2021.fleet-management.fixtures :as fixtures]
-            [winter-onboarding-2021.fleet-management.factories :as factories]))
+            [winter-onboarding-2021.fleet-management.factories :as factories]
+            [winter-onboarding-2021.fleet-management-service.models.cab :as models]))
 
 (use-fixtures :once fixtures/config fixtures/db-connection)
 (use-fixtures :each fixtures/clear-db)
@@ -40,6 +41,7 @@
         (is (vectors-contain-same-elements?  (take limit cabs)
                                              (map dissoc-irrelevant-keys
                                                   (cab-db/select! offset limit))))))))
+
 (deftest update-cab
   (let [cab {:name "Maruti"
              :licence-plate "MHOR1234"
@@ -51,3 +53,15 @@
                   :distance-travelled 123500}]
     (cab-db/update! id new-cab̦)
     (is (= 123500 ((cab-db/get-by-id id) :cabs/distance-travelled)))))
+
+(deftest deletion
+  (testing "Should delete a cab with a specific ID"
+    (let [cab {:name "Foo cab"
+               :licence-plate "KA20X 2345"
+               :distance-travelled 122290}
+          db-cab (models/create cab)]
+      (cab-db/delete {:id (:cabs/id db-cab)})
+      (is (= nil (-> db-cab
+                     :cabs/id
+                     str
+                     models/get-by-id))))))

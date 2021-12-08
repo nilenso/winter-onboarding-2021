@@ -61,3 +61,15 @@
                    :distance-travelled 123500}]
       (cab-model/update! id new-cab)
       (is (= 123500 ((cab-model/get-by-id id) :cabs/distance-travelled))))))
+
+(deftest delete-by-id
+  (testing "Should delete a cab which has a specific id"
+    (let [cab #:cabs{:name "Foo cab 1"
+                     :licence-plate "KA23X 4567"
+                     :distance-travelled 122772}
+          db-cab (cab-model/create cab)]
+      (cab-model/delete-by-id (str (:cabs/id db-cab)))
+      (is (= nil (-> db-cab
+                     :cabs/id
+                     str
+                     cab-model/get-by-id))))))

@@ -33,3 +33,5 @@
   (db/query! (sql/format (-> (update :cabs)
                              (set cab)
                              (where [:= :id id])))))
+(defn delete [where-params]
+  (db/delete! :cabs where-params))

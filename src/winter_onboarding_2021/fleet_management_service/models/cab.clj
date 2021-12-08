@@ -20,3 +20,7 @@
 
 (defn update! [id cab]
   (cab-db/update! (java.util.UUID/fromString id) cab))
+
+(defn delete-by-id [id]
+  {:pre [(string? id)]}
+  (cab-db/delete {:id (java.util.UUID/fromString id)}))
