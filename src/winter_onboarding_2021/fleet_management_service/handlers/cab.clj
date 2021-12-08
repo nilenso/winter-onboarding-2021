@@ -35,7 +35,7 @@
 
 (defn view-cab [request]
   (let [cab (models/get-by-id (get-in request [:params :id]))]
-    {:title (:cabs/name cab)
+    {:title (str "Cab - "(:cabs/name cab))
      :content (views/cab cab)}))
 
 (defn get-cabs [req]
