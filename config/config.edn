@@ -4,4 +4,8 @@
                     :dev #ref [:secrets :dev-db]
                     :prod #ref [:secrets :prod-db]
                     :ci #ref [:secrets :ci-db]}
+ :log #profile {:test {}
+                :dev  {}
+                :prod {}
+                :ci {}}
  :default-page-size 10}
