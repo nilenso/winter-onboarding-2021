@@ -16,3 +16,6 @@
 
 (defn get-page-size []
   (:default-page-size config))
+
+(defn get-log-config []
+  (:log config))
