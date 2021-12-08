@@ -12,6 +12,6 @@ lein migrations migrate
 ENV=test lein migrations migrate
 ```
 6. Run the tests `lein test`
-7. Run the server `lein run`
+7. Run the server `lein run server`
 
 The server will be available at `http://localhost:3000/`
