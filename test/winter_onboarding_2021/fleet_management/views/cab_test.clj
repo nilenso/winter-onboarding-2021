@@ -1,5 +1,6 @@
 (ns winter-onboarding-2021.fleet-management.views.cab-test
   (:require [clojure.test :refer [deftest is testing]]
+            [hiccup-find.core :as hf]
             [clojure.string :as str]
             [hiccup-find.core :as hf]
             [hiccup.page :refer [html5]]
@@ -35,27 +36,41 @@
                      :licence-plate "HR20A 1234"
                      :distance-travelled 12333}
           hiccup-output (layout/application
-                       {} ; request is empty
-                       (format "Cab %s" (:name cab))
-                       (cab/cab cab))]
-      
+                         {} ; request is empty
+                         (format "Cab %s" (:cabs/name cab))
+                         (cab/cab cab))]
+
       (is (= (hf/hiccup-text (hf/hiccup-find [:h2] hiccup-output))
              (:cabs/name cab)))
 
-      (is (= (hf/hiccup-text (first (hf/hiccup-find [:h3] hiccup-output))) 
+      (is (= (hf/hiccup-text (first (hf/hiccup-find [:h3] hiccup-output)))
              (:cabs/licence-plate cab)))
 
       (is (= (hf/hiccup-text (second (hf/hiccup-find [:h3] hiccup-output)))
-           (str (:cabs/distance-travelled cab)))))))
+             (str (:cabs/distance-travelled cab)))))))
 
 (deftest update-cab-form
- (testing "Should have form labels name, licence plate and distance travelled"
-   (let [cab #:cabs{:id (java.util.UUID/randomUUID)
-                    :name "Maruti Cab"
-                    :licence-plate "HR20A 1234"
-                    :distance-travelled 12333}
-         output-view (cab/update-cab-form cab)]
-     (is (= 3 (count (hf/hiccup-find [:input.form-control] output-view))))
-     (is (str/includes? (html5 output-view) (:cabs/name cab)))
-     (is (str/includes? (html5 output-view) (str (:cabs/distance-travelled cab))))
-     (is (str/includes? (html5 output-view) (:cabs/licence-plate cab))))))
+  (testing "Should have form labels name, licence plate and distance travelled"
+    (let [cab #:cabs{:id (java.util.UUID/randomUUID)
+                     :name "Maruti Cab"
+                     :licence-plate "HR20A 1234"
+                     :distance-travelled 12333}
+          output-view (cab/update-cab-form cab)]
+      (is (= 3 (count (hf/hiccup-find [:input.form-control] output-view))))
+      (is (str/includes? (html5 output-view) (:cabs/name cab)))
+      (is (str/includes? (html5 output-view) (str (:cabs/distance-travelled cab))))
+      (is (str/includes? (html5 output-view) (:cabs/licence-plate cab))))))
+
+(deftest delete-modal
+  (testing "Should have name of the cab in its title"
+    (let [output (cab/modal {:modal-id "deleteCabModal"
+                             :title "Delete Foo Cab?"
+                             :body "Once the cab is deleted, it can't be recovered."
+                             :footer (list [:button
+                                            {:data-bs-dismiss "modal", :type "button" :class "btn btn-secondary"} "Close"]
+                                           [:form {:action "/cabs/delete" :method "POST"}
+                                            [:input {:name "id" :value (java.util.UUID/randomUUID) :hidden true}]
+                                            [:button {:type "submit" :class "btn btn-danger"} "Delete"]])})
+          hiccup-find-result (hf/hiccup-find [:h5.modal-title] output)
+          result-string (hf/hiccup-text hiccup-find-result)]
+      (is (= "Delete Foo Cab?" result-string)))))
