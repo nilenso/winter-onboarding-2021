@@ -107,4 +107,16 @@
               :style-class "alert alert-success"
               :message "Cab updated successfully!"} (response :flash)))
       (is (= (str "/cabs/" id)
-             (get-in response [:headers "Location"]))))))
+             (get-in response [:headers "Location"])))))
+
+  (testing "Should redirect with an error message when update fails"
+    (let [cab-id (:cabs/id (models/create {:name "Some name"
+                                           :licence-plate "License plate"
+                                           :distance-travelled 123}))
+          response (handlers/update-cab {:params {:id (str cab-id)}
+                                         :multipart-params {:name "foo"
+                                                            :distance-travelled 234
+                                                            :licence-plate "something"}})]
+      (is (= 302 (:status response)))
+      (is (= true (get-in response [:flash :error])))
+      (is (re-find #"(?i)could not update" (get-in response [:flash :message]))))))

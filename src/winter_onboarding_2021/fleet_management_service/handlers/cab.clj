@@ -10,6 +10,12 @@
   {:flash {:error true
            :style-class "alert alert-danger"
            :message "Could not add cab, try again!"}})
+
+(def update-error-flash
+  {:flash {:error true
+           :style-class "alert alert-danger"
+           :message "Could not update cab, try again!"}})
+
 (def success-flash
   {:flash {:success true
            :style-class "alert alert-success"
@@ -55,18 +61,14 @@
                      current-page
                      show-next-page?)))
 (defn update-cab [req]
-  (let [cab (req :multipart-params)
+  (let [cab (:multipart-params req)
         id (get-in req [:params :id])
-        validated-cab (s/conform ::specs/create-cab-form
-                                 cab)]
-    (println "This is id" id)
+        validated-cab (s/conform ::specs/create-cab-form cab)]
     (if (s/invalid? validated-cab)
-      (-> error-flash
+      (-> update-error-flash
           (assoc-in [:flash :data] cab)
           (merge (response/redirect "/cabs/new")))
       (do
         (models/update! id validated-cab)
-        (merge update-success-flash (response/redirect
-                              (format
-                               "/cabs/%s"
-                               id)))))))
+        (merge update-success-flash
+               (response/redirect (format "/cabs/%s" id)))))))
