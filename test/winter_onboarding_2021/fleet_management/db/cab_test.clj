@@ -10,7 +10,6 @@
 (defn vectors-contain-same-elements? [x y]
   (= (set x) (set y)))
 
-
 (defn dissoc-irrelevant-keys [created-cab]
   (dissoc created-cab
           :cabs/id
@@ -41,3 +40,14 @@
         (is (vectors-contain-same-elements?  (take limit cabs)
                                              (map dissoc-irrelevant-keys
                                                   (cab-db/select! offset limit))))))))
+(deftest update-cab
+  (let [cab {:name "Maruti"
+             :licence-plate "MHOR1234"
+             :distance-travelled 123340}
+        inserted-cab (cab-db/create cab)
+        id (inserted-cab :cabs/id)
+        new-cab̦ {:name "Maruti"
+                  :licence-plate "MHOR1234"
+                  :distance-travelled 123500}]
+    (cab-db/update! id new-cab̦)
+    (is (= 123500 ((cab-db/get-by-id id) :cabs/distance-travelled)))))
