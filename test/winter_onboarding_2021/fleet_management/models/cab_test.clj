@@ -11,8 +11,8 @@
   (testing "Should add a cab"
     ;; NOTE: the cab/create input needs to be auto kebab'ised, need to use honeysql for this
     (let [created-cab (cab-model/create {:licence_plate "HR20X 6710"
-                                   :name "Maruti Celerio"
-                                   :distance_travelled 2333})]
+                                         :name "Maruti Celerio"
+                                         :distance_travelled 2333})]
       (is (= #:cabs{:licence-plate "HR20X 6710"
                     :name "Maruti Celerio"
                     :distance-travelled 2333}
@@ -30,8 +30,8 @@
 (deftest get-single-cab
   (testing "Should get details of a single cab with a certain ID"
     (let [cab (cab-model/create {:licence-plate "HR20X 9999"
-                           :name "Maruti Celerio 12"
-                           :distance-travelled 12221})]
+                                 :name "Maruti Celerio 12"
+                                 :distance-travelled 12221})]
       (is (= cab
              (cab-model/get-by-id (str (:cabs/id cab)))))))
 
@@ -73,3 +73,18 @@
                      :cabs/id
                      str
                      cab-model/get-by-id))))))
+
+(deftest get-cab-by-licence-plate
+  (testing "Should return a cab given a licence plate"
+    (let [cab {:name "Maruti"
+               :licence-plate "ODAH1234"
+               :distance-travelled 123445}
+          cab-id (:cabs/id (cab-model/create cab))
+          cab-by-licence (first (cab-model/get-by-licence-plate (:licence-plate cab)))]
+      (is (= #:cabs{:id cab-id
+                    :name "Maruti"
+                    :licence-plate "ODAH1234"
+                    :distance-travelled 123445} (select-keys
+                                                 cab-by-licence
+                                                 [:cabs/id :cabs/name :cabs/licence-plate :cabs/distance-travelled])))
+      (is (= cab-id (:cabs/id cab-by-licence))))))

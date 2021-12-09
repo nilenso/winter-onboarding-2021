@@ -24,3 +24,6 @@
 (defn delete-by-id [id]
   {:pre [(string? id)]}
   (cab-db/delete {:id (java.util.UUID/fromString id)}))
+
+(defn get-by-licence-plate [licence-no]
+  (cab-db/find-by-keys {:licence-plate licence-no}))
