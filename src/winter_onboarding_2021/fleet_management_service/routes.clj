@@ -9,7 +9,10 @@
 (defn wrap-layout [handler]
   (fn [request]
     (let [data (handler request)]
-      (response/response (layout/application request (:title data) (:content data))))))
+      (response/response (layout/application
+                          request
+                          (:title data)
+                          (:content data))))))
 
 (def routes
   ["/" [["public" {:get (br/->Resources {:prefix "/bootstrap"})}]

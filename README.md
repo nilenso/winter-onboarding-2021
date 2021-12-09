@@ -15,3 +15,14 @@ Steps:
 1. Clone this repo
 2. `cd` into the repo and run `lein deps`
 3. Run `lein test` to run the tests
+
+
+## What will handlers return?
+
+All handlers which render some HTML, should return a structure like below:
+```clojure
+{:title "Whatever Page title"
+ :content [:div "Whatever content of div"]}
+```
+
+Other endpoints can return a simple `ring.util.response/response` for returning something.

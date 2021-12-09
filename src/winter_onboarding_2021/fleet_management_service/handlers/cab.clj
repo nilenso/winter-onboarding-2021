@@ -40,12 +40,13 @@
                                (:cabs/id created-cab))))))))
 
 (defn new [request]
-  (views/cab-form
-   (get-in request [:flash :data])))
+  {:title "Add a cab"
+   :content (views/cab-form
+             (get-in request [:flash :data]))})
 
 (defn view-cab [request]
   (let [cab (models/get-by-id (get-in request [:params :id]))]
-    {:title (:name cab)
+    {:title (str "Cab - "(:cabs/name cab))
      :content (views/cab cab)}))
 
 (defn get-cabs [req]
@@ -57,9 +58,10 @@
                             page-size)
         rows-count (models/cabs-count)
         show-next-page? (<= (* current-page page-size) rows-count)]
-    (views/show-cabs cabs
-                     current-page
-                     show-next-page?)))
+    {:title "List cabs"
+     :content (views/show-cabs cabs
+                               current-page
+                               show-next-page?)}))
 (defn update-cab [req]
   (let [cab (:multipart-params req)
         id (get-in req [:params :id])

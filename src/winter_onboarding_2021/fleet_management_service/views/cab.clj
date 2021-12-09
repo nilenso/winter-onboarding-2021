@@ -45,19 +45,24 @@
         :href (str "/cabs/" (:cabs/id cab) "/edit")}
     "Update"]])
 
+(def headers
+  [{:label "Name" :value :cabs/name}
+   {:label "Distance travelled" :value :cabs/distance-travelled}
+   {:label "Licence plate" :value :cabs/licence-plate}
+   {:label "Created at" :value :cabs/created-at}
+   {:label "Updated at" :value :cabs/updated-at}])
+
+(defn gen-cab-row [row]
+  [:tr (map (fn [header] [:td (header row)])
+            (map :value headers))])
+
 (defn show-cabs [cabs page-num show-next-page?]
-  (let [head [:name :licence-plate :distance-travelled :created-at :updated-at]
-        next-page-query (str "?page=" (inc page-num))]
+  (let [next-page-query (str "?page=" (inc page-num))]
     [:div
      [:table {:class "table table-dark min-vh-40"}
-      [:thead [:tr
-               (map (fn [col] [:th (str col)])
-                    head)]]
-      [:tbody (map
-               (fn [row] [:tr (map
-                               (fn [cell] [:td (str cell)])
-                               row)])
-               cabs)]]
+      [:thead [:tr (map (fn [header] [:th (:label header)])
+                        headers)]]
+      [:tbody (map gen-cab-row cabs)]]
      [:div {:class "text-end"}
       (if show-next-page?
         [:a {:id "cab-next-page" :href next-page-query}  "Next Page > "] ())]]))
