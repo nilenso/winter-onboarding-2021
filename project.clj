@@ -6,7 +6,6 @@
   :dependencies [[org.clojure/clojure "1.10.1"]
                  [ring "1.9.4"]
                  [ring/ring-json "0.5.1"]
-                 [ring-logger "1.0.1"]
                  [org.postgresql/postgresql "42.2.24.jre7"]
                  [bidi "2.1.6"]
                  [aero "1.1.6"]

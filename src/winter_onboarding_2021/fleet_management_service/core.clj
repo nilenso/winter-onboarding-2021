@@ -1,6 +1,5 @@
 (ns winter-onboarding-2021.fleet-management-service.core
   (:require [ring.adapter.jetty :as raj]
-            [ring.logger :as logger]
             [bidi.ring :as br]
             [mount.core :as mount :refer [defstate]]
             [ring.middleware.multipart-params :refer [wrap-multipart-params]]
@@ -25,8 +24,8 @@
    wrap-keyword-params
    wrap-params
    wrap-session
-   logger/wrap-with-logger
-   middleware/exception-logging))
+   middleware/exception-logger
+   middleware/request-response-logger))
 
 (defn start-server []
   (let [port (if (int? (:port config/config))
