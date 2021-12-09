@@ -15,6 +15,11 @@
              :style-class "alert alert-danger"
              :message msg}}))
 
+(defn string->uuid [id]
+  (try
+    (java.util.UUID/fromString id)
+    (catch Exception _ nil)))
+
 (def error-flash
   {:flash {:error true
            :style-class "alert alert-danger"
@@ -35,6 +40,13 @@
            :style-class "alert alert-success"
            :message "Cab updated successfully!"}})
 
+(defn- view-cab-response [{:cabs/keys [name] :as cab}]
+  (if cab
+    {:title (str "Cab - " name)
+     :content (views/cab cab)}
+    {:title "No cabs found"
+     :content (views/cab-not-found)}))
+
 (defn create [{:keys [multipart-params]}]
   (let [validated-cab (s/conform ::specs/create-cab-form
                                  multipart-params)]
@@ -54,9 +66,10 @@
              (get-in request [:flash :data]))})
 
 (defn view-cab [request]
-  (let [cab (models/get-by-id (get-in request [:params :id]))]
-    {:title (str "Cab - "(:cabs/name cab))
-     :content (views/cab cab)}))
+  (let [id-or-licence (get-in request [:params :id])]
+    (if-let [id (string->uuid id-or-licence)]
+      (view-cab-response (models/get-by-id id))
+      (view-cab-response (models/get-by-licence-plate id-or-licence)))))
 
 (defn get-cabs [req]
   (let [{:keys [page]} (:params req)
@@ -80,12 +93,13 @@
           (assoc-in [:flash :data] cab)
           (merge (response/redirect "/cabs/new")))
       (do
-        (models/update! id validated-cab)
+        (models/update! (string->uuid id) validated-cab)
         (merge update-success-flash
                (response/redirect (format "/cabs/%s" id)))))))
 
 (defn update-cab-view [req]
-  (let [cab (models/get-by-id (get-in req [:params :id]))]
+  (let [cab (models/get-by-id (string->uuid (get-in req 
+                                                    [:params :id])))]
     {:title (str "Update cab " (:cabs/licence-plate cab))
      :content (views/update-cab-form cab)}))
 
