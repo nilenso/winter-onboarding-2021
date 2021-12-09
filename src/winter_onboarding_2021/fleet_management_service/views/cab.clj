@@ -41,7 +41,9 @@
    [:div {:class "mt-5"}
     [:div "Distance Travlled"]
     [:h3 (:cabs/distance-travelled cab)]]
-   [:a {:id "cab-next-page" :href (str "/cabs/" (:cabs/id cab) "/edit")} "Update > "]])
+   [:a {:id "cab-next-page" :class "btn btn-primary"
+        :href (str "/cabs/" (:cabs/id cab) "/edit")}
+    "Update"]])
 
 (defn show-cabs [cabs page-num show-next-page?]
   (let [head [:name :licence-plate :distance-travelled :created-at :updated-at]
@@ -60,7 +62,7 @@
       (if show-next-page?
         [:a {:id "cab-next-page" :href next-page-query}  "Next Page > "] ())]]))
 
-(defn update-cab-form [{:cabs/keys [id name distance-travelled]}]
+(defn update-cab-form [{:cabs/keys [id name licence-plate distance-travelled]}]
   (let [route (str "/cabs/" id)]
     [:div {:id "content"}
      [:h1 {:class "text-success"} "Update Cab"]
@@ -74,8 +76,14 @@
          :value name)]
        [:div {:class "mb-3"}
         (labelled-text-input
+         "Licence Plate"
+         :required true
+         :disabled true
+         :value licence-plate)]
+       [:div {:class "mb-3"}
+        (labelled-text-input
          "Distance Travelled"
          :type "number"
          :required true
          :value distance-travelled)]
-       [:button {:type "submit" :class "btn btn-primary"} "Update"]]]]))
+       [:button {:type "submit" :class "btn btn-success"} "Update"]]]]))
