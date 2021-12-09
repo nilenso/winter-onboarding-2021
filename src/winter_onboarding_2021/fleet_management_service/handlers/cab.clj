@@ -79,3 +79,8 @@
   (let [cab (models/get-by-id (get-in req [:params :id]))]
     {:title (str "Update cab " (:cabs/licence-plate cab))
      :content (views/update-cab-form cab)}))
+
+(defn delete [request]
+  (let [cab (models/delete-by-id (get-in request [:params :id]))]
+    {:title (:name cab)
+     :content (views/cab cab)}))

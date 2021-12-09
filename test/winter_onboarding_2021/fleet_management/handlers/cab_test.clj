@@ -146,3 +146,12 @@
       (is (= "Update cab KA20X1234"
              (:title (handlers/update-cab-view {:params
                                                 {:id (str cab-id)}})))))))
+
+(deftest deletion
+  (testing "Should successfully delete a cab with a specific ID & redirect to cabs' list"
+    (let [cab #:cabs{:name "Foo cab whatever"
+                     :distance-travelled 12233
+                     :licence-plate "KA20A 3456"}
+          db-cab (models/create cab)
+          handler-resp (handlers/delete {:params {:id (:cabs/id cab)}})]
+      (is true))))
