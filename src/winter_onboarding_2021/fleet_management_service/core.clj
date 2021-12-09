@@ -7,7 +7,6 @@
             [ring.middleware.params :refer [wrap-params]]
             [ring.middleware.keyword-params :refer [wrap-keyword-params]]
             [ring.middleware.session :refer [wrap-session]]
-            [winter-onboarding-2021.fleet-management-service.logger]
             [winter-onboarding-2021.fleet-management-service.routes :as r]
             [winter-onboarding-2021.fleet-management-service.middleware :as middleware]
             [winter-onboarding-2021.fleet-management-service.config :as config]
