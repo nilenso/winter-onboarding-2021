@@ -148,10 +148,27 @@
                                                 {:id (str cab-id)}})))))))
 
 (deftest deletion
-  (testing "Should successfully delete a cab with a specific ID & redirect to cabs' list"
+  (testing "Should redirect to cabs' list when delete succeeds"
     (let [cab #:cabs{:name "Foo cab whatever"
                      :distance-travelled 12233
                      :licence-plate "KA20A 3456"}
           db-cab (models/create cab)
-          handler-resp (handlers/delete {:params {:id (:cabs/id cab)}})]
-      (is true))))
+          id (str (:cabs/id db-cab))
+          handler-resp (handlers/delete {:params {:id id}})]
+      (is (= {:flash {:success true
+                      :style-class "alert alert-success"
+                      :message "Cab deleted successfully"}
+              :status 302
+              :headers {"Location" "/cabs"}
+              :body ""}
+             handler-resp))))
+  (testing "Should redirect to /cabs when delete fails"
+    (let [missing-uuid (str (java.util.UUID/randomUUID))
+          handler-response (handlers/delete {:params {:id missing-uuid}})]
+      (is (= {:flash {:error true
+                      :style-class "alert alert-danger"
+                      :message "Cab does not exist"}
+              :status 302
+              :headers {"Location" "/cabs"}
+              :body ""}
+             handler-response)))))

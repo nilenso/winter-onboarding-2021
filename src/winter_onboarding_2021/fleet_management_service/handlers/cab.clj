@@ -6,6 +6,15 @@
             [winter-onboarding-2021.fleet-management-service.config :as config]
             [winter-onboarding-2021.fleet-management-service.specs :as specs]))
 
+(defn flash-msg [msg success?]
+  (if success?
+   {:flash {:success true
+            :style-class "alert alert-success"
+            :message msg}}
+    {:flash {:error true
+             :style-class "alert alert-danger"
+             :message msg}}))
+
 (def error-flash
   {:flash {:error true
            :style-class "alert alert-danger"
@@ -81,6 +90,9 @@
      :content (views/update-cab-form cab)}))
 
 (defn delete [request]
-  (let [cab (models/delete-by-id (get-in request [:params :id]))]
-    {:title (:name cab)
-     :content (views/cab cab)}))
+  (let [id (get-in request [:params :id])]
+    (if (> (:next.jdbc/update-count (models/delete-by-id id)) 0)
+      (-> (flash-msg "Cab deleted successfully" true)
+          (merge (response/redirect "/cabs")))
+      (-> (flash-msg "Cab does not exist" false)
+          (merge (response/redirect "/cabs"))))))

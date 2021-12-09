@@ -58,7 +58,7 @@
    [:div {:class "mt-5"}
     [:div "Distance Travlled"]
     [:h3 (:cabs/distance-travelled cab)]]
-   [:a {:id "cab-next-page" :class "btn btn-primary"
+   [:a {:id "cab-next-page" :class "btn btn-primary me-2"
         :href (str "/cabs/" (:cabs/id cab) "/edit")}
     "Update"]
    [:button.btn.btn-danger

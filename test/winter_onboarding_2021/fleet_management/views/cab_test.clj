@@ -2,7 +2,6 @@
   (:require [clojure.test :refer [deftest is testing]]
             [hiccup-find.core :as hf]
             [clojure.string :as str]
-            [hiccup-find.core :as hf]
             [hiccup.page :refer [html5]]
             [winter-onboarding-2021.fleet-management-service.views.cab :as cab]
             [winter-onboarding-2021.fleet-management-service.views.layout :as layout]))
