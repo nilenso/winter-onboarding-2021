@@ -96,6 +96,10 @@
    [:td (format-date (:cabs/updated-at row))]
    [:td (format-date (:cabs/created-at row))]])
 
+(defn cab-not-found []
+  [:div {:id "content" :class "p-5"}
+   [:h2 "No cabs found"]])
+
 (defn show-cabs [cabs page-num show-next-page?]
   (let [next-page-query (str "?page=" (inc page-num))]
     [:div

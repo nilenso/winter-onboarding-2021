@@ -48,12 +48,18 @@
 (deftest view-single-cab
   (testing "Should return 200 code with the HTML of the single cab details view"
     (let [cab (models/create {:name "Foo cab"
-                              :licence-plate "Foo Licence Plate"
+                              :licence-plate "FooLicencePlate"
                               :distance-travelled 19191})
           content (views/cab cab)]
       (is (= {:title (str "Cab - " (:cabs/name cab))
               :content content}
-             (handlers/view-cab {:params {:id (str (:cabs/id cab))}}))))))
+             (handlers/view-cab {:params {:id (str (:cabs/id cab))}})))
+      (is (= {:title (str "Cab - " (:cabs/name cab))
+              :content content}
+             (handlers/view-cab {:params {:id (str (:cabs/licence-plate cab))}})))
+      (is (= {:title "No cabs found"
+              :content (views/cab-not-found)}
+             (handlers/view-cab {:params {:id (str (java.util.UUID/randomUUID))}}))))))
 
 (deftest list-cabs-handler
   (testing "Should return a list of 2 rows of cabs"
@@ -128,7 +134,7 @@
              (get-in response [:headers "Location"])))
       (is (= {:cabs/name "Maruti Cab"
               :cabs/distance-travelled 13000}
-             (select-keys (models/get-by-id cab-id)
+             (select-keys (models/get-by-id (handlers/string->uuid cab-id))
                           [:cabs/name :cabs/distance-travelled])))))
 
   (testing "Should redirect with an error message when update fails"
@@ -142,7 +148,7 @@
       (is (re-find #"(?i)could not update" (get-in response [:flash :message])))
       (is (= {:cabs/name "Some name"
               :cabs/distance-travelled 123}
-             (select-keys (models/get-by-id (str cab-id))
+             (select-keys (models/get-by-id cab-id)
                           [:cabs/name :cabs/distance-travelled]))))))
 
 (deftest update-cab-form

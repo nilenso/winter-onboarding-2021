@@ -33,11 +33,11 @@
                                  :name "Maruti Celerio 12"
                                  :distance-travelled 12221})]
       (is (= cab
-             (cab-model/get-by-id (str (:cabs/id cab)))))))
+             (cab-model/get-by-id (:cabs/id cab))))))
 
   (testing "Should return nil if there is no row with a id"
     (is (= nil
-           (cab-model/get-by-id (str (java.util.UUID/randomUUID)))))))
+           (cab-model/get-by-id (java.util.UUID/randomUUID))))))
 
 (deftest find-by-key
   (testing "Should find a row with a specific licence-plate"
@@ -55,7 +55,7 @@
                :licence-plate "MHOR1234"
                :distance-travelled 123340}
           inserted-cab (cab-model/create cab)
-          id (str (inserted-cab :cabs/id))
+          id (:cabs/id inserted-cab)
           new-cab {:name "Maruti"
                    :licence-plate "MHOR1234"
                    :distance-travelled 123500}]
@@ -80,7 +80,7 @@
                :licence-plate "ODAH1234"
                :distance-travelled 123445}
           cab-id (:cabs/id (cab-model/create cab))
-          cab-by-licence (first (cab-model/get-by-licence-plate (:licence-plate cab)))]
+          cab-by-licence (cab-model/get-by-licence-plate (:licence-plate cab))]
       (is (= #:cabs{:id cab-id
                     :name "Maruti"
                     :licence-plate "ODAH1234"
