@@ -5,6 +5,7 @@
             :url "https://www.eclipse.org/legal/epl-2.0/"}
   :dependencies [[org.clojure/clojure "1.10.1"]
                  [ring "1.9.4"]
+                 [ring-logger "1.0.1"]
                  [ring/ring-json "0.5.1"]
                  [org.postgresql/postgresql "42.2.24.jre7"]
                  [bidi "2.1.6"]
@@ -27,7 +28,7 @@
                    :dependencies [[org.clojure/tools.namespace "1.0.0"]
                                   [hiccup-find "1.0.1"]]}}
   :plugins [[lein-cloverage "1.2.2"]]
-  :repl-options {:init-ns winter-onboarding-2021.core}
+  :repl-options {:init-ns user}
   :resource-paths ["config" "resources"]
   :uberjar-name "winter-onboarding-2021-standalone.jar"
   :main winter-onboarding-2021.fleet-management-service.core

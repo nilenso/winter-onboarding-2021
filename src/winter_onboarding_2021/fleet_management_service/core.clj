@@ -24,8 +24,8 @@
    wrap-keyword-params
    wrap-params
    wrap-session
-   middleware/exception-logger
-   middleware/request-response-logger))
+   middleware/ring-timbre-logger
+   middleware/wrap-exception-handler))
 
 (defn start-server []
   (let [port (if (int? (:port config/config))
