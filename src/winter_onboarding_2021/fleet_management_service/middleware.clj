@@ -1,6 +1,8 @@
 (ns winter-onboarding-2021.fleet-management-service.middleware
   (:require [clojure.walk :as walk]
-            [taoensso.timbre :refer [error info]]
+            [taoensso.timbre :as timbre]
+            [ring.logger :as logger]
+            [ring.middleware.stacktrace :as stacktrace]
             [ring.util.response :as response]))
 
 (defn keywordize-multipart-params [handler]
@@ -10,28 +12,17 @@
                (walk/keywordize-keys multipart-params))
         handler)))
 
-(defn exception-logger [handler]
-  (fn [{:keys [uri] :as request}]
+(defn wrap-exception-handler [handler]
+  (fn [request]
     (try (handler request)
-         (catch Exception e
-           (error e (str "Error occured in " uri))
+         (catch Exception _
            (-> (response/response "Something bad happened")
                (response/status 500))))))
 
-(defn make-req-log-msg [request]
-  (str "Request " (select-keys request
-                               [:body
-                                :params
-                                :uri
-                                :headers
-                                :request-method])))
-
-(defn make-response-log-msg [response]
-  (str "Response " response))
-
-(defn request-response-logger [handler]
-  (fn [request]
-    (info (make-req-log-msg request))
-    (let [response (handler request)]
-      (info (make-response-log-msg response))
-      response)))
+(defn ring-timbre-logger [handler]
+  (-> handler
+      stacktrace/wrap-stacktrace-log
+      (logger/wrap-with-logger {:log-fn (fn [{:keys [level throwable message]}]
+                                          (if (some? throwable)
+                                            (timbre/log level throwable message)
+                                            (timbre/log level message)))})))
