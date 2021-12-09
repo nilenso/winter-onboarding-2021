@@ -75,5 +75,5 @@
 
 (defn update-cab-view [req]
   (let [cab (models/get-by-id (get-in req [:params :id]))]
-    {:title "Update cab"
+    {:title (str "Update cab " (:cabs/licence-plate cab))
      :content (views/update-cab-form cab)}))

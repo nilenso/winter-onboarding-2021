@@ -125,3 +125,13 @@
               :cabs/distance-travelled 123}
              (select-keys (models/get-by-id (str cab-id))
                           [:cabs/name :cabs/distance-travelled]))))))
+
+(deftest update-cab-form
+  (testing "Should return the html form to update cabs"
+    (let [cab {:name "Test cab"
+               :licence-plate "KA20X1234"
+               :distance-travelled 1223}
+          cab-id (:cabs/id (models/create cab))]
+      (is (= "Update cab KA20X1234"
+             (:title (handlers/update-cab-view {:params
+                                                {:id (str cab-id)}})))))))
