@@ -89,14 +89,60 @@
         (is (= 0 (count (hf/hiccup-find [:#cab-next-page]
                                         (:content page-2-output)))))))
 
-  (testing "Should return 5 colums for :name :distance-travelled :licence-plate 
+  (testing "Should return 5 colums for :name :distance-travelled :licence-plate
             :created-at :updated-at"
-      (let [output (handlers/get-cabs {})
-            hiccup-text (hf/hiccup-text (:content output))]
-        (is (= 5 (count (hf/hiccup-find [:thead :tr :th]
-                                        (:content output)))))
-        (is (str/includes? hiccup-text "Name"))
-        (is (str/includes? hiccup-text "Distance travelled"))
-        (is (str/includes? hiccup-text "Licence plate"))
-        (is (str/includes? hiccup-text "Created at"))
-        (is (str/includes? hiccup-text "Updated at")))))
+    (let [output (handlers/get-cabs {})
+          hiccup-text (hf/hiccup-text (:content output))]
+      (is (= 5 (count (hf/hiccup-find [:thead :tr :th]
+                                      (:content output)))))
+      (is (str/includes? hiccup-text "Name"))
+      (is (str/includes? hiccup-text "Distance travelled"))
+      (is (str/includes? hiccup-text "Licence plate"))
+      (is (str/includes? hiccup-text "Created at"))
+      (is (str/includes? hiccup-text "Updated at")))))
+
+(deftest update-cab
+  (testing "Should redirect to /cabs:id with success flash
+            after successfull update of cab with given id and cab data"
+    (let [cab {:name "Maruti Cab"
+               :licence-plate "HR20A 1234"
+               :distance-travelled 12333}
+          cab-id (str (:cabs/id (models/create cab)))
+          new-cab {:name "Maruti Cab"
+                   :distance-travelled "13000"}
+          response (handlers/update-cab {:params {:id cab-id}
+                                         :multipart-params new-cab})]
+      (is (= 302 (response :status)))
+      (is (= {:success true
+              :style-class "alert alert-success"
+              :message "Cab updated successfully!"} (response :flash)))
+      (is (= (str "/cabs/" cab-id)
+             (get-in response [:headers "Location"])))
+      (is (= {:cabs/name "Maruti Cab"
+              :cabs/distance-travelled 13000}
+             (select-keys (models/get-by-id cab-id)
+                          [:cabs/name :cabs/distance-travelled])))))
+
+  (testing "Should redirect with an error message when update fails"
+    (let [cab-id (:cabs/id (models/create {:name "Some name"
+                                           :licence-plate "License plate"
+                                           :distance-travelled 123}))
+          response (handlers/update-cab {:params {:id (str cab-id)}
+                                         :multipart-params {:foo "boo"}})]
+      (is (= 302 (:status response)))
+      (is (= true (get-in response [:flash :error])))
+      (is (re-find #"(?i)could not update" (get-in response [:flash :message])))
+      (is (= {:cabs/name "Some name"
+              :cabs/distance-travelled 123}
+             (select-keys (models/get-by-id (str cab-id))
+                          [:cabs/name :cabs/distance-travelled]))))))
+
+(deftest update-cab-form
+  (testing "Should return the html form to update cabs"
+    (let [cab {:name "Test cab"
+               :licence-plate "KA20X1234"
+               :distance-travelled 1223}
+          cab-id (:cabs/id (models/create cab))]
+      (is (= "Update cab KA20X1234"
+             (:title (handlers/update-cab-view {:params
+                                                {:id (str cab-id)}})))))))

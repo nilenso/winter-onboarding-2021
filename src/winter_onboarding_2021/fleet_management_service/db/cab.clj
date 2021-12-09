@@ -1,28 +1,25 @@
 (ns winter-onboarding-2021.fleet-management-service.db.cab
   (:require [winter-onboarding-2021.fleet-management-service.db.core :as db]
-            [honeysql.core :as honeysql]))
-
-(defn select-query [offset limit]
-  {:select [:name
-            :licence-plate
-            :distance-travelled
-            :created-at
-            :updated-at]
-   :from   [:cabs]
-   :limit limit
-   :offset offset
-   :order-by [:created-at]})
+            [honey.sql :as sql]
+            [honey.sql.helpers :as h :refer [select from limit offset order-by update set where]]))
 
 (defn create [cabs]
   (db/insert! :cabs cabs))
 
-(defn select [offset limit]
-  (db/query! (honeysql/format (select-query offset limit))))
+(defn select! [off lim]
+  (db/query! (sql/format (-> (select :name
+                         :licence-plate
+                         :distance-travelled
+                         :created-at
+                         :updated-at)
+                 (from :cabs)
+                 (limit lim)
+                 (offset off)
+                 (order-by :created-at)))))
 
 (defn get-count []
-  (db/query! (honeysql/format {:select [:%count.*]
-                               :as [:count]
-                               :from [:cabs]})))
+  (db/query! (sql/format (-> (select [:%count.* :count])
+                             (from :cabs)))))
 
 (defn get-by-id [id]
   {:pre [(uuid? id)]}
@@ -30,3 +27,9 @@
 
 (defn find-by-keys [key-map]
   (db/find-by-keys! :cabs key-map))
+
+(defn update! [id cab]
+  {:pre [(uuid? id)]}
+  (db/query! (sql/format (-> (update :cabs)
+                             (set cab)
+                             (where [:= :id id])))))
