@@ -2,6 +2,7 @@
   (:require [hiccup-find.core :as hf]
             [clojure.string :as str]
             [clojure.test :refer [deftest is testing use-fixtures]]
+            [hiccup.page :as hp]
             [winter-onboarding-2021.fleet-management.fixtures :as fixtures]
             [winter-onboarding-2021.fleet-management.factories :as factories]
             [winter-onboarding-2021.fleet-management-service.config :as config]
@@ -50,7 +51,7 @@
                               :licence-plate "Foo Licence Plate"
                               :distance-travelled 19191})
           content (views/cab cab)]
-      (is (= {:title (str "Cab - "(:cabs/name cab))
+      (is (= {:title (str "Cab - " (:cabs/name cab))
               :content content}
              (handlers/view-cab {:params {:id (str (:cabs/id cab))}}))))))
 
@@ -59,35 +60,42 @@
     (with-redefs [config/get-page-size (constantly 2)]
       (let [cabs (factories/create-cabs 3)
             db-cabs (doall (map models/create cabs))
-            output (handlers/get-cabs {})]
-        (is (= 2 (count (hf/hiccup-find [:tbody :tr] (:content output)))))
-        (is (= [[:tr [[:td (:cabs/name (first db-cabs))]
-                      [:td (:cabs/distance-travelled (first db-cabs))]
-                      [:td (:cabs/licence-plate (first db-cabs))]
-                      [:td (:cabs/created-at (first db-cabs))]
-                      [:td (:cabs/updated-at (first db-cabs))]]]
-                [:tr [[:td (:cabs/name (second db-cabs))]
-                      [:td (:cabs/distance-travelled (second db-cabs))]
-                      [:td (:cabs/licence-plate (second db-cabs))]
-                      [:td (:cabs/created-at (second db-cabs))]
-                      [:td (:cabs/updated-at (second db-cabs))]]]]
-               (hf/hiccup-find [:tbody :tr] (:content output))))
-        (is (not-empty (hf/hiccup-find [:#cab-next-page] (:content output)))))))
+            first-cab (first db-cabs)
+            second-cab (second db-cabs)
+            output (:content (handlers/get-cabs {}))
+            html-output (hp/html5 output)]
+        
+        (is (= 2 (count (hf/hiccup-find [:tbody :tr] output))))
+        (is (= 2 (count (hf/hiccup-find [:tr :td :a] output))))
+        
+        (is (str/includes? html-output (:cabs/name first-cab)))
+        (is (str/includes? html-output (str (:cabs/distance-travelled first-cab))))
+        (is (str/includes? html-output (:cabs/licence-plate first-cab)))
+        (is (str/includes? html-output (views/format-date (:cabs/updated-at first-cab))))
+        (is (str/includes? html-output (views/format-date (:cabs/created-at first-cab))))
+
+        (is (str/includes? html-output (:cabs/name second-cab)))
+        (is (str/includes? html-output (str (:cabs/distance-travelled second-cab))))
+        (is (str/includes? html-output (:cabs/licence-plate second-cab)))
+        (is (str/includes? html-output (views/format-date (:cabs/updated-at second-cab))))
+        (is (str/includes? html-output (views/format-date (:cabs/created-at second-cab))))
+
+        (is (not-empty (hf/hiccup-find [:#cab-next-page] output))))))
 
   (testing "Should return a list of 10 rows of cabs with next Page link"
-      (let [cabs (factories/create-cabs 12)
-            _ (doall (map models/create cabs))
-            output (handlers/get-cabs {})]
-        (is (= 10 (count (hf/hiccup-find [:tbody :tr] (:content output)))))
-        (is (= 1 (count (hf/hiccup-find [:#cab-next-page] (:content output)))))))
+    (let [cabs (factories/create-cabs 12)
+          _ (doall (map models/create cabs))
+          output (handlers/get-cabs {})]
+      (is (= 10 (count (hf/hiccup-find [:tbody :tr] (:content output)))))
+      (is (= 1 (count (hf/hiccup-find [:#cab-next-page] (:content output)))))))
 
   (testing "Should return 5 rows of cabs in page number 2"
-      (let [page-2-output (handlers/get-cabs {:params
-                                              {:page "2"}})]
-        (is (= 5 (count (hf/hiccup-find [:tbody :tr]
-                                        (:content page-2-output)))))
-        (is (= 0 (count (hf/hiccup-find [:#cab-next-page]
-                                        (:content page-2-output)))))))
+    (let [page-2-output (handlers/get-cabs {:params
+                                            {:page "2"}})]
+      (is (= 5 (count (hf/hiccup-find [:tbody :tr]
+                                      (:content page-2-output)))))
+      (is (= 0 (count (hf/hiccup-find [:#cab-next-page]
+                                      (:content page-2-output)))))))
 
   (testing "Should return 5 colums for :name :distance-travelled :licence-plate
             :created-at :updated-at"

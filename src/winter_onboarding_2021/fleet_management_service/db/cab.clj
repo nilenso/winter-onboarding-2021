@@ -7,15 +7,16 @@
   (db/insert! :cabs cabs))
 
 (defn select! [off lim]
-  (db/query! (sql/format (-> (select :name
-                         :licence-plate
-                         :distance-travelled
-                         :created-at
-                         :updated-at)
-                 (from :cabs)
-                 (limit lim)
-                 (offset off)
-                 (order-by :created-at)))))
+  (db/query! (sql/format (-> (select :id
+                                     :name
+                                     :licence-plate
+                                     :distance-travelled
+                                     :created-at
+                                     :updated-at)
+                             (from :cabs)
+                             (limit lim)
+                             (offset off)
+                             (order-by :created-at)))))
 
 (defn get-count []
   (db/query! (sql/format (-> (select [:%count.* :count])
