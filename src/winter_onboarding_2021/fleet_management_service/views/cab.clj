@@ -18,17 +18,21 @@
       "Cab Name"
       :name "name"
       :required true
+      :placeholder "Enter cab name"
       :value name)]
     [:div {:class "mb-3"}
      (labelled-text-input
       "Licence Plate"
       :required true
+      :placeholder "Enter licence plate (only alphabets and number allowed)"
+      :pattern "^[a-zA-Z0-9]*$"
       :value licence-plate)]
     [:div {:class "mb-3"}
      (labelled-text-input
       "Distance Travelled"
       :type "number"
       :required true
+      :placeholder "Enter distance in meters"
       :value distance-travelled)]
     [:button {:type "submit" :class "btn btn-primary"} "Submit"]]])
 
@@ -120,6 +124,7 @@
        [:div {:class "mb-3"}
         (labelled-text-input
          "Cab Name"
+         :placeholder "Enter cab name"
          :name "name"
          :required true
          :value name)]
@@ -127,12 +132,15 @@
         (labelled-text-input
          "Licence Plate"
          :required true
+         :placeholder "Enter licence plate (only alphabets and number allowed)"
+         :pattern "^[a-zA-Z0-9]*$"
          :disabled true
          :value licence-plate)]
        [:div {:class "mb-3"}
         (labelled-text-input
          "Distance Travelled"
          :type "number"
+         :placeholder "Enter distance in meters"
          :required true
          :value distance-travelled)]
        [:button {:type "submit" :class "btn btn-success"} "Update"]]]]))
