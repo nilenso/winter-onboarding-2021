@@ -9,3 +9,11 @@
 (defn health-check [_]
   (response/response {:message "Everything OK!"
                       :data (healthcheck/healthcheck-query)}))
+
+(defn root [_]
+  {:title "Landing Page"
+   :content "You are viewing the landing page."})
+
+(defn not-found [_]
+  {:title "Not Found"
+   :content "Page you requested is not found."})
