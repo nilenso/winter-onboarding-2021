@@ -71,7 +71,6 @@
       (cab-model/delete-by-id (str (:cabs/id db-cab)))
       (is (= nil (-> db-cab
                      :cabs/id
-                     str
                      cab-model/get-by-id))))))
 
 (deftest get-cab-by-licence-plate

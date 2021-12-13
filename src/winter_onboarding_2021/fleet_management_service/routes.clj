@@ -21,9 +21,9 @@
                      :post handlers/create}
                  "/new" {:get (wrap-layout handlers/new)}
                  "/delete" {:post handlers/delete}
-                 ["/" :id] {:get (wrap-layout handlers/view-cab)
-                            :post handlers/update-cab
-                            "/edit" {:get (wrap-layout handlers/update-cab-view)}}}]
+                 ["/" :slug] {"/edit" {:get (wrap-layout handlers/update-cab-view)}
+                              :get (wrap-layout handlers/view-cab)
+                              :post handlers/update-cab}}]
         ["healthcheck" {:get (wrap-json-response handler/health-check)}]
         ["index" {:get (wrap-layout handler/index)}]
         ["" {:get (wrap-layout handler/root)}]
