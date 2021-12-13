@@ -87,3 +87,36 @@
                                                  cab-by-licence
                                                  [:cabs/id :cabs/name :cabs/licence-plate :cabs/distance-travelled])))
       (is (= cab-id (:cabs/id cab-by-licence))))))
+
+(deftest get-cab-by-licence-plate-or-id
+  (testing "Should return a cab given a licence plate"
+    (let [cab {:name "Maruti"
+               :licence-plate "ODAH12342"
+               :distance-travelled 123445}
+          cab-id (:cabs/id (cab-model/create cab))
+          cab-by-licence (cab-model/get-by-id-or-licence-plate (:licence-plate cab))]
+      (is (= #:cabs{:id cab-id
+                    :name "Maruti"
+                    :licence-plate "ODAH12342"
+                    :distance-travelled 123445}
+             (select-keys cab-by-licence
+                          [:cabs/id :cabs/name :cabs/licence-plate :cabs/distance-travelled])))
+      (is (= cab-id (:cabs/id cab-by-licence)))))
+
+  (testing "Should return a cab given a cab UUID"
+    (let [cab {:name "Maruti"
+               :licence-plate "ODAH1234"
+               :distance-travelled 123445}
+          cab-id (:cabs/id (cab-model/create cab))
+          cab-by-licence (cab-model/get-by-id-or-licence-plate (str cab-id))]
+      (is (= #:cabs{:id cab-id
+                    :name "Maruti"
+                    :licence-plate "ODAH1234"
+                    :distance-travelled 123445}
+             (select-keys cab-by-licence
+                          [:cabs/id :cabs/name :cabs/licence-plate :cabs/distance-travelled])))
+      (is (= cab-id (:cabs/id cab-by-licence)))))
+
+  (testing "Should return nil if cab doesnt exist with a certain licence plate or UUID"
+    (let [cab-by-licence (cab-model/get-by-id-or-licence-plate (str (java.util.UUID/randomUUID)))]
+      (is (= nil cab-by-licence)))))

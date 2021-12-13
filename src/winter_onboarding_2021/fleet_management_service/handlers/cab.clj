@@ -4,21 +4,17 @@
             [winter-onboarding-2021.fleet-management-service.models.cab :as models]
             [winter-onboarding-2021.fleet-management-service.views.cab :as views]
             [winter-onboarding-2021.fleet-management-service.config :as config]
-            [winter-onboarding-2021.fleet-management-service.specs :as specs]))
+            [winter-onboarding-2021.fleet-management-service.specs :as specs]
+            [winter-onboarding-2021.fleet-management-service.utils :as utils]))
 
 (defn flash-msg [msg success?]
   (if success?
-   {:flash {:success true
-            :style-class "alert alert-success"
-            :message msg}}
+    {:flash {:success true
+             :style-class "alert alert-success"
+             :message msg}}
     {:flash {:error true
              :style-class "alert alert-danger"
              :message msg}}))
-
-(defn string->uuid [id]
-  (try
-    (java.util.UUID/fromString id)
-    (catch Exception _ nil)))
 
 (def error-flash
   {:flash {:error true
@@ -65,11 +61,8 @@
    :content (views/cab-form
              (get-in request [:flash :data]))})
 
-(defn view-cab [request]
-  (let [id-or-licence (get-in request [:params :slug])]
-    (if-let [id (string->uuid id-or-licence)]
-      (view-cab-response (models/get-by-id id))
-      (view-cab-response (models/get-by-licence-plate id-or-licence)))))
+(defn view-cab [{:keys [params]}]
+  (view-cab-response (models/get-by-id-or-licence-plate (:slug params))))
 
 (defn get-cabs [req]
   (let [{:keys [page]} (:params req)
@@ -94,13 +87,13 @@
           (assoc-in [:flash :data] cab)
           (merge (response/redirect "/cabs/new")))
       (do
-        (models/update! (string->uuid id) validated-cab)
+        (models/update! (utils/string->uuid id) validated-cab)
         (merge update-success-flash
                (response/redirect (format "/cabs/%s" id)))))))
 
 (defn update-cab-view [req]
-  (let [cab (models/get-by-id (string->uuid (get-in req 
-                                                    [:params :slug])))]
+  (let [cab (models/get-by-id (utils/string->uuid
+                               (get-in req [:params :slug])))]
     {:title (str "Update cab " (:cabs/licence-plate cab))
      :content (views/update-cab-form cab)}))
 
