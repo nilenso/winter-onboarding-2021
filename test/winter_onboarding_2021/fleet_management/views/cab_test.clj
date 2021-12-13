@@ -60,3 +60,9 @@
      (is (str/includes? (html5 output-view) (:cabs/name cab)))
      (is (str/includes? (html5 output-view) (str (:cabs/distance-travelled cab))))
      (is (str/includes? (html5 output-view) (:cabs/licence-plate cab))))))
+
+(deftest contains-navbar
+  (testing "Should contain navbar"
+    (is (= true
+           (str/includes? (layout/application {} "Test Page" "")
+                          "nav-item")))))
