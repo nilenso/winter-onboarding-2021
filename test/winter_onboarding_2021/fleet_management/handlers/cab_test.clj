@@ -53,13 +53,13 @@
           content (views/cab cab)]
       (is (= {:title (str "Cab - " (:cabs/name cab))
               :content content}
-             (handlers/view-cab {:params {:id (str (:cabs/id cab))}})))
+             (handlers/view-cab {:params {:slug (str (:cabs/id cab))}})))
       (is (= {:title (str "Cab - " (:cabs/name cab))
               :content content}
-             (handlers/view-cab {:params {:id (str (:cabs/licence-plate cab))}})))
+             (handlers/view-cab {:params {:slug (str (:cabs/licence-plate cab))}})))
       (is (= {:title "No cabs found"
               :content (views/cab-not-found)}
-             (handlers/view-cab {:params {:id (str (java.util.UUID/randomUUID))}}))))))
+             (handlers/view-cab {:params {:slug (str (java.util.UUID/randomUUID))}}))))))
 
 (deftest list-cabs-handler
   (testing "Should return a list of 2 rows of cabs"
@@ -70,10 +70,10 @@
             second-cab (second db-cabs)
             output (:content (handlers/get-cabs {}))
             html-output (hp/html5 output)]
-        
+
         (is (= 2 (count (hf/hiccup-find [:tbody :tr] output))))
         (is (= 2 (count (hf/hiccup-find [:tr :td :a] output))))
-        
+
         (is (str/includes? html-output (:cabs/name first-cab)))
         (is (str/includes? html-output (str (:cabs/distance-travelled first-cab))))
         (is (str/includes? html-output (:cabs/licence-plate first-cab)))
@@ -116,7 +116,7 @@
       (is (str/includes? hiccup-text "Updated at")))))
 
 (deftest update-cab
-  (testing "Should redirect to /cabs:id with success flash
+  (testing "Should redirect to /cabs:slug with success flash
             after successfull update of cab with given id and cab data"
     (let [cab {:name "Maruti Cab"
                :licence-plate "HR20A 1234"
@@ -124,7 +124,7 @@
           cab-id (str (:cabs/id (models/create cab)))
           new-cab {:name "Maruti Cab"
                    :distance-travelled "13000"}
-          response (handlers/update-cab {:params {:id cab-id}
+          response (handlers/update-cab {:params {:slug cab-id}
                                          :multipart-params new-cab})]
       (is (= 302 (response :status)))
       (is (= {:success true
@@ -141,7 +141,7 @@
     (let [cab-id (:cabs/id (models/create {:name "Some name"
                                            :licence-plate "License plate"
                                            :distance-travelled 123}))
-          response (handlers/update-cab {:params {:id (str cab-id)}
+          response (handlers/update-cab {:params {:slug (str cab-id)}
                                          :multipart-params {:foo "boo"}})]
       (is (= 302 (:status response)))
       (is (= true (get-in response [:flash :error])))
@@ -159,7 +159,7 @@
           cab-id (:cabs/id (models/create cab))]
       (is (= "Update cab KA20X1234"
              (:title (handlers/update-cab-view {:params
-                                                {:id (str cab-id)}})))))))
+                                                {:slug (str cab-id)}})))))))
 
 (deftest deletion
   (testing "Should redirect to cabs' list when delete succeeds"
@@ -176,6 +176,7 @@
               :headers {"Location" "/cabs"}
               :body ""}
              handler-resp))))
+  
   (testing "Should redirect to /cabs when delete fails"
     (let [missing-uuid (str (java.util.UUID/randomUUID))
           handler-response (handlers/delete {:params {:id missing-uuid}})]

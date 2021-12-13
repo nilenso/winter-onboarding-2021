@@ -66,7 +66,7 @@
              (get-in request [:flash :data]))})
 
 (defn view-cab [request]
-  (let [id-or-licence (get-in request [:params :id])]
+  (let [id-or-licence (get-in request [:params :slug])]
     (if-let [id (string->uuid id-or-licence)]
       (view-cab-response (models/get-by-id id))
       (view-cab-response (models/get-by-licence-plate id-or-licence)))))
@@ -84,9 +84,10 @@
      :content (views/show-cabs cabs
                                current-page
                                show-next-page?)}))
+
 (defn update-cab [req]
   (let [cab (:multipart-params req)
-        id (get-in req [:params :id])
+        id (get-in req [:params :slug])
         validated-cab (s/conform ::specs/update-cab-form cab)]
     (if (s/invalid? validated-cab)
       (-> update-error-flash
@@ -99,7 +100,7 @@
 
 (defn update-cab-view [req]
   (let [cab (models/get-by-id (string->uuid (get-in req 
-                                                    [:params :id])))]
+                                                    [:params :slug])))]
     {:title (str "Update cab " (:cabs/licence-plate cab))
      :content (views/update-cab-form cab)}))
 
