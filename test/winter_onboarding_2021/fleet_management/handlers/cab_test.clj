@@ -8,7 +8,8 @@
             [winter-onboarding-2021.fleet-management-service.config :as config]
             [winter-onboarding-2021.fleet-management-service.models.cab :as models]
             [winter-onboarding-2021.fleet-management-service.views.cab :as views]
-            [winter-onboarding-2021.fleet-management-service.handlers.cab :as handlers]))
+            [winter-onboarding-2021.fleet-management-service.handlers.cab :as handlers]
+            [winter-onboarding-2021.fleet-management-service.utils :as utils]))
 
 (use-fixtures :once fixtures/config fixtures/db-connection)
 (use-fixtures :each fixtures/clear-db)
@@ -134,7 +135,7 @@
              (get-in response [:headers "Location"])))
       (is (= {:cabs/name "Maruti Cab"
               :cabs/distance-travelled 13000}
-             (select-keys (models/get-by-id (handlers/string->uuid cab-id))
+             (select-keys (models/get-by-id (utils/string->uuid cab-id))
                           [:cabs/name :cabs/distance-travelled])))))
 
   (testing "Should redirect with an error message when update fails"
