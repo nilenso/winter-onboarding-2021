@@ -23,7 +23,8 @@
                  "/delete" {:post handlers/delete}
                  ["/" :id] {:get (wrap-layout handlers/view-cab)
                             :post handlers/update-cab
-                            "/edit" {:get (wrap-layout handlers/update-cab-view)}}}]
+                            "/edit" {:get (wrap-layout handlers/update-cab-view)}}
+                 "/" {:get (fn [_] (response/redirect "/cabs"))}}]
         ["healthcheck" {:get (wrap-json-response handler/health-check)}]
         ["index" {:get (wrap-layout handler/index)}]
         ["" {:get (wrap-layout handler/root)}]
