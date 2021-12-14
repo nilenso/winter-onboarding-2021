@@ -69,9 +69,6 @@ jobs:
 
     - name: Run migrations
       run: lein migrations migrate
-    
-    - name: Run Licence Plate data migration
-      run: lein migrate-licence-plate
 
     - name: Run tests
       run: lein cloverage
