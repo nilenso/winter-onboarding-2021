@@ -64,4 +64,8 @@
       (is (= nil (-> db-cab
                      :cabs/id
                      str
-                     models/get-by-id))))))
+                     models/get-by-id)))))
+  (testing "Should return 0 when a cab with a specific ID is not found for deletion"
+    (let [cab-id (java.util.UUID/randomUUID)
+          output (cab-db/delete {:id cab-id})]
+      (is (= 0 (:next.jdbc/update-count output))))))
