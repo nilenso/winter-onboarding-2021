@@ -89,21 +89,21 @@
       (is (= cab-id (:cabs/id cab-by-licence))))))
 
 (deftest get-cab-by-licence-plate-or-id
-  (testing "Should return a cab given a licence plate"
+  (testing "Should return a cab given a licence plate number or an id"
     (let [cab {:name "Maruti"
                :licence-plate "ODAH12342"
                :distance-travelled 123445}
           cab-id (:cabs/id (cab-model/create cab))
-          cab-by-licence (cab-model/get-by-id-or-licence-plate (:licence-plate cab))]
+          cab-by-licence-or-id (cab-model/get-by-id-or-licence-plate (:licence-plate cab))]
       (is (= #:cabs{:id cab-id
                     :name "Maruti"
                     :licence-plate "ODAH12342"
                     :distance-travelled 123445}
-             (select-keys cab-by-licence
+             (select-keys cab-by-licence-or-id
                           [:cabs/id :cabs/name :cabs/licence-plate :cabs/distance-travelled])))
-      (is (= cab-id (:cabs/id cab-by-licence)))))
+      (is (= cab-id (:cabs/id cab-by-licence-or-id)))))
 
-  (testing "Should return a cab given a cab UUID"
+  (testing "Should return a cab given a cab id"
     (let [cab {:name "Maruti"
                :licence-plate "ODAH1234"
                :distance-travelled 123445}

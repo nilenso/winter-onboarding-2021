@@ -62,7 +62,9 @@
              (get-in request [:flash :data]))})
 
 (defn view-cab [{:keys [params]}]
-  (view-cab-response (models/get-by-id-or-licence-plate (:slug params))))
+  (if-let [slug (:slug params)]
+    (view-cab-response (models/get-by-id-or-licence-plate slug))
+    (response/redirect "/cabs")))
 
 (defn get-cabs [req]
   (let [{:keys [page]} (:params req)
@@ -91,9 +93,8 @@
         (merge update-success-flash
                (response/redirect (format "/cabs/%s" id)))))))
 
-(defn update-cab-view [req]
-  (let [cab (models/get-by-id (utils/string->uuid
-                               (get-in req [:params :slug])))]
+(defn update-cab-view [{:keys [params]}]
+  (let [cab (models/get-by-id-or-licence-plate (:slug params))]
     {:title (str "Update cab " (:cabs/licence-plate cab))
      :content (views/update-cab-form cab)}))
 
