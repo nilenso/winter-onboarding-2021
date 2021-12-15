@@ -8,17 +8,17 @@
           (include-css "/public/css/bootstrap.min.css")
           (include-js "/public/js/jquery-3.6.0.min.js")
           (include-js "/public/js/bootstrap.bundle.min.js")
-          [:header.d-flex.flex-wrap.justify-content-center.py-3.mb-4.border-bottom
-           [:a.d-flex.align-items-center.mb-3.mb-md-0.me-md-auto.text-dark.text-decoration-none
-            {:href "/"}
+          [:header {:class "d-flex flex-wrap justify-content-center py-3 mb-4 border-bottom"}
+           [:a {:class "d-flex align-items-center mb-3 mb-md-0 me-md-auto text-dark text-decoration-none"
+                :href "/"}
             [:svg.bi.me-2
              {:height "32", :width "40"}
              [:use {:xlink:href "#bootstrap"}]]
-            [:span.fs-4 "Fleet Management System"]]
-           [:ul.nav.nav-pills
-            [:li.nav-item [:a.nav-link {:href "/cabs"} "Cabs"]]
-            [:li.nav-item [:a.nav-link {:href "/"} "FAQs"]]
-            [:li.nav-item [:a.nav-link {:href "/"} "About"]]]]
+            [:span {:class "fs-4"} "Fleet Management System"]]
+           [:ul {:class "nav nav-pills"}
+            [:li {:class "nav-item"} [:a {:class "nav-link" :href "/cabs"} "Cabs"]]
+            [:li {:class "nav-item"} [:a {:class "nav-link" :href "/"} "FAQs"]]
+            [:li {:class "nav-item"} [:a {:class "nav-link" :href "/"} "About"]]]]
           [:body
            [:div {:class "container"}
             (when (:flash request)
