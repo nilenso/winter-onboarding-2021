@@ -2,6 +2,7 @@
   (:require [bidi.ring :as br]
             [ring.util.response :as response]
             [ring.middleware.json :refer [wrap-json-response]]
+            [hiccup.page :refer [html5]]
             [winter-onboarding-2021.fleet-management-service.handlers.cab :as handlers]
             [winter-onboarding-2021.fleet-management-service.views.layout :as layout]
             [winter-onboarding-2021.fleet-management-service.handlers.core :as handler]))
@@ -9,10 +10,10 @@
 (defn wrap-layout [handler]
   (fn [request]
     (let [data (handler request)]
-      (response/response (layout/application
-                          request
-                          (:title data)
-                          (:content data))))))
+      (response/response (html5 (layout/application
+                                 request
+                                 (:title data)
+                                 (:content data)))))))
 
 (def routes
   ["/" [["public" {:get (br/->Resources {:prefix "/bootstrap"})}]
