@@ -68,3 +68,24 @@
     (let [cab-id (java.util.UUID/randomUUID)
           output (cab-db/delete {:id cab-id})]
       (is (= 0 (:next.jdbc/update-count output))))))
+
+(deftest get-by-id-or-licence-plate
+  (testing "Should return a cab, given a licence plate"
+    (let [cab {:name "Maruti"
+             :licence-plate "MHOR1234"
+             :distance-travelled 123340}
+        inserted-cab (cab-db/create cab)
+        cab-by-licence (cab-db/get-by-id-or-licence-plate nil (:licence-plate cab))]
+    (is (= cab-by-licence inserted-cab))))
+  (testing "Should return a cab, given an id"
+    (let [cab {:name "Maruti"
+               :licence-plate "MHOR1233"
+               :distance-travelled 123340}
+          inserted-cab (cab-db/create cab)
+          id (:cabs/id inserted-cab)
+          cab-by-id (cab-db/get-by-id-or-licence-plate id (str id))]
+      (is (= cab-by-id inserted-cab))))
+  (testing "Should return nil, given a non-exsistent id or licence"
+    (let [id (java.util.UUID/randomUUID)
+          cab-by-id (cab-db/get-by-id-or-licence-plate id (str id))]
+      (is (= nil cab-by-id)))))
