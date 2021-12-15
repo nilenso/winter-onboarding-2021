@@ -3,9 +3,10 @@
             [ring.util.response :as response]
             [ring.middleware.json :refer [wrap-json-response]]
             [hiccup.page :refer [html5]]
-            [winter-onboarding-2021.fleet-management-service.handlers.cab :as handlers]
+            [winter-onboarding-2021.fleet-management-service.handlers.cab :as cab-handlers]
             [winter-onboarding-2021.fleet-management-service.views.layout :as layout]
-            [winter-onboarding-2021.fleet-management-service.handlers.core :as handler]))
+            [winter-onboarding-2021.fleet-management-service.handlers.core :as handler]
+            [winter-onboarding-2021.fleet-management-service.handlers.user :as user-handlers]))
 
 (defn wrap-layout [handler]
   (fn [request]
@@ -17,13 +18,14 @@
 
 (def routes
   ["/" [["public" {:get (br/->Resources {:prefix "/bootstrap"})}]
-        ["cabs" {"" {:get (wrap-layout handlers/get-cabs)
-                     :post handlers/create}
-                 "/new" {:get (wrap-layout handlers/new)}
-                 "/delete" {:post handlers/delete}
-                 ["/" :slug] {"/edit" {:get (wrap-layout handlers/update-cab-view)}
-                              :get (wrap-layout handlers/view-cab)
-                              :post handlers/update-cab}}]
+        ["cabs" {"" {:get (wrap-layout cab-handlers/get-cabs)
+                     :post cab-handlers/create}
+                 "/new" {:get (wrap-layout cab-handlers/new)}
+                 "/delete" {:post cab-handlers/delete}
+                 ["/" :slug] {"/edit" {:get (wrap-layout cab-handlers/update-cab-view)}
+                              :get (wrap-layout cab-handlers/view-cab)
+                              :post cab-handlers/update-cab}}]
+        ["user" {"/signup" {:get (wrap-layout user-handlers/signup-form)}}]
         ["healthcheck" {:get (wrap-json-response handler/health-check)}]
         ["index" {:get (wrap-layout handler/index)}]
         ["" {:get (wrap-layout handler/root)}]
