@@ -35,4 +35,3 @@
                                                                     (:password validated-user))))]
               (merge (flash-msg (format "User %s created successfully!" (:users/name created-user)) true)
                      (response/redirect "/users/signup"))))))
-
