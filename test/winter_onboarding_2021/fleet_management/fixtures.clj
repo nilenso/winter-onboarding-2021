@@ -22,7 +22,7 @@
   (mount/stop #'db/db-conn))
 
 (defn clear-db [f]
-  (jdbc/execute! db/db-conn  ["TRUNCATE TABLE cabs"])
+  (jdbc/execute! db/db-conn  ["TRUNCATE TABLE cabs, users CASCADE"])
   (f))
 
 ;; config doubt --> pass config via CLI?

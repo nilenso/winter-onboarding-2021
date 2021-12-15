@@ -24,3 +24,21 @@
   (s/keys :req [:cabs/name
                 :cabs/licence-plate
                 :cabs/distance-travelled]))
+
+;; Users (admin)
+
+(s/def :users/name string?)
+(s/def :users/email (and string? #(re-matches #".+\@.+\..+" %)))
+(s/def :users/role #{"admin" "fleet-manager" "driver"})
+(s/def :users/password string?)
+
+(s/def ::users
+  (s/keys :req [:users/name
+                :users/role
+                :users/email
+                :users/password]))
+
+(s/def ::signup-form 
+       (s/keys :req-un [:users/name
+                     :users/email
+                     :users/password]))

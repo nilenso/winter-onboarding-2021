@@ -10,3 +10,6 @@
 
 (defn create-cabs [num]
   (gen/generate (generate-cab num)))
+
+(defn generate-user []
+  (gen/generate (s/gen ::specs/signup-form)))

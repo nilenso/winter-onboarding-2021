@@ -25,7 +25,8 @@
                  ["/" :slug] {"/edit" {:get (wrap-layout cab-handlers/update-cab-view)}
                               :get (wrap-layout cab-handlers/view-cab)
                               :post cab-handlers/update-cab}}]
-        ["user" {"/signup" {:get (wrap-layout user-handlers/signup-form)}}]
+        ["users" {"/signup" {:get (wrap-layout user-handlers/signup-form)
+                             :post user-handlers/create-user}}]
         ["healthcheck" {:get (wrap-json-response handler/health-check)}]
         ["index" {:get (wrap-layout handler/index)}]
         ["" {:get (wrap-layout handler/root)}]
