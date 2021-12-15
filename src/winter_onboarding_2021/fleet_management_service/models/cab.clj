@@ -29,7 +29,7 @@
 (defn get-by-licence-plate [licence-no]
   (first (cab-db/find-by-keys {:licence-plate licence-no})))
 
-(defn get-by-id-or-licence-plate [id-or-licence-no]
-  (if-let [id (utils/string->uuid id-or-licence-no)]
-    (get-by-id id)
-    (get-by-licence-plate id-or-licence-no)))
+(defn get-by-id-or-licence-plate [val]
+  (let [id (utils/string->uuid val)
+        licence-plate val]
+    (cab-db/get-by-id-or-licence-plate id licence-plate)))

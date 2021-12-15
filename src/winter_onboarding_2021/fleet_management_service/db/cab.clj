@@ -34,5 +34,11 @@
   (db/query! (sql/format (-> (update :cabs)
                              (set cab)
                              (where [:= :id id])))))
+
 (defn delete [where-params]
   (db/delete! :cabs where-params))
+
+(defn get-by-id-or-licence-plate [id licence-plate]
+  (first (db/query! (sql/format (-> (select :*)
+                                    (from :cabs)
+                                    (where :or [:= :id id] [:= :licence-plate licence-plate]))))))
