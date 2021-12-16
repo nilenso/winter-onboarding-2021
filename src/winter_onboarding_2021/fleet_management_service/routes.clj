@@ -26,7 +26,9 @@
                               :get (wrap-layout cab-handlers/view-cab)
                               :post cab-handlers/update-cab}}]
         ["users" {"/signup" {:get (wrap-layout user-handlers/signup-form)
-                             :post user-handlers/create-user}}]
+                            :post user-handlers/create-user}
+                 "/login" {:get (wrap-layout user-handlers/login-form)
+                           :post user-handlers/login}}]
         ["healthcheck" {:get (wrap-json-response handler/health-check)}]
         ["index" {:get (wrap-layout handler/index)}]
         ["" {:get (wrap-layout handler/root)}]

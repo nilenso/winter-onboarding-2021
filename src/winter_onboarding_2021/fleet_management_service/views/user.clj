@@ -26,3 +26,14 @@
      :name "password")]
    [:input {:type "hidden" :name "role" :value "admin"}]
    [:button {:type "submit" :class "btn btn-primary"} "Submit"]])
+
+(defn login-form []
+  [:div [:h1 {:class "text-center"} "Login"] 
+   [:form {:method "POST"}
+   [:div {:class "mb-3" :id "email"}
+    [:label {:for "login-email-input" :class "form-label"} "Email address"]
+    [:input {:required :required :id "login-email-input" :class "form-control" :type "email", :name "email"}]]
+   [:div {:class "mb-3" :id "password"}
+    [:label {:for "login-pwd-input" :class "form-label"} "Password"]
+    [:input  {:required :required :id "login-pwd-input" :class "form-control" :type "password", :name "password"}]]
+   [:button {:type "submit" :class "btn btn-primary"} "Submit"]]])
