@@ -25,8 +25,7 @@
                 :cabs/licence-plate
                 :cabs/distance-travelled]))
 
-;; Users (admin)
-
+;; Users
 (s/def :users/name string?)
 (s/def :users/email (and string? #(re-matches #".+\@.+\..+" %)))
 (s/def :users/role #{"admin" "fleet-manager" "driver"})

@@ -3,3 +3,6 @@
 
 (defn create [user]
   (user/create user))
+
+(defn find-by-keys [key-map]
+  (user/find-by-keys key-map))
