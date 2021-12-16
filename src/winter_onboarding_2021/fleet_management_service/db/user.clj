@@ -3,3 +3,6 @@
 
 (defn create [user]
   (db/insert! :users user))
+
+(defn find-by-keys [key-map]
+  (db/find-by-keys! :users key-map))
