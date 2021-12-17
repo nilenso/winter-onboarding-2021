@@ -24,6 +24,7 @@
    wrap-multipart-params
    wrap-keyword-params
    wrap-params
+   middleware/append-user-to-request
    middleware/keywordize-cookies-keys
    wrap-cookies
    wrap-session

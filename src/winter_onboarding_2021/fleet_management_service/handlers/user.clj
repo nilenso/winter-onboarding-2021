@@ -2,6 +2,7 @@
   (:require [ring.util.response :as response]
             [clojure.spec.alpha :as s]
             [crypto.password.bcrypt :as password]
+            [winter-onboarding-2021.fleet-management-service.session :as session]
             [winter-onboarding-2021.fleet-management-service.views.user :as view]
             [winter-onboarding-2021.fleet-management-service.models.user :as user-model]
             [winter-onboarding-2021.fleet-management-service.specs :as specs]))
@@ -22,6 +23,8 @@
 (defn user-exist? [email]
   (not-empty (user-model/find-by-keys {:email email})))
 
+(defn uuid []
+  (java.util.UUID/randomUUID))
 
 (defn create-user [{:keys [form-params]}]
   (let [validated-user (s/conform ::specs/signup-form form-params)]
@@ -40,8 +43,9 @@
   {:title "Login"
    :content (view/login-form)})
 
-(defn- successful-login-response []
-  (let [session-id (java.util.UUID/randomUUID)]
+(defn- successful-login-response [user-id]
+  (let [session-id (uuid)]
+    (session/write-session session-id user-id)
     (merge (flash-msg "Hooray! Logged in!" true)
            (-> (response/redirect "/users/dashboard")
                (response/set-cookie "session-id" session-id {:path "/"})))))
@@ -64,6 +68,6 @@
       (invalid-data-response)
       (if-let [db-user (first (user-model/find-by-keys (select-keys validated-params [:email])))]
         (if (password/check (:password validated-params) (:users/password db-user))
-          (successful-login-response)
+          (successful-login-response (:users/id db-user))
           (wrong-password-response))
         (email-not-found-response)))))

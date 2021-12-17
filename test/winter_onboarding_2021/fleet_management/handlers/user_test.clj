@@ -56,17 +56,19 @@
 
 (deftest user-login
   (testing "Correct login credentials, should redirect to user dashboard"
-    (let [user {:name "Severus Snape"
-                :email "s.snape@hogwarts.edu"
-                :password "lily"}
-          _ (handler/create-user {:multipart-params user})
-          response (handler/login {:params
-                                   {:email "s.snape@hogwarts.edu" :password "lily"}})]
-
-      (is (= 302 (:status response)))
-      (is (= (str "/users/dashboard")
-             (get-in response [:headers "Location"])))
-      (is (= "" (:body response)))))
+    (with-redefs [handler/uuid (fn [] (java.util.UUID/fromString "9088992d-d0f4-4207-9b95-c934ad071c32"))]
+      (let [user {:name "Severus Snape"
+                  :email "s.snape@hogwarts.edu"
+                  :password "lily"}
+            _ (handler/create-user {:multipart-params user})
+            response (handler/login {:params
+                                     {:email "s.snape@hogwarts.edu" :password "lily"}})]
+        (is (= 302 (:status response)))
+        (is (= (str "/users/dashboard")
+               (get-in response [:headers "Location"])))
+        (is (= "" (:body response)))
+        (is (= (java.util.UUID/fromString "9088992d-d0f4-4207-9b95-c934ad071c32")
+             (get-in response [:cookies "session-id" :value]))))))
 
   (testing "No email exists in the database, should redirect to login page with error flash message"
     (let [user {:name "Severus Snape"

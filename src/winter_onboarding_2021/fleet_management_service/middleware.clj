@@ -3,7 +3,9 @@
             [taoensso.timbre :as timbre]
             [ring.logger :as logger]
             [ring.middleware.stacktrace :as stacktrace]
-            [ring.util.response :as response]))
+            [ring.util.response :as response]
+            [winter-onboarding-2021.fleet-management-service.session :as session]
+            [winter-onboarding-2021.fleet-management-service.models.user :as user-model]))
 
 (defn keywordize-multipart-params [handler]
   (fn [{:keys [multipart-params] :as request}]
@@ -39,3 +41,15 @@
                                           (if (some? throwable)
                                             (timbre/log level throwable message)
                                             (timbre/log level message)))})))
+
+(defn append-user-to-request [handler]
+  (fn [request]
+    (if-let [session-id (get-in request [:cookies :session-id :value])]
+      (let [user-id (session/read-session (java.util.UUID/fromString session-id))
+            db-user (select-keys (first (user-model/find-by-keys {:id user-id}))
+                                 [:users/id :users/name :users/role :users/email])
+            new-request (-> request
+                            (assoc :user db-user))]
+        (-> new-request
+            handler))
+      (handler request))))

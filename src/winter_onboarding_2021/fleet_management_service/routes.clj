@@ -16,11 +16,17 @@
                                  (:title data)
                                  (:content data)))))))
 
+(defn protect [handler allowed-roles]
+  (fn [request]
+    (if (contains? (set allowed-roles) (keyword (get-in request [:user :users/role])))
+      (handler request)
+      (response/response "NOT AUTHORIZED"))))
+
 (def routes
   ["/" [["public" {:get (br/->Resources {:prefix "/bootstrap"})}]
         ["cabs" {"" {:get (wrap-layout cab-handlers/get-cabs)
                      :post cab-handlers/create}
-                 "/new" {:get (wrap-layout cab-handlers/new)}
+                 "/new" {:get (protect  (wrap-layout cab-handlers/new) [:admin :manager])}
                  "/delete" {:post cab-handlers/delete}
                  ["/" :slug] {"/edit" {:get (wrap-layout cab-handlers/update-cab-view)}
                               :get (wrap-layout cab-handlers/view-cab)
