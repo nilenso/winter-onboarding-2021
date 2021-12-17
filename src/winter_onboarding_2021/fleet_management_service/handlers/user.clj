@@ -71,3 +71,11 @@
           (successful-login-response (:users/id db-user))
           (wrong-password-response))
         (email-not-found-response)))))
+
+(defn not-authorized [_]
+  (merge (flash-msg "You are not authorized" false)
+         (response/redirect "/users/dashboard")))
+
+(defn not-logged-in [_]
+  (merge (flash-msg "You are not logged in" false)
+         (response/redirect "/users/login")))
