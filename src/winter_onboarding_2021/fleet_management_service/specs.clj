@@ -44,5 +44,5 @@
                         :users/password]))
 
 (s/def ::login-params
-       (s/keys :req-un [:users/email
-                        :users/password]))
+  (s/keys :req-un [:users/email
+                   :users/password]))

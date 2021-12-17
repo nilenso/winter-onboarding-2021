@@ -39,3 +39,31 @@
 (defn login-form [_]
   {:title "Login"
    :content (view/login-form)})
+
+(defn- successful-login-response []
+  (let [session-id (java.util.UUID/randomUUID)]
+    (merge (flash-msg "Hooray! Logged in!" true)
+           (-> (response/redirect "/users/dashboard")
+               (response/set-cookie "session-id" session-id {:path "/"})))))
+
+(defn- wrong-password-response []
+  (merge (flash-msg "Wrong password" false)
+         (response/redirect "/users/login")))
+
+(defn- email-not-found-response []
+  (merge (flash-msg "User with email not found" false)
+         (response/redirect "/users/login")))
+
+(defn- invalid-data-response []
+  (merge (flash-msg "Please send valid data" false)
+         (response/redirect "/users/login")))
+
+(defn login [{:keys [params]}]
+  (let [validated-params (s/conform ::specs/login-params params)]
+    (if (s/invalid? validated-params)
+      (invalid-data-response)
+      (if-let [db-user (first (user-model/find-by-keys (select-keys validated-params [:email])))]
+        (if (password/check (:password validated-params) (:users/password db-user))
+          (successful-login-response)
+          (wrong-password-response))
+        (email-not-found-response)))))

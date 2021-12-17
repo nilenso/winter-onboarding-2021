@@ -7,6 +7,7 @@
             [ring.middleware.params :refer [wrap-params]]
             [ring.middleware.keyword-params :refer [wrap-keyword-params]]
             [ring.middleware.session :refer [wrap-session]]
+            [ring.middleware.cookies :refer [wrap-cookies]]
             [winter-onboarding-2021.fleet-management-service.routes :as r]
             [winter-onboarding-2021.fleet-management-service.middleware :as middleware]
             [winter-onboarding-2021.fleet-management-service.config :as config]
@@ -23,6 +24,8 @@
    wrap-multipart-params
    wrap-keyword-params
    wrap-params
+   middleware/keywordize-cookies-keys
+   wrap-cookies
    wrap-session
    middleware/ring-timbre-logger
    middleware/wrap-exception-handler))

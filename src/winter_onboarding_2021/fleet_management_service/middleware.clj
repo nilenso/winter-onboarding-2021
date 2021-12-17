@@ -19,6 +19,12 @@
                (walk/keywordize-keys form-params))
         handler)))
 
+(defn keywordize-cookies-keys [handler]
+  (fn [request]
+    (-> request
+        (update :cookies walk/keywordize-keys)
+        handler)))
+
 (defn wrap-exception-handler [handler]
   (fn [request]
     (try (handler request)

@@ -53,3 +53,50 @@
               :style-class "alert alert-danger"
               :message "Could not create user, enter valid details!"}
              (:flash response))))))
+
+(deftest user-login
+  (testing "Correct login credentials, should redirect to user dashboard"
+    (let [user {:name "Severus Snape"
+                :email "s.snape@hogwarts.edu"
+                :password "lily"}
+          _ (handler/create-user {:multipart-params user})
+          response (handler/login {:params
+                                   {:email "s.snape@hogwarts.edu" :password "lily"}})]
+
+      (is (= 302 (:status response)))
+      (is (= (str "/users/dashboard")
+             (get-in response [:headers "Location"])))
+      (is (= "" (:body response)))))
+
+  (testing "No email exists in the database, should redirect to login page with error flash message"
+    (let [user {:name "Severus Snape"
+                :email "foo@gmail.com"
+                :password "lily"}
+          response (handler/login {:params
+                                   {:email (:email user) :password (:password user)}})]
+
+      (is (= 302 (:status response)))
+      (is (= (str "/users/login")
+             (get-in response [:headers "Location"])))
+      (is (= {:error true
+              :style-class "alert alert-danger"
+              :message "User with email not found"}
+             (:flash response)))
+      (is (= "" (:body response)))))
+
+  (testing "Password is wrong, should redirect to login page with error flash message"
+    (let [user {:name "Severus Snape"
+                :email "foo@gmail.com"
+                :password "lily"}
+          _ (handler/create-user {:multipart-params user})
+          response (handler/login {:params
+                                   {:email (:email user) :password "notthecorrectpassword"}})]
+
+      (is (= 302 (:status response)))
+      (is (= (str "/users/login")
+             (get-in response [:headers "Location"])))
+      (is (= {:error true
+              :style-class "alert alert-danger"
+              :message "Wrong password"}
+             (:flash response)))
+      (is (= "" (:body response))))))
