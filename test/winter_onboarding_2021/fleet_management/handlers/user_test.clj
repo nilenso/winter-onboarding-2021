@@ -68,7 +68,7 @@
                (get-in response [:headers "Location"])))
         (is (= "" (:body response)))
         (is (= (java.util.UUID/fromString "9088992d-d0f4-4207-9b95-c934ad071c32")
-             (get-in response [:cookies "session-id" :value]))))))
+               (get-in response [:cookies "session-id" :value]))))))
 
   (testing "No email exists in the database, should redirect to login page with error flash message"
     (let [user {:name "Severus Snape"
@@ -102,3 +102,22 @@
               :message "Wrong password"}
              (:flash response)))
       (is (= "" (:body response))))))
+
+(deftest authorization
+  (testing "Should return a 302 response with flash message of \"not authorized\""
+    (let [response (handler/not-authorized {})]
+      (is (= 302 (:status response)))
+      (is (= "/users/dashboard" (get-in response [:headers "Location"])))
+      (is (= {:error true
+              :style-class "alert alert-danger"
+              :message "You are not authorized"}
+             (:flash response)))))
+
+  (testing "Should return a 302 response with flash message of \"not logged in\""
+    (let [response (handler/not-logged-in {})]
+      (is (= 302 (:status response)))
+      (is (= "/users/login" (get-in response [:headers "Location"])))
+      (is (= {:error true
+              :style-class "alert alert-danger"
+              :message "You are not logged in"}
+             (:flash response))))))
