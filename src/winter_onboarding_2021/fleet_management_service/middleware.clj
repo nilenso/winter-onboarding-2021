@@ -12,6 +12,13 @@
                (walk/keywordize-keys multipart-params))
         handler)))
 
+(defn keywordize-form-params [handler]
+  (fn [{:keys [form-params] :as request}]
+    (-> request
+        (assoc :form-params
+               (walk/keywordize-keys form-params))
+        handler)))
+
 (defn wrap-exception-handler [handler]
   (fn [request]
     (try (handler request)
