@@ -68,3 +68,10 @@
   (s/keys :req-un [:users/email
                    :users/password]))
                    
+; Fleets
+(s/def :fleets/name string?)
+(s/def :fleets/created-by uuid?)
+
+(s/def ::create-fleet
+  (s/keys :req-un [:fleets/name
+                   :fleets/created-by]))
