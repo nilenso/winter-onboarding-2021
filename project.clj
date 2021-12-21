@@ -25,7 +25,7 @@
             "migrate-licence-plate" ["run" "-m" "format-licence-plate/run-data-migration"]}
   :profiles {:uberjar {:aot :all}
              :test {:cloverage {:fail-threshold 70
-                                :ns-exclude-regex [#"user"]}}
+                                :ns-exclude-regex [#"user", #"format-licence-plate"]}}
              :dev {:source-paths ["dev"]
                    :dependencies [[org.clojure/tools.namespace "1.0.0"]
                                   [hiccup-find "1.0.1"]]}}
