@@ -1,34 +1,26 @@
 (ns winter-onboarding-2021.fleet-management-service.views.cab
-  (:require [camel-snake-kebab.core :as csk]))
-
-(defn labelled-text-input [label & args]
-  (let [options (apply hash-map args)
-        name (csk/->kebab-case-string label)]
-    [:div
-     [:label {:for label :class "form-label"} label]
-     [:input (merge {:class "form-control" :type "text" :name name}
-                    options)]]))
+  (:require [winter-onboarding-2021.fleet-management-service.views.core :as core-views]))
 
 (defn cab-form [{:keys [name distance-travelled licence-plate]}]
   [:div {:id "content"}
    [:h1 {:class "text-success"} "This is the form page"]
    [:form {:action "/cabs" :method "POST" :enctype "multipart/form-data"}
     [:div {:class "mb-3"}
-     (labelled-text-input
+     (core-views/labelled-text-input
       "Cab Name"
       :name "name"
       :required true
       :placeholder "Enter cab name"
       :value name)]
     [:div {:class "mb-3"}
-     (labelled-text-input
+     (core-views/labelled-text-input
       "Licence Plate"
       :required true
       :placeholder "Enter licence plate (only alphabets and number allowed)"
       :pattern "^[a-zA-Z0-9]*$"
       :value licence-plate)]
     [:div {:class "mb-3"}
-     (labelled-text-input
+     (core-views/labelled-text-input
       "Distance Travelled"
       :type "number"
       :required true
@@ -122,14 +114,14 @@
      [:form {:action route :method "POST" :enctype "multipart/form-data"}
       [:div
        [:div {:class "mb-3"}
-        (labelled-text-input
+        (core-views/labelled-text-input
          "Cab Name"
          :placeholder "Enter cab name"
          :name "name"
          :required true
          :value name)]
        [:div {:class "mb-3"}
-        (labelled-text-input
+        (core-views/labelled-text-input
          "Licence Plate"
          :required true
          :placeholder "Enter licence plate (only alphabets and number allowed)"
@@ -137,7 +129,7 @@
          :disabled true
          :value licence-plate)]
        [:div {:class "mb-3"}
-        (labelled-text-input
+        (core-views/labelled-text-input
          "Distance Travelled"
          :type "number"
          :placeholder "Enter distance in meters"
