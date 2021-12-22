@@ -24,17 +24,15 @@
 
 
 (defn create-user [{:keys [form-params]}]
-  (let [validated-user (s/conform ::specs/signup-form form-params)
-        user-exist (user-exist? (:email form-params))]
-    (if (or (s/invalid? validated-user) user-exist)
-      (if user-exist
-        (merge (flash-msg "User already exisits, use different email!" false)
-               (response/redirect "/users/signup"))
-        (merge (flash-msg "Could not create user, enter valid details!" false)
-               (response/redirect "/users/signup")))
-      (let [created-user (user-model/create (assoc validated-user
-                                        :role "admin"
-                                        :password (password/encrypt
-                                                   (:password validated-user))))]
-        (merge (flash-msg (format "User %s created successfully!" (:users/name created-user)) true)
-               (response/redirect "/users/signup"))))))
+  (let [validated-user (s/conform ::specs/signup-form form-params)]
+    (cond
+      (s/invalid? validated-user) (merge (flash-msg "Could not create user, enter valid details!" false)
+                                         (response/redirect "/users/signup"))
+      (user-exist? (:email form-params)) (merge (flash-msg "User already exisits, use different email!" false)
+                                                (response/redirect "/users/signup"))
+      :else (let [created-user (user-model/create (assoc validated-user
+                                                         :password (password/encrypt
+                                                                    (:password validated-user))))]
+              (merge (flash-msg (format "User %s created successfully!" (:users/name created-user)) true)
+                     (response/redirect "/users/signup"))))))
+

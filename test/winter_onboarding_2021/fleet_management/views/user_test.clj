@@ -5,7 +5,7 @@
 
 (deftest signup-form
   (testing "Should return inputs for email,name and password"
-    (is (= 3
+    (is (= 4
            (count (hf/hiccup-find [:input] (view/signup-form)))))
     (is (= "Email address"
            (hf/hiccup-text (hf/hiccup-find [:#email] (view/signup-form)))))
