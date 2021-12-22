@@ -13,8 +13,16 @@
     (let [user {:name "Severus Snape"
                 :email "s.snape@hogwarts.edu"
                 :password "lily"}
-          _ (handler/create-user {:form-params user})
+          response (handler/create-user {:form-params user})
           created-user (first (user-model/find-by-keys {:email (:email user)}))]
+
+      (is (= 302 (:status response)))
+
+      (is (= {:success true
+              :style-class "alert alert-success"
+              :message (format "User %s created successfully!" (:users/name created-user))}
+             (:flash response)))
+
       (is (= #:users{:name "Severus Snape"
                      :role "admin"
                      :email "s.snape@hogwarts.edu"}

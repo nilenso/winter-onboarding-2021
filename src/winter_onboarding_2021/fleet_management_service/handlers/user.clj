@@ -28,12 +28,13 @@
         user-exist (user-exist? (:email form-params))]
     (if (or (s/invalid? validated-user) user-exist)
       (if user-exist
-        (-> (flash-msg "User already exisits, use different email!" false)
-            (merge (response/redirect "/users/signup")))
-        (-> (flash-msg "Could not create user, enter valid details!" false)
-            (merge (response/redirect "/users/signup"))))
-      (let [_ (user-model/create (assoc validated-user
+        (merge (flash-msg "User already exisits, use different email!" false)
+               (response/redirect "/users/signup"))
+        (merge (flash-msg "Could not create user, enter valid details!" false)
+               (response/redirect "/users/signup")))
+      (let [created-user (user-model/create (assoc validated-user
                                         :role "admin"
                                         :password (password/encrypt
                                                    (:password validated-user))))]
-        (merge (flash-msg "User created successfully!" true) (response/redirect "/users/signup"))))))
+        (merge (flash-msg (format "User %s created successfully!" (:users/name created-user)) true)
+               (response/redirect "/users/signup"))))))
