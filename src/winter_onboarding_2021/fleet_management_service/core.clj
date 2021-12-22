@@ -19,6 +19,7 @@
    br/make-handler
    wrap-flash
    middleware/keywordize-multipart-params
+   middleware/keywordize-form-params
    wrap-multipart-params
    wrap-keyword-params
    wrap-params
