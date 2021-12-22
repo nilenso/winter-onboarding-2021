@@ -1,6 +1,6 @@
-(ns winter-onboarding-2021.fleet-management.migration-test
+(ns winter-onboarding-2021.fleet-management-service.migration-test
   (:require [clojure.test :refer [deftest is testing use-fixtures]]
-            [winter-onboarding-2021.fleet-management.fixtures :as fixtures]
+            [winter-onboarding-2021.fleet-management-service.fixtures :as fixtures]
             [winter-onboarding-2021.fleet-management-service.config :as config]
             [winter-onboarding-2021.fleet-management-service.migration :as migration]))
 

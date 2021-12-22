@@ -1,4 +1,4 @@
-(ns winter-onboarding-2021.fleet-management.views.cab-test
+(ns winter-onboarding-2021.fleet-management-service.views.cab-test
   (:require [clojure.test :refer [deftest is testing]]
             [hiccup-find.core :as hf]
             [clojure.string :as str]

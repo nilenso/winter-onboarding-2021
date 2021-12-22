@@ -1,8 +1,8 @@
-(ns winter-onboarding-2021.fleet-management.routes-test
+(ns winter-onboarding-2021.fleet-management-service.routes-test
   (:require [clojure.test :refer [deftest is testing use-fixtures]]
             [crypto.password.bcrypt :as password]
             [winter-onboarding-2021.fleet-management-service.handlers.cab :as cab-handlers]
-            [winter-onboarding-2021.fleet-management.fixtures :as fixtures]
+            [winter-onboarding-2021.fleet-management-service.fixtures :as fixtures]
             [winter-onboarding-2021.fleet-management-service.routes :as routes]))
 
 (use-fixtures :once fixtures/config fixtures/db-connection)

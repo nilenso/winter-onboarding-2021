@@ -1,4 +1,4 @@
-(ns winter-onboarding-2021.fleet-management.fixtures
+(ns winter-onboarding-2021.fleet-management-service.fixtures
   (:require [next.jdbc :as jdbc]
             [mount.core :as mount]
             [aero.core :refer [read-config]]
