@@ -16,7 +16,7 @@
                                  (:title data)
                                  (:content data)))))))
 
-(defn protect [handler allowed-roles]
+(defn authentication-required [handler allowed-roles]
   (fn [request]
     (if-let [user-role (keyword (get-in request [:user :users/role]))]
       (if (contains? allowed-roles user-role)
@@ -26,10 +26,10 @@
 
 (def routes
   ["/" [["public" {:get (br/->Resources {:prefix "/bootstrap"})}]
-        ["cabs" {"" {:get (protect (wrap-layout cab-handlers/get-cabs) #{:admin :manager})
+        ["cabs" {"" {:get (authentication-required (wrap-layout cab-handlers/get-cabs) #{:admin :manager})
                      :post cab-handlers/create}
-                 "/new" {:get (protect  (wrap-layout cab-handlers/new) #{:admin :manager})}
-                 "/delete" {:post (protect  (wrap-layout cab-handlers/delete) #{:admin :manager})}
+                 "/new" {:get (authentication-required  (wrap-layout cab-handlers/new) #{:admin :manager})}
+                 "/delete" {:post (authentication-required  (wrap-layout cab-handlers/delete) #{:admin :manager})}
                  ["/" :slug] {"/edit" {:get (wrap-layout cab-handlers/update-cab-view)}
                               :get (wrap-layout cab-handlers/view-cab)
                               :post cab-handlers/update-cab}}]

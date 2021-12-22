@@ -5,14 +5,14 @@
 
 (defonce all-sessions (atom {}))
 
-(defstate session-store
+(defstate store
   :start (ring-memory/memory-store all-sessions))
 
-(defn write-session [session-id data]
-  (store/write-session session-store session-id data))
+(defn write [session-id data]
+  (store/write-session store session-id data))
 
-(defn read-session [session-id]
-  (store/read-session session-store session-id))
+(defn lookup [session-id]
+  (store/read-session store session-id))
 
-(defn delete-session [session-id]
-  (store/delete-session session-store session-id))
+(defn delete [session-id]
+  (store/delete-session store session-id))

@@ -31,7 +31,7 @@
     (cond
       (s/invalid? validated-user) (merge (flash-msg "Could not create user, enter valid details!" false)
                                          (response/redirect "/users/signup"))
-      (user-exist? (:email form-params)) (merge (flash-msg "User already exisits, use different email!" false)
+      (user-exist? (:email form-params)) (merge (flash-msg "User already exists, use different email!" false)
                                                 (response/redirect "/users/signup"))
       :else (let [created-user (user-model/create (assoc validated-user
                                                          :password (password/encrypt
@@ -45,7 +45,7 @@
 
 (defn- successful-login-response [user-id]
   (let [session-id (uuid)]
-    (session/write-session session-id user-id)
+    (session/write session-id user-id)
     (merge (flash-msg "Hooray! Logged in!" true)
            (-> (response/redirect "/users/dashboard")
                (response/set-cookie "session-id" session-id {:path "/"})))))

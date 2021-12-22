@@ -10,7 +10,7 @@
     (let [user-id (java.util.UUID/randomUUID)
           session-id (java.util.UUID/randomUUID)
           _ (reset! session/all-sessions {session-id user-id})
-          session-value (session/read-session session-id)]
+          session-value (session/lookup session-id)]
       (is (= user-id
              session-value)))))
 
@@ -18,15 +18,15 @@
   (testing "Should write a user id to the session store"
     (let [session-id (java.util.UUID/randomUUID)
           user-id (java.util.UUID/randomUUID)
-          _ (session/write-session session-id user-id)
-          session-value (session/read-session session-id)]
+          _ (session/write session-id user-id)
+          session-value (session/lookup session-id)]
       (is (= user-id session-value)))))
 
 (deftest delete-session
     (testing "Should delete a specific session with provided session-id"
       (let [user-id (java.util.UUID/randomUUID)
             session-id (java.util.UUID/randomUUID)]
-        (session/write-session session-id user-id)
-        (session/delete-session session-id)
+        (session/write session-id user-id)
+        (session/delete session-id)
         (is (= nil
-               (session/read-session session-id))))))
+               (session/lookup session-id))))))

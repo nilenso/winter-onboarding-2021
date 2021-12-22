@@ -45,7 +45,7 @@
 (defn append-user-to-request [handler]
   (fn [request]
     (if-let [session-id (get-in request [:cookies :session-id :value])]
-      (let [user-id (session/read-session (java.util.UUID/fromString session-id))
+      (let [user-id (session/lookup (java.util.UUID/fromString session-id))
             db-user (select-keys (first (user-model/find-by-keys {:id user-id}))
                                  [:users/id :users/name :users/role :users/email])
             new-request (-> request

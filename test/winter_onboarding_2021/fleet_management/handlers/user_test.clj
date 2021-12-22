@@ -42,7 +42,7 @@
           response (handler/create-user {:form-params user})]
       (is (= {:error true
               :style-class "alert alert-danger"
-              :message "User already exisits, use different email!"}
+              :message "User already exists, use different email!"}
              (:flash response)))))
   (testing "Should flash a message invalid details are passed"
     (let [user {:name "Dumbledore"
@@ -59,8 +59,9 @@
     (with-redefs [handler/uuid (fn [] (java.util.UUID/fromString "9088992d-d0f4-4207-9b95-c934ad071c32"))]
       (let [user {:name "Severus Snape"
                   :email "s.snape@hogwarts.edu"
+                  :role "admin"
                   :password "lily"}
-            _ (handler/create-user {:multipart-params user})
+            _ (handler/create-user {:form-params user})
             response (handler/login {:params
                                      {:email "s.snape@hogwarts.edu" :password "lily"}})]
         (is (= 302 (:status response)))
@@ -89,8 +90,9 @@
   (testing "Password is wrong, should redirect to login page with error flash message"
     (let [user {:name "Severus Snape"
                 :email "foo@gmail.com"
+                :role "admin"
                 :password "lily"}
-          _ (handler/create-user {:multipart-params user})
+          _ (handler/create-user {:form-params user})
           response (handler/login {:params
                                    {:email (:email user) :password "notthecorrectpassword"}})]
 

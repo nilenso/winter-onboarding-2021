@@ -14,7 +14,7 @@
                        :email "foo@gmail.com"
                        :password (password/encrypt "lily")
                        :role "admin"}
-          cabs-response ((routes/protect cab-handlers/get-cabs #{:admin :manager})
+          cabs-response ((routes/authentication-required cab-handlers/get-cabs #{:admin :manager})
                          {:user user})]
       (is (not= 302 (:status cabs-response)))))
 
@@ -23,7 +23,7 @@
                        :email "foo@gmail.com"
                        :password (password/encrypt "lily")
                        :role "driver"}
-          cabs-response ((routes/protect cab-handlers/get-cabs #{:admin :manager})
+          cabs-response ((routes/authentication-required cab-handlers/get-cabs #{:admin :manager})
                          {:user user})]
       (is (= 302 (:status cabs-response)))
       (is (= "/users/dashboard" (get-in cabs-response [:headers "Location"]))))))

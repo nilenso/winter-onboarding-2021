@@ -21,8 +21,9 @@
     (let [handler identity
           user {:name "Severus Snape"
                 :email "s.snape@hogwarts.edu"
+                :role "admin"
                 :password "lily"}
-          _ (handler/create-user {:multipart-params user})
+          _ (handler/create-user {:form-params user})
           login-response (handler/login {:params {:email "s.snape@hogwarts.edu"
                                                   :password "lily"}})
           session-id (str (get-in login-response [:cookies "session-id" :value]))
