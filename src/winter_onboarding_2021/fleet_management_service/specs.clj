@@ -39,5 +39,6 @@
 
 (s/def ::signup-form 
        (s/keys :req-un [:users/name
-                     :users/email
-                     :users/password]))
+                        :users/email
+                        :users/role
+                        :users/password]))

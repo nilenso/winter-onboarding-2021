@@ -24,4 +24,5 @@
      :id "signup-pwd-input"
      :type "password"
      :name "password")]
+   [:input {:type "hidden" :name "role" :value "admin"}]
    [:button {:type "submit" :class "btn btn-primary"} "Submit"]])

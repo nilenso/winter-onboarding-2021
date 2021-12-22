@@ -12,6 +12,7 @@
   (testing "Should create a user in db"
     (let [user {:name "Severus Snape"
                 :email "s.snape@hogwarts.edu"
+                :role "admin"
                 :password "lily"}
           response (handler/create-user {:form-params user})
           created-user (first (user-model/find-by-keys {:email (:email user)}))]
@@ -36,6 +37,7 @@
   (testing "Should flash a message if user already exist"
     (let [user {:name "Severus Snape"
                 :email "s.snape@hogwarts.edu"
+                :role "admin"
                 :password "lily"}
           response (handler/create-user {:form-params user})]
       (is (= {:error true
