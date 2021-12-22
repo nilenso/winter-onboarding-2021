@@ -1,7 +1,8 @@
 (ns winter-onboarding-2021.fleet-management.models.user-test
   (:require [clojure.test :refer [deftest is testing use-fixtures]]
             [winter-onboarding-2021.fleet-management-service.models.user :as user-model]
-            [winter-onboarding-2021.fleet-management.fixtures :as fixtures]))
+            [winter-onboarding-2021.fleet-management.fixtures :as fixtures]
+            [winter-onboarding-2021.fleet-management-service.utils :as utils]))
 
 (use-fixtures :once fixtures/config fixtures/db-connection)
 (use-fixtures :each fixtures/clear-db)
@@ -17,8 +18,8 @@
                      :role "admin"
                      :email "harry@hogwarts.edu"
                      :password "hermione@123"}
-             (dissoc (first (user-model/find-by-keys {:email (:email user)}))
-                     :users/id))))))
+             (utils/dissoc-irrelevant-keys-from-user
+              (first (user-model/find-by-keys {:email (:email user)}))))))))
 
 (deftest find-by-keys
   (testing "Should return a user given a key-map(properties)"
@@ -31,5 +32,5 @@
                      :role "admin"
                      :email "harry@hogwarts.edu"
                      :password "hermione@123"}
-             (dissoc (first (user-model/find-by-keys {:email (:email user)}))
-                     :users/id))))))
+             (utils/dissoc-irrelevant-keys-from-user
+              (first (user-model/find-by-keys {:email (:email user)}))))))))

@@ -23,9 +23,9 @@
   (not-empty (user-model/find-by-keys {:email email})))
 
 
-(defn create-user [{:keys [multipart-params]}]
-  (let [validated-user (s/conform ::specs/signup-form multipart-params)
-        user-exist (user-exist? (:email multipart-params))]
+(defn create-user [{:keys [form-params]}]
+  (let [validated-user (s/conform ::specs/signup-form form-params)
+        user-exist (user-exist? (:email form-params))]
     (if (or (s/invalid? validated-user) user-exist)
       (if user-exist
         (-> (flash-msg "User already exisits, use different email!" false)

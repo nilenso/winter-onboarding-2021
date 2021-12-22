@@ -2,7 +2,7 @@
 
 
 (defn signup-form []
-  [:form {:action "/users/signup" :method "POST" :enctype "multipart/form-data"}
+  [:form {:action "/users/signup" :method "POST"}
    [:div {:class "mb-3" :id "email"}
     [:label {:for "signup-email-input" :class "form-label"} "Email address"]
     [:input {:required "required" :id "signup-email-input" :class "form-control" :type "email", :name "email"}]]

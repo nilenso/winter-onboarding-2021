@@ -13,28 +13,32 @@
     (let [user {:name "Severus Snape"
                 :email "s.snape@hogwarts.edu"
                 :password "lily"}
-          _ (handler/create-user {:multipart-params user})
+          _ (handler/create-user {:form-params user})
           created-user (first (user-model/find-by-keys {:email (:email user)}))]
       (is (= #:users{:name "Severus Snape"
-              :role "admin"
-              :email "s.snape@hogwarts.edu"}
-             (dissoc created-user :users/id :users/password)))
+                     :role "admin"
+                     :email "s.snape@hogwarts.edu"}
+             (dissoc created-user
+                     :users/id
+                     :users/password
+                     :users/created-at
+                     :users/updated-at)))
       (is (password/check "lily" (:users/password created-user)))))
-  
+
   (testing "Should flash a message if user already exist"
     (let [user {:name "Severus Snape"
                 :email "s.snape@hogwarts.edu"
                 :password "lily"}
-          response (handler/create-user {:multipart-params user})]
+          response (handler/create-user {:form-params user})]
       (is (= {:error true
               :style-class "alert alert-danger"
               :message "User already exisits, use different email!"}
-           (:flash response)))))
+             (:flash response)))))
   (testing "Should flash a message invalid details are passed"
     (let [user {:name "Dumbledore"
                 :email "albus@hogwarts"
                 :password "fawkes"}
-          response (handler/create-user {:multipart-params user})]
+          response (handler/create-user {:form-params user})]
       (is (= {:error true
               :style-class "alert alert-danger"
               :message "Could not create user, enter valid details!"}
