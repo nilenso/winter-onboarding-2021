@@ -1,4 +1,4 @@
-(ns winter-onboarding-2021.fleet-management.config-test
+(ns winter-onboarding-2021.fleet-management-service.config-test
   (:require [clojure.test :refer [deftest is testing]]
             [winter-onboarding-2021.fleet-management-service.config :as config]))
 

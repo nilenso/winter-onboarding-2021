@@ -1,8 +1,8 @@
-(ns winter-onboarding-2021.fleet-management.db.session-test
+(ns winter-onboarding-2021.fleet-management-service.db.session-test
   (:require [clojure.test :refer [deftest is testing use-fixtures]]
             [winter-onboarding-2021.fleet-management-service.db.core :as db-core]
-            [winter-onboarding-2021.fleet-management.fixtures :as fixtures]
-            [winter-onboarding-2021.fleet-management.factories :as factories]
+            [winter-onboarding-2021.fleet-management-service.fixtures :as fixtures]
+            [winter-onboarding-2021.fleet-management-service.factories :as factories]
             [winter-onboarding-2021.fleet-management-service.db.session :as db-session]
             [winter-onboarding-2021.fleet-management-service.models.user :as user-models]
             [winter-onboarding-2021.fleet-management-service.utils :as utils]

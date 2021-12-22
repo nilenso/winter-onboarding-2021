@@ -1,4 +1,4 @@
-(ns winter-onboarding-2021.fleet-management.factories
+(ns winter-onboarding-2021.fleet-management-service.factories
   (:require [clojure.spec.gen.alpha :as gen]
             [clojure.spec.alpha :as s]
             [winter-onboarding-2021.fleet-management-service.specs :as specs]))

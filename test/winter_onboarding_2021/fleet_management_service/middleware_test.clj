@@ -1,12 +1,11 @@
-(ns winter-onboarding-2021.fleet-management.middleware-test
+(ns winter-onboarding-2021.fleet-management-service.middleware-test
   (:require [clojure.test :refer [deftest is testing use-fixtures]]
             [winter-onboarding-2021.fleet-management-service.middleware :as middleware]
             [winter-onboarding-2021.fleet-management-service.handlers.user :as handler]
-            [winter-onboarding-2021.fleet-management.fixtures :as fixtures]))
+            [winter-onboarding-2021.fleet-management-service.fixtures :as fixtures]))
 
 (use-fixtures :once fixtures/config fixtures/db-connection)
 (use-fixtures :each fixtures/clear-db)
-
 
 (deftest keywordizing-multipart-params
   (testing "Should keywordize multipart params"

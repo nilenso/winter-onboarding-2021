@@ -1,10 +1,10 @@
-(ns winter-onboarding-2021.fleet-management.handlers.cab-test
+(ns winter-onboarding-2021.fleet-management-service.handlers.cab-test
   (:require [hiccup-find.core :as hf]
             [clojure.string :as str]
             [clojure.test :refer [deftest is testing use-fixtures]]
             [hiccup.page :as hp]
-            [winter-onboarding-2021.fleet-management.fixtures :as fixtures]
-            [winter-onboarding-2021.fleet-management.factories :as factories]
+            [winter-onboarding-2021.fleet-management-service.fixtures :as fixtures]
+            [winter-onboarding-2021.fleet-management-service.factories :as factories]
             [winter-onboarding-2021.fleet-management-service.config :as config]
             [winter-onboarding-2021.fleet-management-service.models.cab :as models]
             [winter-onboarding-2021.fleet-management-service.views.cab :as views]
