@@ -1,7 +1,7 @@
-(ns winter-onboarding-2021.fleet-management.db.user-test
+(ns winter-onboarding-2021.fleet-management-service.db.user-test
   (:require [clojure.test :refer [deftest is testing use-fixtures]]
             [winter-onboarding-2021.fleet-management-service.db.user :as user-db]
-            [winter-onboarding-2021.fleet-management.fixtures :as fixtures]
+            [winter-onboarding-2021.fleet-management-service.fixtures :as fixtures]
             [winter-onboarding-2021.fleet-management-service.utils :as utils])
   (:import [org.postgresql.util PSQLException]))
 

@@ -1,4 +1,4 @@
-(ns winter-onboarding-2021.fleet-management.views.layout-test
+(ns winter-onboarding-2021.fleet-management-service.views.layout-test
   (:require [clojure.test :refer [deftest is testing]]
             [clojure.string :as string]
             [hiccup.page :refer [html5]]

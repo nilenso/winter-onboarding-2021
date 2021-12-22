@@ -1,7 +1,7 @@
-(ns winter-onboarding-2021.fleet-management.models.user-test
+(ns winter-onboarding-2021.fleet-management-service.models.user-test
   (:require [clojure.test :refer [deftest is testing use-fixtures]]
             [winter-onboarding-2021.fleet-management-service.models.user :as user-model]
-            [winter-onboarding-2021.fleet-management.fixtures :as fixtures]
+            [winter-onboarding-2021.fleet-management-service.fixtures :as fixtures]
             [winter-onboarding-2021.fleet-management-service.utils :as utils]))
 
 (use-fixtures :once fixtures/config fixtures/db-connection)

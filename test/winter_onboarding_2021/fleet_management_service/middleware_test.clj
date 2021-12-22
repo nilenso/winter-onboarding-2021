@@ -1,4 +1,4 @@
-(ns winter-onboarding-2021.fleet-management.middleware-test
+(ns winter-onboarding-2021.fleet-management-service.middleware-test
   (:require [clojure.test :refer [deftest is testing]]
             [winter-onboarding-2021.fleet-management-service.middleware :as middleware]))
 
