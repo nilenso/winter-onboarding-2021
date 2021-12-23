@@ -1,32 +1,40 @@
 (ns winter-onboarding-2021.fleet-management-service.views.cab
-  (:require [winter-onboarding-2021.fleet-management-service.views.core :as core-views]))
+  (:require [winter-onboarding-2021.fleet-management-service.components.form :as component]))
 
 (defn cab-form [{:keys [name distance-travelled licence-plate]}]
-  [:div {:id "content"}
-   [:h1 {:class "text-success"} "This is the form page"]
-   [:form {:action "/cabs" :method "POST" :enctype "multipart/form-data"}
-    [:div {:class "mb-3"}
-     (core-views/labelled-text-input
-      "Cab Name"
-      :name "name"
-      :required true
-      :placeholder "Enter cab name"
-      :value name)]
-    [:div {:class "mb-3"}
-     (core-views/labelled-text-input
-      "Licence Plate"
-      :required true
-      :placeholder "Enter licence plate (only alphabets and number allowed)"
-      :pattern "^[a-zA-Z0-9]*$"
-      :value licence-plate)]
-    [:div {:class "mb-3"}
-     (core-views/labelled-text-input
-      "Distance Travelled"
-      :type "number"
-      :required true
-      :placeholder "Enter distance in meters"
-      :value distance-travelled)]
-    [:button {:type "submit" :class "btn btn-primary"} "Submit"]]])
+  (let [form (component/form {:action "/cabs"
+                              :method "POST"
+                              :enctype "multipart/form-data"
+                              :inputs [{:label "Cab Name"
+                                        :type "text"
+                                        :name "name"
+                                        :id "name"
+                                        :required true
+                                        :placeholder "Enter cab name"
+                                        :value name}
+                                       {:label "Licence Plate"
+                                        :type "text"
+                                        :name "licence-plate"
+                                        :id "licence-plate"
+                                        :required true
+                                        :placeholder "Enter licence plate (only alphabets and number allowed)"
+                                        :pattern "^[a-zA-Z0-9]*$"
+                                        :value licence-plate}
+                                       {:label "Distance Travelled"
+                                        :type "number"
+                                        :name "distance-travelled"
+                                        :id "distance-travelled"
+                                        :required true
+                                        :placeholder "Enter distance in meters"
+                                        :value distance-travelled}
+                                       {:type "submit"
+                                        :class "btn btn-primary"
+                                        :value "Submit"}]})]
+    [:div {:id "content"}
+     [:h1 {:class "text-success"} "This is the form page"]
+     form]))
+
+
 
 (defn modal [data]
   [:div {:id (:modal-id data)
@@ -67,10 +75,15 @@
            :title (str "Delete " (:cabs/name cab) "?")
            :body "Once the cab is deleted, it can't be recovered."
            :footer (list [:button
-                          {:data-bs-dismiss "modal", :type "button" :class "btn btn-secondary"} "Close"]
-                         [:form {:action "/cabs/delete" :method "POST"}
-                          [:input {:name "id" :value (:cabs/id cab) :hidden true}]
-                          [:button {:type "submit" :class "btn btn-danger"} "Delete"]])})])
+                          {:data-bs-dismiss "modal", :type "button" :class "btn btn-secondary mt-3"} "Close"]
+                         (component/form {:action "/cabs/delete"
+                                          :method "POST"
+                                          :inputs [{:name "id"
+                                                    :value (:cabs/id cab)
+                                                    :hidden true}
+                                                   {:type "submit"
+                                                    :class "btn btn-danger"
+                                                    :value "Delete"}]}))})])
 
 (def headers
   [{:label "Name" :value :cabs/name}
@@ -108,31 +121,35 @@
         [:a {:id "cab-next-page" :href next-page-query}  "Next Page > "] ())]]))
 
 (defn update-cab-form [{:cabs/keys [id name licence-plate distance-travelled]}]
-  (let [route (str "/cabs/" id)]
+  (let [route (str "/cabs/" id)
+        form (component/form {:action route
+                              :method "POST"
+                              :enctype "multipart/form-data"
+                              :inputs [{:label "Cab Name"
+                                        :type "text"
+                                        :name "name"
+                                        :id "name"
+                                        :required true
+                                        :placeholder "Enter cab name"
+                                        :value name}
+                                       {:label "Licence Plate"
+                                        :type "text"
+                                        :name "licence-plate"
+                                        :id "licence-plate"
+                                        :required true
+                                        :placeholder "Enter licence plate (only alphabets and number allowed)"
+                                        :pattern "^[a-zA-Z0-9]*$"
+                                        :value licence-plate}
+                                       {:label "Distance Travelled"
+                                        :type "number"
+                                        :name "distance-travelled"
+                                        :id "distance-travelled"
+                                        :required true
+                                        :placeholder "Enter distance in meters"
+                                        :value distance-travelled}
+                                       {:type "submit"
+                                        :class "btn btn-success"
+                                        :value "Update"}]})]
     [:div {:id "content"}
      [:h1 {:class "text-success"} "Update Cab"]
-     [:form {:action route :method "POST" :enctype "multipart/form-data"}
-      [:div
-       [:div {:class "mb-3"}
-        (core-views/labelled-text-input
-         "Cab Name"
-         :placeholder "Enter cab name"
-         :name "name"
-         :required true
-         :value name)]
-       [:div {:class "mb-3"}
-        (core-views/labelled-text-input
-         "Licence Plate"
-         :required true
-         :placeholder "Enter licence plate (only alphabets and number allowed)"
-         :pattern "^[a-zA-Z0-9]*$"
-         :disabled true
-         :value licence-plate)]
-       [:div {:class "mb-3"}
-        (core-views/labelled-text-input
-         "Distance Travelled"
-         :type "number"
-         :placeholder "Enter distance in meters"
-         :required true
-         :value distance-travelled)]
-       [:button {:type "submit" :class "btn btn-success"} "Update"]]]]))
+     form]))
