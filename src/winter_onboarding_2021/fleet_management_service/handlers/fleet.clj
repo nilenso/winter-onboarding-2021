@@ -2,8 +2,8 @@
   (:require [winter-onboarding-2021.fleet-management-service.models.fleet :as fleet-model]
             [clojure.spec.alpha :as s]
             [winter-onboarding-2021.fleet-management-service.specs :as specs]
-            [ring.util.response :as response]))
-
+            [ring.util.response :as response]
+            [winter-onboarding-2021.fleet-management-service.views.fleet :as views]))
 
 (def success-flash
   {:flash {:success true
@@ -22,7 +22,11 @@
         valid-fleet-data (s/conform ::specs/create-fleet fleet-data)]
     (if (s/invalid? valid-fleet-data)
       (->  error-flash
-           (merge (response/redirect "/fleets")))
+           (merge (response/redirect "/fleets/new")))
       (let [fleet-id (:fleets/id (fleet-model/create fleet-data))]
         (->  success-flash
              (merge (response/redirect (format "/fleets/%s" (str fleet-id)))))))))
+
+(defn new [_]
+  {:title "Create fleet"
+   :content (views/create-fleet)})

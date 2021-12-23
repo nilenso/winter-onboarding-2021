@@ -4,6 +4,7 @@
             [ring.middleware.json :refer [wrap-json-response]]
             [hiccup.page :refer [html5]]
             [winter-onboarding-2021.fleet-management-service.handlers.cab :as cab-handlers]
+            [winter-onboarding-2021.fleet-management-service.handlers.fleet :as fleet-handlers]
             [winter-onboarding-2021.fleet-management-service.views.layout :as layout]
             [winter-onboarding-2021.fleet-management-service.handlers.core :as handler]
             [winter-onboarding-2021.fleet-management-service.handlers.user :as user-handlers]))
@@ -37,6 +38,8 @@
                              :post user-handlers/create-user}
                   "/login" {:get (wrap-layout user-handlers/login-form)
                             :post user-handlers/login}}]
+        ["fleets" {"" {:post fleet-handlers/create-fleet}
+                   "/new" {:get (wrap-layout fleet-handlers/new)}}]
         ["healthcheck" {:get (wrap-json-response handler/health-check)}]
         ["index" {:get (wrap-layout handler/index)}]
         ["" {:get (wrap-layout handler/root)}]
