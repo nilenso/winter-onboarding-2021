@@ -15,7 +15,7 @@
                 :users/email "foobar@gmail.com"
                 :users/password "foo"}
           user-id (:users/id (user-db/create user))
-          request {:form-params {:name "Goo fleet"}
+          request {:form-params {:name "Foo fleet"}
                    :user #:users{:id user-id
                                  :name "foo bar"
                                  :role "admin"
@@ -23,6 +23,20 @@
           response (fleet-handler/create-fleet request)
           inserted-fleet (first (db-core/query! ["SELECT * FROM FLEETS"]))]
       (is (= 302 (:status response)))
-      (is (= #:fleets{:name "Goo fleet"
-                      :created-by user-id} (select-keys inserted-fleet 
-                                                        [:fleets/name :fleets/created-by]))))))
+      (is (= #:fleets{:name "Foo fleet"
+                      :created-by user-id}
+             (select-keys inserted-fleet
+                          [:fleets/name :fleets/created-by])))
+      (is (= {:success true
+              :style-class "alert alert-success"
+              :message "Fleet created successfully!"}
+             (:flash response)))))
+
+  (testing "Should not create a fleet if the admin is not logged-in"
+    (let [request {:form-params {:name "Boo fleet"}}
+          response (fleet-handler/create-fleet request)]
+      (is (= 302 (:status response)))
+      (is (= {"Location" "/fleets/new"} (:headers response)))
+      (is (= {:error true
+              :style-class "alert alert-danger"
+              :message "Could not create fleet, try again!"} (:flash response))))))
