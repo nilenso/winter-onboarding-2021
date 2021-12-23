@@ -3,6 +3,7 @@
             [crypto.password.bcrypt :as password]
             [winter-onboarding-2021.fleet-management-service.handlers.user :as handler]
             [winter-onboarding-2021.fleet-management-service.models.user :as user-model]
+            [winter-onboarding-2021.fleet-management-service.utils :as utils]
             [winter-onboarding-2021.fleet-management.fixtures :as fixtures]))
 
 (use-fixtures :once fixtures/config fixtures/db-connection)
@@ -56,7 +57,7 @@
 
 (deftest user-login
   (testing "Correct login credentials, should redirect to user dashboard"
-    (with-redefs [handler/uuid (fn [] (java.util.UUID/fromString "9088992d-d0f4-4207-9b95-c934ad071c32"))]
+    (with-redefs [utils/uuid (fn [] (java.util.UUID/fromString "9088992d-d0f4-4207-9b95-c934ad071c32"))]
       (let [user {:name "Severus Snape"
                   :email "s.snape@hogwarts.edu"
                   :role "admin"

@@ -23,8 +23,6 @@
 (defn user-exist? [email]
   (not-empty (user-model/find-by-keys {:email email})))
 
-(defn uuid []
-  (java.util.UUID/randomUUID))
 
 (defn create-user [{:keys [form-params]}]
   (let [validated-user (s/conform ::specs/signup-form form-params)]
@@ -44,8 +42,7 @@
    :content (view/login-form)})
 
 (defn- successful-login-response [user-id]
-  (let [session-id (uuid)]
-    (session/write session-id user-id)
+  (let [session-id (session/new user-id)]
     (merge (flash-msg "Hooray! Logged in!" true)
            (-> (response/redirect "/users/dashboard")
                (response/set-cookie "session-id" session-id {:path "/"})))))

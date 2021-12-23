@@ -9,3 +9,6 @@
           :users/id
           :users/created-at
           :users/updated-at))
+
+(defn uuid []
+  (java.util.UUID/randomUUID))

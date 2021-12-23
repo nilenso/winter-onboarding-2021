@@ -16,9 +16,8 @@
 
 (deftest write-session
   (testing "Should write a user id to the session store"
-    (let [session-id (java.util.UUID/randomUUID)
-          user-id (java.util.UUID/randomUUID)
-          _ (session/write session-id user-id)
+    (let [user-id (java.util.UUID/randomUUID)
+          session-id (session/new user-id)
           session-value (session/lookup session-id)]
       (is (= user-id session-value)))))
 
@@ -26,7 +25,7 @@
     (testing "Should delete a specific session with provided session-id"
       (let [user-id (java.util.UUID/randomUUID)
             session-id (java.util.UUID/randomUUID)]
-        (session/write session-id user-id)
+        (session/new user-id)
         (session/delete session-id)
         (is (= nil
                (session/lookup session-id))))))
