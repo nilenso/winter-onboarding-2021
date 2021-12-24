@@ -63,11 +63,13 @@
   (let [validated-params (s/conform ::specs/login-params params)]
     (if (s/invalid? validated-params)
       (invalid-data-response)
-      (if-let [db-user (first (user-model/find-by-keys (select-keys validated-params [:email])))]
-        (if (password/check (:password validated-params) (:users/password db-user))
-          (successful-login-response (:users/id db-user))
-          (wrong-password-response))
-        (email-not-found-response)))))
+      (let [auth-resp (user-model/authenticate
+                       (select-keys validated-params [:email :password]))]
+        (if (:found? auth-resp)
+          (if (:user auth-resp)
+            (successful-login-response (:users/id (:user auth-resp)))
+            (wrong-password-response))
+          (email-not-found-response))))))
 
 (defn not-authorized [_]
   (merge (flash-msg "You are not authorized" false)
