@@ -5,7 +5,8 @@
             [winter-onboarding-2021.fleet-management.factories :as factories]
             [winter-onboarding-2021.fleet-management-service.db.session :as db-session]
             [winter-onboarding-2021.fleet-management-service.models.user :as user-models]
-            [winter-onboarding-2021.fleet-management-service.utils :as utils]))
+            [winter-onboarding-2021.fleet-management-service.utils :as utils]
+            [winter-onboarding-2021.fleet-management-service.config :as config]))
 
 (use-fixtures :once fixtures/config fixtures/db-connection)
 (use-fixtures :each fixtures/clear-db)
@@ -16,10 +17,11 @@
           created-user (user-models/create user)
           user-id (:users/id created-user)
           session-id (utils/uuid)
-          _ (db-core/insert! :sessions {:id session-id
-                                        :user-id user-id})
+          created-session (db-core/insert! :sessions {:id session-id
+                                        :user-id user-id
+                                        :expires-at (+ (System/currentTimeMillis) (config/get-timeout-period))})
           db-resp (db-session/lookup session-id)]
-      (is (= user-id db-resp)))))
+      (is (= created-session db-resp)))))
 
 (deftest insert
   (testing "Should add a session in the sessions table"
@@ -27,9 +29,10 @@
           created-user (user-models/create user)
           user-id (:users/id created-user)
           session-id (utils/uuid)
-          _ (db-session/insert session-id user-id)]
+          created-session (db-session/insert session-id user-id)]
 
-      (is (= user-id (db-session/lookup session-id))))))
+      (is (= created-session
+             (db-session/lookup session-id))))))
 
 (deftest delete
   (testing "Should delete the session given a session id"
@@ -40,3 +43,16 @@
           _ (db-session/insert session-id user-id)]
       (db-session/delete session-id)
       (is (= nil (db-session/lookup session-id))))))
+
+(deftest join-user-with-session
+  (testing "Should give us details about the session & the user associated with it"
+    (let [user (factories/user)
+          created-user (user-models/create user)
+          user-id (:users/id created-user)
+          session-id (utils/uuid)
+          created-session (db-session/insert session-id user-id)
+          joined-user-session (first (db-session/join-user-with-session session-id))]
+      (is (= (select-keys (merge created-user created-session)
+                          [:users/id :users/name :users/role :users/email
+                           :sessions/id :sessions/expires-at])
+             joined-user-session)))))

@@ -19,3 +19,6 @@
 
 (defn get-log-config []
   (:log config))
+
+(defn get-timeout-period []
+  (:session-timeout-ms config))

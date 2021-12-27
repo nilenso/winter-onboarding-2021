@@ -4,8 +4,7 @@
             [ring.logger :as logger]
             [ring.middleware.stacktrace :as stacktrace]
             [ring.util.response :as response]
-            [winter-onboarding-2021.fleet-management-service.session :as session]
-            [winter-onboarding-2021.fleet-management-service.models.user :as user-model]))
+            [winter-onboarding-2021.fleet-management-service.session :as session]))
 
 (defn keywordize-multipart-params [handler]
   (fn [{:keys [multipart-params] :as request}]
@@ -45,11 +44,12 @@
 (defn append-user-to-request [handler]
   (fn [request]
     (if-let [session-id (get-in request [:cookies :session-id :value])]
-      (let [user-id (session/lookup (java.util.UUID/fromString session-id))
-            db-user (select-keys (first (user-model/find-by-keys {:id user-id}))
-                                 [:users/id :users/name :users/role :users/email])
-            new-request (-> request
-                            (assoc :user db-user))]
-        (-> new-request
-            handler))
+      (if-let  [session-user-data (first (session/join-user-with-session (java.util.UUID/fromString session-id)))]
+        (if (< (:sessions/expires-at session-user-data) (System/currentTimeMillis))
+          (do (session/delete (java.util.UUID/fromString session-id))
+              (merge (response/redirect "/users/login")
+                     {:cookies nil}))
+          (handler (assoc request :user (select-keys session-user-data
+                                                     [:users/id :users/name :users/role :users/email]))))
+        (handler request))
       (handler request))))

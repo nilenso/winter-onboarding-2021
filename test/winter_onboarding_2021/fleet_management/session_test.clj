@@ -15,8 +15,8 @@
           created-user (user-models/create user)
           user-id (:users/id created-user)
           session-id (session/new user-id)
-          db-resp (session/lookup session-id)]
-      (is (= user-id db-resp)))))
+          session-value (session/lookup session-id)]
+      (is (= user-id (:sessions/user-id session-value))))))
 
 (deftest new
   (testing "Should write a user id to the session store"
@@ -25,7 +25,7 @@
           user-id (:users/id created-user)
           session-id (session/new user-id)
           session-value (session/lookup session-id)]
-      (is (= user-id session-value)))))
+      (is (= user-id (:sessions/user-id session-value))))))
 
 (deftest delete-session
   (testing "Should delete a specific session with provided session-id"
@@ -36,3 +36,16 @@
       (session/delete session-id)
       (is (= nil
              (session/lookup session-id))))))
+
+(deftest join-user-with-session
+  (testing "Should give us details about the session & the user associated with it"
+    (let [user (factories/user)
+          created-user (user-models/create user)
+          user-id (:users/id created-user)
+          session-id (session/new user-id)
+          created-session (session/lookup session-id)
+          joined-user-session (first (session/join-user-with-session session-id))]
+      (is (= (select-keys (merge created-user created-session)
+                          [:users/id :users/name :users/role :users/email
+                           :sessions/id :sessions/expires-at])
+             joined-user-session)))))
