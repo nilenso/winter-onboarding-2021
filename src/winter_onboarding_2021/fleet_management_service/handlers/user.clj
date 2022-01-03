@@ -55,11 +55,11 @@
   (let [validated-params (s/conform ::specs/login-params params)]
     (if (s/invalid? validated-params)
       (invalid-data-response)
-      (let [auth-resp (user-model/authenticate
-                       (select-keys validated-params [:email :password]))]
-        (if (:found? auth-resp)
-          (if (:user auth-resp)
-            (successful-login-response (:users/id (:user auth-resp)))
+      (let [{:keys [found? user]} (user-model/authenticate
+                                   (select-keys validated-params [:email :password]))]
+        (if found?
+          (if user
+            (successful-login-response (:users/id user))
             (wrong-password-response))
           (email-not-found-response))))))
 

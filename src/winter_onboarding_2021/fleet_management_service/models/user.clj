@@ -8,9 +8,9 @@
 (defn find-by-keys [key-map]
   (user/find-by-keys key-map))
 
-(defn authenticate [user-creds]
-  (if-let [db-user (first (user/find-by-keys  {:email (:email user-creds)}))]
-    (if (password/check (:password user-creds) (:users/password db-user))
+(defn authenticate [{:keys [email password]}]
+  (if-let [db-user (first (user/find-by-keys  {:email email}))]
+    (if (password/check password (:users/password db-user))
       {:found? true :user (dissoc db-user :users/password)}
       {:found? true :user nil})
     {:found? false :user nil}))
