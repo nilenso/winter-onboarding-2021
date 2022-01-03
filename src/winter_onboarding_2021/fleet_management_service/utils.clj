@@ -12,3 +12,12 @@
 
 (defn uuid []
   (java.util.UUID/randomUUID))
+
+(defn flash-msg [msg success?]
+  (if success?
+    {:flash {:success true
+             :style-class "alert alert-success"
+             :message msg}}
+    {:flash {:error true
+             :style-class "alert alert-danger"
+             :message msg}}))
