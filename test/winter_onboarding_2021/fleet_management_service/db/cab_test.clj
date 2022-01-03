@@ -3,7 +3,9 @@
             [winter-onboarding-2021.fleet-management-service.db.cab :as cab-db]
             [winter-onboarding-2021.fleet-management-service.fixtures :as fixtures]
             [winter-onboarding-2021.fleet-management-service.factories :as factories]
-            [winter-onboarding-2021.fleet-management-service.models.cab :as models]))
+            [winter-onboarding-2021.fleet-management-service.models.cab :as models]
+            [winter-onboarding-2021.fleet-management-service.utils :as utils])
+  (:import [org.postgresql.util PSQLException]))
 
 (use-fixtures :once fixtures/config fixtures/db-connection)
 (use-fixtures :each fixtures/clear-db)
@@ -11,11 +13,24 @@
 (defn vectors-contain-same-elements? [x y]
   (= (set x) (set y)))
 
-(defn dissoc-irrelevant-keys [created-cab]
-  (dissoc created-cab
-          :cabs/id
-          :cabs/created-at
-          :cabs/updated-at))
+(deftest created-cab
+  (testing "Should create a cab"
+    (testing "Should add a cab"
+      (let [created-cab (cab-db/create {:name "Maruti Celerio"
+                                        :licence-plate "HR20X6710"
+                                        :distance-travelled 2333})]
+        (is (= #:cabs{:name "Maruti Celerio"
+                      :licence-plate "HR20X6710"
+                      :distance-travelled 2333}
+               (utils/dissoc-irrelevant-keys-from-cab created-cab)))))
+    (testing "Should fail to create a cab because of invalid cab"
+      (is (= {:error :validation-failed} (cab-db/create {:name "Kia"}))))
+    (testing "Should throw an exception if cab with same licence-plate already exists"
+      (is (thrown-with-msg? PSQLException
+                            #"Detail: Key \(licence_plate\)=\(HR20X6710\) already exists."
+                            (cab-db/create {:name "Maruti Alto"
+                                            :licence-plate "HR20X6710"
+                                            :distance-travelled 300021}))))))
 
 (deftest list-cabs
   (testing "Should return a list of cabs"
@@ -24,7 +39,7 @@
           page-length 10]
       (doall (map cab-db/create cabs-list))
       (is (= cabs-list
-             (map dissoc-irrelevant-keys (cab-db/select! offset page-length)))))))
+             (utils/remove-namespace (map utils/dissoc-irrelevant-keys-from-cab (cab-db/select! offset page-length))))))))
 
 (deftest pagination
   (let [cabs (factories/create-cabs 12)]
@@ -33,14 +48,14 @@
       (let [offset 10
             limit 2]
         (is (vectors-contain-same-elements?  (take limit (reverse cabs))
-                                             (map dissoc-irrelevant-keys
-                                                  (cab-db/select! offset limit))))))
+                                             (utils/remove-namespace (map utils/dissoc-irrelevant-keys-from-cab
+                                                                          (cab-db/select! offset limit)))))))
     (testing "Should return first 10 cabs from 12 cabs"
       (let [offset 0
             limit 10]
         (is (vectors-contain-same-elements?  (take limit cabs)
-                                             (map dissoc-irrelevant-keys
-                                                  (cab-db/select! offset limit))))))))
+                                             (utils/remove-namespace (map utils/dissoc-irrelevant-keys-from-cab
+                                                                          (cab-db/select! offset limit)))))))))
 
 (deftest update-cab
   (let [cab {:name "Maruti"
@@ -57,7 +72,7 @@
 (deftest deletion
   (testing "Should delete a cab with a specific ID"
     (let [cab {:name "Foo cab"
-               :licence-plate "KA20X 2345"
+               :licence-plate "KA20X2345"
                :distance-travelled 122290}
           db-cab (models/create cab)]
       (cab-db/delete {:id (:cabs/id db-cab)})
@@ -72,11 +87,11 @@
 (deftest get-by-id-or-licence-plate
   (testing "Should return a cab, given a licence plate"
     (let [cab {:name "Maruti"
-             :licence-plate "MHOR1234"
-             :distance-travelled 123340}
-        inserted-cab (cab-db/create cab)
-        cab-by-licence (cab-db/get-by-id-or-licence-plate nil (:licence-plate cab))]
-    (is (= cab-by-licence inserted-cab))))
+               :licence-plate "MHOR1234"
+               :distance-travelled 123340}
+          inserted-cab (cab-db/create cab)
+          cab-by-licence (cab-db/get-by-id-or-licence-plate nil (:licence-plate cab))]
+      (is (= cab-by-licence inserted-cab))))
   (testing "Should return a cab, given an id"
     (let [cab {:name "Maruti"
                :licence-plate "MHOR1233"

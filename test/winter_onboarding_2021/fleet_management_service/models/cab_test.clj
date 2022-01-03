@@ -1,20 +1,20 @@
 (ns winter-onboarding-2021.fleet-management-service.models.cab-test
   (:require [clojure.test :refer [deftest is testing use-fixtures]]
             [winter-onboarding-2021.fleet-management-service.models.cab :as cab-model]
-            [winter-onboarding-2021.fleet-management-service.fixtures :as fixtures])
-  (:import [org.postgresql.util PSQLException]))
+            [winter-onboarding-2021.fleet-management-service.fixtures :as fixtures]
+            [winter-onboarding-2021.fleet-management-service.db.cab :as cab-db])
+  (:import [org.postgresql.util PSQLException ServerErrorMessage]))
 
 (use-fixtures :once fixtures/config fixtures/db-connection)
 (use-fixtures :each fixtures/clear-db)
 
 (deftest create-cab
   (testing "Should add a cab"
-    ;; NOTE: the cab/create input needs to be auto kebab'ised, need to use honeysql for this
-    (let [created-cab (cab-model/create {:licence_plate "HR20X 6710"
-                                         :name "Maruti Celerio"
-                                         :distance_travelled 2333})]
-      (is (= #:cabs{:licence-plate "HR20X 6710"
-                    :name "Maruti Celerio"
+    (let [created-cab (cab-model/create {:name "Maruti Celerio"
+                                         :licence-plate "HR20X6710"
+                                         :distance-travelled 2333})]
+      (is (= #:cabs{:name "Maruti Celerio"
+                    :licence-plate "HR20X6710"
                     :distance-travelled 2333}
              (select-keys created-cab
                      [:cabs/name
@@ -22,15 +22,24 @@
                      :cabs/distance-travelled])))))
 
   (testing "Should fail to create a cab because of invalid cab"
-    (is (thrown-with-msg?
-         PSQLException
-         #"null value in column \"licence_plate\" of relation \"cabs\""
-         (cab-model/create {:name "Kia"})))))
+    (is (= {:error :validation-failed} (cab-model/create {:name "Kia"}))))
+  (testing "Should fail if cab with same licence-plate already exists"
+    (is (= {:error :licence-plate-already-exists}
+           (cab-model/create {:name "Maruti Alto"
+                              :licence-plate "HR20X6710"
+                              :distance-travelled 300021}))))
+  (testing "Should return generic-error if anything wrong happens while creating cab"
+    (with-redefs [cab-db/create (fn [_] (throw (PSQLException.
+                                                (ServerErrorMessage. "Something wrong happened"))))]
+      (is (= {:error :generic-error}
+             (cab-model/create {:name "Maruti Alto"
+                                :licence-plate "HR20X6712"
+                                :distance-travelled 300021}))))))
 
 (deftest get-single-cab
   (testing "Should get details of a single cab with a certain ID"
-    (let [cab (cab-model/create {:licence-plate "HR20X 9999"
-                                 :name "Maruti Celerio 12"
+    (let [cab (cab-model/create {:name "Maruti Celerio 12"
+                                 :licence-plate "HR20X9999"
                                  :distance-travelled 12221})]
       (is (= cab
              (cab-model/get-by-id (:cabs/id cab))))))
@@ -41,7 +50,7 @@
 
 (deftest find-by-key
   (testing "Should find a row with a specific licence-plate"
-    (let [sample-cab {:licence-plate "HR20X 9999"
+    (let [sample-cab {:licence-plate "HR20X9999"
                       :name "Maruti Celerio 12"
                       :distance-travelled 12221}
           created-cab (cab-model/create sample-cab)
@@ -64,9 +73,9 @@
 
 (deftest delete-by-id
   (testing "Should delete a cab which has a specific id"
-    (let [cab #:cabs{:name "Foo cab 1"
-                     :licence-plate "KA23X 4567"
-                     :distance-travelled 122772}
+    (let [cab {:name "Foo cab 1"
+               :licence-plate "KA23X4567"
+               :distance-travelled 122772}
           db-cab (cab-model/create cab)]
       (cab-model/delete-by-id (str (:cabs/id db-cab)))
       (is (= nil (-> db-cab
