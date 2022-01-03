@@ -21,12 +21,17 @@
       (-> (utils/flash-msg "Could not add cab, try again!" false)
           (assoc-in [:flash :data] multipart-params)
           (merge (response/redirect "/cabs/new")))
-      (let [created-cab (models/create validated-cab)]
-        (merge (utils/flash-msg "Cab added successfully!" true)
-               (response/redirect
-                (format
-                 "/cabs/%s"
-                 (:cabs/id created-cab))))))))
+      (let [response (models/create validated-cab)]
+        (cond (= (:error response)
+                 :licence-plate-already-exists) (merge (utils/flash-msg "Cab with licence plate already exists" false)
+                                                      (response/redirect "cabs/new"))
+              (= (:error response)
+                 :generic-error) (merge (utils/flash-msg "Some error occured" false)
+                                                          (response/redirect "cabs/new"))
+              :else (merge (utils/flash-msg "Cab added successfully!" true) (response/redirect
+                                          (format
+                                           "/cabs/%s"
+                                           (:cabs/id response)))))))))
 
 (defn new [request]
   {:title "Add a cab"

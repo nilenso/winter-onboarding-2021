@@ -120,7 +120,7 @@
   (testing "Should redirect to /cabs:slug with success flash
             after successfull update of cab with given id and cab data"
     (let [cab {:name "Maruti Cab"
-               :licence-plate "HR20A 1234"
+               :licence-plate "HR20A1234"
                :distance-travelled 12333}
           cab-id (str (:cabs/id (models/create cab)))
           new-cab {:name "Maruti Cab"
@@ -140,7 +140,7 @@
 
   (testing "Should redirect with an error message when update fails"
     (let [cab-id (:cabs/id (models/create {:name "Some name"
-                                           :licence-plate "License plate"
+                                           :licence-plate "Licenseplate"
                                            :distance-travelled 123}))
           response (handlers/update-cab {:params {:slug (str cab-id)}
                                          :multipart-params {:foo "boo"}})]
@@ -164,9 +164,9 @@
 
 (deftest deletion
   (testing "Should redirect to cabs' list when delete succeeds"
-    (let [cab #:cabs{:name "Foo cab whatever"
-                     :distance-travelled 12233
-                     :licence-plate "KA20A 3456"}
+    (let [cab {:name "Foo cab whatever"
+               :licence-plate "KA20A3456"
+               :distance-travelled 12233}
           db-cab (models/create cab)
           id (str (:cabs/id db-cab))
           handler-resp (handlers/delete {:params {:id id}})]

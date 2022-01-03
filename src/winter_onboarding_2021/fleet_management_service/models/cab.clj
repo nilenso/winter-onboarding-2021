@@ -1,7 +1,8 @@
 (ns winter-onboarding-2021.fleet-management-service.models.cab
   (:require [winter-onboarding-2021.fleet-management-service.db.cab :as cab-db]
             [winter-onboarding-2021.fleet-management-service.config :as config]
-            [winter-onboarding-2021.fleet-management-service.utils :as utils]))
+            [winter-onboarding-2021.fleet-management-service.utils :as utils])
+  (:import [org.postgresql.util PSQLException]))
 
 (defn get-by-id [id]
   (cab-db/get-by-id id))
@@ -10,7 +11,11 @@
   (cab-db/find-by-keys key-map))
 
 (defn create [cab]
-  (cab-db/create cab))
+  (try (cab-db/create cab)
+       (catch PSQLException e
+         (if (re-find  #"already exists." (.getMessage e))
+           {:error :licence-plate-already-exists}
+           {:error :generic-error}))))
 
 (defn select
   ([] (cab-db/select! 0 (config/get-page-size)))

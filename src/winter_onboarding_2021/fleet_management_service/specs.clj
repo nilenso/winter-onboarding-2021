@@ -23,7 +23,7 @@
                    :cabs-form/distance-travelled]))
 
 (s/def ::cabs
-  (s/keys :req [:cabs/name
+  (s/keys :req-un [:cabs/name
                 :cabs/licence-plate
                 :cabs/distance-travelled]))
 
