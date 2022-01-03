@@ -18,8 +18,8 @@
           user-id (:users/id created-user)
           session-id (utils/uuid)
           created-session (db-core/insert! :sessions {:id session-id
-                                        :user-id user-id
-                                        :expires-at (+ (System/currentTimeMillis) (config/get-timeout-period))})
+                                                      :user-id user-id
+                                                      :expires-at (+ (System/currentTimeMillis) (config/get-timeout-period))})
           db-resp (db-session/lookup session-id)]
       (is (= created-session db-resp)))))
 
@@ -44,14 +44,14 @@
       (db-session/delete session-id)
       (is (= nil (db-session/lookup session-id))))))
 
-(deftest join-user-with-session
+(deftest user-session
   (testing "Should give us details about the session & the user associated with it"
     (let [user (factories/user)
           created-user (user-models/create user)
           user-id (:users/id created-user)
           session-id (utils/uuid)
           created-session (db-session/insert session-id user-id)
-          joined-user-session (first (db-session/join-user-with-session session-id))]
+          joined-user-session (first (db-session/user-session session-id))]
       (is (= (select-keys (merge created-user created-session)
                           [:users/id :users/name :users/role :users/email
                            :sessions/id :sessions/expires-at])

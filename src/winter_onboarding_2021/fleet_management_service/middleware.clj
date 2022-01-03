@@ -44,7 +44,10 @@
 (defn append-user-to-request [handler]
   (fn [request]
     (if-let [session-id (get-in request [:cookies :session-id :value])]
-      (if-let  [session-user-data (first (session/join-user-with-session (java.util.UUID/fromString session-id)))]
+      (if-let  [session-user-data (-> session-id
+                                      java.util.UUID/fromString
+                                      session/user-session
+                                      first)]
         (if (< (:sessions/expires-at session-user-data) (System/currentTimeMillis))
           (do (session/delete (java.util.UUID/fromString session-id))
               (merge (response/redirect "/users/login")

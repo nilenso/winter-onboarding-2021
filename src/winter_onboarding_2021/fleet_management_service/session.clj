@@ -13,5 +13,5 @@
 (defn delete [session-id]
   (session-db/delete session-id))
 
-(defn join-user-with-session [session-id]
-  (session-db/join-user-with-session session-id))
+(defn user-session [session-id]
+  (session-db/user-session session-id))

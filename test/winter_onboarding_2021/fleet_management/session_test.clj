@@ -37,14 +37,14 @@
       (is (= nil
              (session/lookup session-id))))))
 
-(deftest join-user-with-session
+(deftest user-session
   (testing "Should give us details about the session & the user associated with it"
     (let [user (factories/user)
           created-user (user-models/create user)
           user-id (:users/id created-user)
           session-id (session/new user-id)
           created-session (session/lookup session-id)
-          joined-user-session (first (session/join-user-with-session session-id))]
+          joined-user-session (first (session/user-session session-id))]
       (is (= (select-keys (merge created-user created-session)
                           [:users/id :users/name :users/role :users/email
                            :sessions/id :sessions/expires-at])

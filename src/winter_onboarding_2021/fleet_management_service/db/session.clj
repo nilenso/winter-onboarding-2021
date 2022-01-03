@@ -16,7 +16,7 @@
 (defn delete [session-id]
   (db-core/delete! :sessions {:id session-id}))
 
-(defn join-user-with-session [session-id]
+(defn user-session [session-id]
   (db-core/query! (sql/format
                    (-> (select  :users.id :users.name :users.role :users.email
                                 :sessions.id :sessions.expires-at)
