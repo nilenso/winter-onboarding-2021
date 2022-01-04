@@ -7,35 +7,6 @@
             [winter-onboarding-2021.fleet-management-service.specs :as specs]
             [winter-onboarding-2021.fleet-management-service.utils :as utils]))
 
-(defn flash-msg [msg success?]
-  (if success?
-    {:flash {:success true
-             :style-class "alert alert-success"
-             :message msg}}
-    {:flash {:error true
-             :style-class "alert alert-danger"
-             :message msg}}))
-
-(def error-flash
-  {:flash {:error true
-           :style-class "alert alert-danger"
-           :message "Could not add cab, try again!"}})
-
-(def update-error-flash
-  {:flash {:error true
-           :style-class "alert alert-danger"
-           :message "Could not update cab, try again!"}})
-
-(def success-flash
-  {:flash {:success true
-           :style-class "alert alert-success"
-           :message "Cab added successfully!"}})
-
-(def update-success-flash
-  {:flash {:success true
-           :style-class "alert alert-success"
-           :message "Cab updated successfully!"}})
-
 (defn- view-cab-response [{:cabs/keys [name] :as cab}]
   (if cab
     {:title (str "Cab - " name)
@@ -47,14 +18,15 @@
   (let [validated-cab (s/conform ::specs/create-cab-form
                                  multipart-params)]
     (if (s/invalid? validated-cab)
-      (-> error-flash
+      (-> (utils/flash-msg "Could not add cab, try again!" false)
           (assoc-in [:flash :data] multipart-params)
           (merge (response/redirect "/cabs/new")))
       (let [created-cab (models/create validated-cab)]
-        (merge success-flash (response/redirect
-                              (format
-                               "/cabs/%s"
-                               (:cabs/id created-cab))))))))
+        (merge (utils/flash-msg "Cab added successfully!" true)
+               (response/redirect
+                (format
+                 "/cabs/%s"
+                 (:cabs/id created-cab))))))))
 
 (defn new [request]
   {:title "Add a cab"
@@ -85,12 +57,12 @@
         id (get-in req [:params :slug])
         validated-cab (s/conform ::specs/update-cab-form cab)]
     (if (s/invalid? validated-cab)
-      (-> update-error-flash
+      (-> (utils/flash-msg "Could not update cab, try again!" false)
           (assoc-in [:flash :data] cab)
           (merge (response/redirect "/cabs/new")))
       (do
         (models/update! (utils/string->uuid id) validated-cab)
-        (merge update-success-flash
+        (merge (utils/flash-msg "Cab updated successfully!" true)
                (response/redirect (format "/cabs/%s" id)))))))
 
 (defn update-cab-view [{:keys [params]}]
@@ -101,7 +73,7 @@
 (defn delete [request]
   (let [id (get-in request [:params :id])]
     (if (> (:next.jdbc/update-count (models/delete-by-id id)) 0)
-      (-> (flash-msg "Cab deleted successfully" true)
+      (-> (utils/flash-msg "Cab deleted successfully" true)
           (merge (response/redirect "/cabs")))
-      (-> (flash-msg "Cab does not exist" false)
+      (-> (utils/flash-msg "Cab does not exist" false)
           (merge (response/redirect "/cabs"))))))

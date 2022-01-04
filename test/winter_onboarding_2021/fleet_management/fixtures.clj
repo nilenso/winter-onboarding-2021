@@ -2,9 +2,9 @@
   (:require [next.jdbc :as jdbc]
             [mount.core :as mount]
             [aero.core :refer [read-config]]
+            [clojure.java.io :as io]
             [winter-onboarding-2021.fleet-management-service.config :as config]
-            [winter-onboarding-2021.fleet-management-service.db.core :as db]
-            [clojure.java.io :as io]))
+            [winter-onboarding-2021.fleet-management-service.db.core :as db]))
 
 (defn config [f]
   (mount/stop #'config/config)
@@ -22,7 +22,5 @@
   (mount/stop #'db/db-conn))
 
 (defn clear-db [f]
-  (jdbc/execute! db/db-conn  ["TRUNCATE TABLE cabs, users CASCADE"])
+  (jdbc/execute! db/db-conn  ["TRUNCATE TABLE cabs, sessions, users CASCADE"])
   (f))
-
-;; config doubt --> pass config via CLI?

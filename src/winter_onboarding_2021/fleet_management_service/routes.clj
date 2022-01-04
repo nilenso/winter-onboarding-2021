@@ -16,17 +16,27 @@
                                  (:title data)
                                  (:content data)))))))
 
+(defn authentication-required [handler allowed-roles]
+  (fn [request]
+    (if-let [user-role (keyword (get-in request [:user :users/role]))]
+      (if (contains? allowed-roles user-role)
+        (handler request)
+        (user-handlers/not-authorized request))
+      (user-handlers/not-logged-in request))))
+
 (def routes
   ["/" [["public" {:get (br/->Resources {:prefix "/bootstrap"})}]
-        ["cabs" {"" {:get (wrap-layout cab-handlers/get-cabs)
+        ["cabs" {"" {:get (authentication-required (wrap-layout cab-handlers/get-cabs) #{:admin :manager})
                      :post cab-handlers/create}
-                 "/new" {:get (wrap-layout cab-handlers/new)}
-                 "/delete" {:post cab-handlers/delete}
+                 "/new" {:get (authentication-required  (wrap-layout cab-handlers/new) #{:admin :manager})}
+                 "/delete" {:post (authentication-required  (wrap-layout cab-handlers/delete) #{:admin :manager})}
                  ["/" :slug] {"/edit" {:get (wrap-layout cab-handlers/update-cab-view)}
                               :get (wrap-layout cab-handlers/view-cab)
                               :post cab-handlers/update-cab}}]
         ["users" {"/signup" {:get (wrap-layout user-handlers/signup-form)
-                             :post user-handlers/create-user}}]
+                             :post user-handlers/create-user}
+                  "/login" {:get (wrap-layout user-handlers/login-form)
+                            :post user-handlers/login}}]
         ["healthcheck" {:get (wrap-json-response handler/health-check)}]
         ["index" {:get (wrap-layout handler/index)}]
         ["" {:get (wrap-layout handler/root)}]

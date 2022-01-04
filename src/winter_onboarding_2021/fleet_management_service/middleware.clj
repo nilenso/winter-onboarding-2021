@@ -3,7 +3,8 @@
             [taoensso.timbre :as timbre]
             [ring.logger :as logger]
             [ring.middleware.stacktrace :as stacktrace]
-            [ring.util.response :as response]))
+            [ring.util.response :as response]
+            [winter-onboarding-2021.fleet-management-service.session :as session]))
 
 (defn keywordize-multipart-params [handler]
   (fn [{:keys [multipart-params] :as request}]
@@ -17,6 +18,12 @@
     (-> request
         (assoc :form-params
                (walk/keywordize-keys form-params))
+        handler)))
+
+(defn keywordize-cookies-keys [handler]
+  (fn [request]
+    (-> request
+        (update :cookies walk/keywordize-keys)
         handler)))
 
 (defn wrap-exception-handler [handler]
@@ -33,3 +40,19 @@
                                           (if (some? throwable)
                                             (timbre/log level throwable message)
                                             (timbre/log level message)))})))
+
+(defn append-user-to-request [handler]
+  (fn [request]
+    (if-let [session-id (get-in request [:cookies :session-id :value])]
+      (if-let  [session-user-data (-> session-id
+                                      java.util.UUID/fromString
+                                      session/user-session
+                                      first)]
+        (if (< (:sessions/expires-at session-user-data) (System/currentTimeMillis))
+          (do (session/delete (java.util.UUID/fromString session-id))
+              (merge (response/redirect "/users/login")
+                     {:cookies nil}))
+          (handler (assoc request :user (select-keys session-user-data
+                                                     [:users/id :users/name :users/role :users/email]))))
+        (handler request))
+      (handler request))))

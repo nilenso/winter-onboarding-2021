@@ -11,5 +11,14 @@
 (defn create-cabs [num]
   (gen/generate (generate-cab num)))
 
-(defn generate-user []
-  (gen/generate (s/gen ::specs/signup-form)))
+(defn user
+  ([] (user {}))
+  ([overrides] (merge (gen/generate (s/gen ::specs/users)) overrides)))
+
+(defn admin
+  ([] (admin {}))
+  ([overrides] (user (merge overrides {:users/role "admin"}))))
+
+(defn manager
+  ([] (manager {}))
+  ([overrides] (user (merge overrides {:users/role "manager"}))))

@@ -5,4 +5,5 @@
                     :prod #ref [:secrets :prod-db]
                     :ci #ref [:secrets :ci-db]}
  :log {}
- :default-page-size 10}
+ :default-page-size 10
+ :session-timeout-ms 86400000} ;; 1 day in milliseconds
