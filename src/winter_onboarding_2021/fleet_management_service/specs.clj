@@ -48,13 +48,13 @@
     non-empty-alphanumeric-string)))
 
 (s/def :users/name string?)
-(s/def :users/email (s/with-gen (and string? #(re-matches #".+\@.+\..+" %))
+(s/def :users/email (s/with-gen (s/and string? #(re-matches #".+\@.+\..+" %))
                       email-gen))
-(s/def :users/role #{"admin" "fleet-manager" "driver"})
+(s/def :users/role #{"admin" "manager" "driver"})
 (s/def :users/password (s/and string? not-empty))
 
 (s/def ::users
-  (s/keys :req [:users/name
+  (s/keys :req-un [:users/name
                 :users/role
                 :users/email
                 :users/password]))

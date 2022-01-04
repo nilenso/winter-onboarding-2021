@@ -11,6 +11,12 @@
           :users/created-at
           :users/updated-at))
 
+(defn dissoc-keys-except-name-email [user]
+  (dissoc user
+          :users/id
+          :users/created-at
+          :users/updated-at))
+
 (defn uuid []
   (java.util.UUID/randomUUID))
 
