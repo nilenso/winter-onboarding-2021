@@ -5,10 +5,18 @@
   (:import [org.postgresql.util PSQLException]))
 
 (defn get-by-id [id]
-  (cab-db/get-by-id id))
+  (if (uuid? id)
+    (cab-db/get-by-id id)
+    {:error :id-not-uuid}))
 
 (defn find-by-keys [key-map]
-  (cab-db/find-by-keys key-map))
+  (if (every? true?
+              (map (partial contains?
+                            #{:name :distance-travelled :licence-plate :id})
+                   (keys key-map)))
+    (cab-db/find-by-keys key-map)
+    {:error :key-not-in-schema}))
+
 
 (defn create [cab]
   (try (cab-db/create cab)
@@ -25,7 +33,14 @@
   (:count (first (cab-db/get-count))))
 
 (defn update! [id cab]
-  (cab-db/update! id cab))
+  (if (uuid? id)
+    (if (every? true?
+                (map (partial contains?
+                              #{:id :name :distance-travelled :licence-plate})
+                     (keys cab)))
+      (cab-db/update! id cab)
+      {:error :key-not-in-schema})
+    {:error :id-not-uuid}))
 
 (defn delete-by-id [id]
   {:pre [(string? id)]}
