@@ -14,18 +14,17 @@
            :style-class "alert alert-danger"
            :message "Could not create fleet, try again!"}})
 
-(defn create-fleet [req]
-  (let [user-id (get-in req [:user :users/id])
-        fleet-name (get-in req [:form-params :name])
+(defn create-fleet [{:keys [user form-params]}]
+  (let [user-id (:users/id user)
+        fleet-name (:name form-params)
         fleet-data {:name fleet-name
-                    :created-by user-id}
-        valid-fleet-data (s/conform ::specs/create-fleet fleet-data)]
-    (if (s/invalid? valid-fleet-data)
-      (->  error-flash
-           (merge (response/redirect "/fleets/new")))
+                    :created-by user-id}]
+    (if (s/valid? ::specs/fleet-form fleet-data)
       (let [fleet-id (:fleets/id (fleet-model/create fleet-data))]
         (->  success-flash
-             (merge (response/redirect (format "/fleets/%s" (str fleet-id)))))))))
+             (merge (response/redirect (format "/fleets/%s" (str fleet-id))))))
+      (->  error-flash
+           (merge (response/redirect "/fleets/new"))))))
 
 (defn new [_]
   {:title "Create fleet"

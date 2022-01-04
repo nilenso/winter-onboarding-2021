@@ -72,6 +72,6 @@
 (s/def :fleets/name string?)
 (s/def :fleets/created-by uuid?)
 
-(s/def ::create-fleet
+(s/def ::fleet-form
   (s/keys :req-un [:fleets/name
                    :fleets/created-by]))
