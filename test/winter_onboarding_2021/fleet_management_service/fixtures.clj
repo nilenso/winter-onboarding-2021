@@ -22,5 +22,5 @@
   (mount/stop #'db/db-conn))
 
 (defn clear-db [f]
-  (jdbc/execute! db/db-conn  ["TRUNCATE TABLE cabs, sessions, users CASCADE"])
+  (jdbc/execute! db/db-conn  ["TRUNCATE TABLE cabs, sessions, users, fleets CASCADE"])
   (f))

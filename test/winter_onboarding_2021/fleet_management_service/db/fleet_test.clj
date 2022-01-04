@@ -2,7 +2,8 @@
   (:require [clojure.test :refer [deftest is testing use-fixtures]]
             [winter-onboarding-2021.fleet-management-service.db.fleet :as fleet-db]
             [winter-onboarding-2021.fleet-management-service.db.user :as user-db]
-            [winter-onboarding-2021.fleet-management-service.fixtures :as fixtures]))
+            [winter-onboarding-2021.fleet-management-service.fixtures :as fixtures]
+            [winter-onboarding-2021.fleet-management-service.db.core :as db-core]))
 
 (use-fixtures :once fixtures/config fixtures/db-connection)
 (use-fixtures :each fixtures/clear-db)
@@ -16,6 +17,7 @@
           user-id (:users/id (user-db/create user))
           fleet {:name "Azkaban Fleet 1"
                  :created-by user-id}]
+      (fleet-db/create fleet)
       (is (= #:fleets{:name "Azkaban Fleet 1"
-                      :created-by user-id} (select-keys (fleet-db/create fleet)
-                                                        [:fleets/name :fleets/created-by]))))))
+                      :created-by user-id} (select-keys (first (db-core/query! ["select * from fleets;"]))
+                                                        [:fleets/created-by :fleets/name]))))))
