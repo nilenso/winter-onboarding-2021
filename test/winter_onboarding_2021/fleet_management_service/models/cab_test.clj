@@ -2,6 +2,7 @@
   (:require [clojure.test :refer [deftest is testing use-fixtures]]
             [winter-onboarding-2021.fleet-management-service.models.cab :as cab-model]
             [winter-onboarding-2021.fleet-management-service.fixtures :as fixtures]
+            [winter-onboarding-2021.fleet-management-service.error :as errors]
             [winter-onboarding-2021.fleet-management-service.db.cab :as cab-db])
   (:import [org.postgresql.util PSQLException ServerErrorMessage]))
 
@@ -22,16 +23,16 @@
                      :cabs/distance-travelled])))))
 
   (testing "Should fail to create a cab because of invalid cab"
-    (is (= {:error :validation-failed} (cab-model/create {:name "Kia"}))))
+    (is (= errors/validation-failed (cab-model/create {:name "Kia"}))))
   (testing "Should fail if cab with same licence-plate already exists"
-    (is (= {:error :licence-plate-already-exists}
+    (is (= errors/license-plate-already-exists
            (cab-model/create {:name "Maruti Alto"
                               :licence-plate "HR20X6710"
                               :distance-travelled 300021}))))
   (testing "Should return generic-error if anything wrong happens while creating cab"
     (with-redefs [cab-db/create (fn [_] (throw (PSQLException.
                                                 (ServerErrorMessage. "Something wrong happened"))))]
-      (is (= {:error :generic-error}
+      (is (= errors/generic-error
              (cab-model/create {:name "Maruti Alto"
                                 :licence-plate "HR20X6712"
                                 :distance-travelled 300021}))))))
@@ -77,7 +78,7 @@
                :licence-plate "KA23X4567"
                :distance-travelled 122772}
           db-cab (cab-model/create cab)]
-      (cab-model/delete-by-id (str (:cabs/id db-cab)))
+      (cab-model/delete-by-id (:cabs/id db-cab))
       (is (= nil (-> db-cab
                      :cabs/id
                      cab-model/get-by-id))))))
