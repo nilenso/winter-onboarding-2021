@@ -24,8 +24,8 @@
 
 (s/def ::cabs
   (s/keys :req-un [:cabs/name
-                :cabs/licence-plate
-                :cabs/distance-travelled]))
+                   :cabs/licence-plate
+                   :cabs/distance-travelled]))
 
 ;; Users
 
@@ -76,3 +76,10 @@
 (s/def ::fleet-form
   (s/keys :req-un [:fleets/name
                    :fleets/created-by]))
+
+(s/def ::pagination-params
+  (s/keys :req-un [:pagination/limit
+                   :pagination/offset]))
+
+(s/def :pagination/offset (comp not neg-int?))
+(s/def :pagination/limit (comp not neg-int?))

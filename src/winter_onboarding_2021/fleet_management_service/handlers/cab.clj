@@ -77,7 +77,7 @@
 
 (defn delete [request]
   (let [id (get-in request [:params :id])]
-    (if (> (:next.jdbc/update-count (models/delete-by-id id)) 0)
+    (if (= (:next.jdbc/update-count (models/delete-by-id (utils/string->uuid id))) 1)
       (-> (utils/flash-msg "Cab deleted successfully" true)
           (merge (response/redirect "/cabs")))
       (-> (utils/flash-msg "Cab does not exist" false)

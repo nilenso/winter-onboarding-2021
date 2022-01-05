@@ -4,7 +4,8 @@
             [winter-onboarding-2021.fleet-management-service.fixtures :as fixtures]
             [winter-onboarding-2021.fleet-management-service.factories :as factories]
             [winter-onboarding-2021.fleet-management-service.models.cab :as models]
-            [winter-onboarding-2021.fleet-management-service.utils :as utils])
+            [winter-onboarding-2021.fleet-management-service.utils :as utils]
+            [winter-onboarding-2021.fleet-management-service.error :as errors])
   (:import [org.postgresql.util PSQLException]))
 
 (use-fixtures :once fixtures/config fixtures/db-connection)
@@ -24,7 +25,7 @@
                       :distance-travelled 2333}
                (utils/dissoc-irrelevant-keys-from-cab created-cab)))))
     (testing "Should fail to create a cab because of invalid cab"
-      (is (= {:error :validation-failed} (cab-db/create {:name "Kia"}))))
+      (is (= errors/validation-failed (cab-db/create {:name "Kia"}))))
     (testing "Should throw an exception if cab with same licence-plate already exists"
       (is (thrown-with-msg? PSQLException
                             #"Detail: Key \(licence_plate\)=\(HR20X6710\) already exists."
@@ -39,7 +40,14 @@
           page-length 10]
       (doall (map cab-db/create cabs-list))
       (is (= cabs-list
-             (utils/remove-namespace (map utils/dissoc-irrelevant-keys-from-cab (cab-db/select! offset page-length))))))))
+             (utils/remove-namespace (map utils/dissoc-irrelevant-keys-from-cab (cab-db/select! offset page-length)))))))
+  (testing "Should return a validation error when offset or page-length are negative"
+    (let [cabs-list (factories/create-cabs 3)
+          offset -1
+          page-length -2]
+      (doall (map cab-db/create cabs-list))
+      (is (= errors/validation-failed
+             (cab-db/select! offset page-length))))))
 
 (deftest pagination
   (let [cabs (factories/create-cabs 12)]
@@ -104,3 +112,20 @@
     (let [id (java.util.UUID/randomUUID)
           cab-by-id (cab-db/get-by-id-or-licence-plate id (str id))]
       (is (= nil cab-by-id)))))
+
+(deftest find-by-keys
+  (testing "Should return list of cabs"
+    (cab-db/create {:name "Maruti Celerio"
+                    :licence-plate "HR20X6710"
+                    :distance-travelled 2333})
+    (is (= #:cabs{:name "Maruti Celerio"
+                  :licence-plate "HR20X6710"
+                  :distance-travelled 2333}
+           (utils/dissoc-irrelevant-keys-from-cab
+            (first (cab-db/find-by-keys {:name "Maruti Celerio"}))))))
+  (testing "Should return key-not-exists-in-schema error"
+    (cab-db/create {:name "Maruti Celerio"
+                    :licence-plate "HR20X6710AS"
+                    :distance-travelled 2333})
+    (is (= errors/key-not-in-schema
+           (cab-db/find-by-keys {:wrong-key "Maruti Celerio"})))))

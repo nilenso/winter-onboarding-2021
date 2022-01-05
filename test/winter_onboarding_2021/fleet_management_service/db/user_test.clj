@@ -2,6 +2,7 @@
   (:require [clojure.test :refer [deftest is testing use-fixtures]]
             [winter-onboarding-2021.fleet-management-service.db.user :as user-db]
             [winter-onboarding-2021.fleet-management-service.fixtures :as fixtures]
+            [winter-onboarding-2021.fleet-management-service.error :as errors]
             [winter-onboarding-2021.fleet-management-service.factories :as factories])
   (:import [org.postgresql.util PSQLException]))
 
@@ -22,13 +23,13 @@
               (first (user-db/find-by-keys {:email "harry@hogwarts.edu"}))
               [:users/name :users/role :users/email :users/password])))))
   (testing "Should throw an exception, given name is nil"
-    (is (= {:error :validation-failed}
+    (is (= errors/validation-failed
            (user-db/create {:name nil
                             :role "admin"
                             :email "harry@hogwarts.edu"
                             :password "lily"}))))
   (testing "Should throw an exception, given email is nil"
-    (is (= {:error :validation-failed}
+    (is (= errors/validation-failed
            (user-db/create {:name "Harry"
                             :role "admin"
                             :email nil

@@ -177,7 +177,7 @@
               :headers {"Location" "/cabs"}
               :body ""}
              handler-resp))))
-  
+
   (testing "Should redirect to /cabs when delete fails"
     (let [missing-uuid (str (java.util.UUID/randomUUID))
           handler-response (handlers/delete {:params {:id missing-uuid}})]
