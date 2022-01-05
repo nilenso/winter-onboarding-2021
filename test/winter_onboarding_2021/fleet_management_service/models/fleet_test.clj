@@ -3,7 +3,8 @@
             [winter-onboarding-2021.fleet-management-service.models.fleet :as fleet-model]
             [winter-onboarding-2021.fleet-management-service.db.user :as user-db]
             [winter-onboarding-2021.fleet-management-service.error :as error]
-            [winter-onboarding-2021.fleet-management-service.fixtures :as fixtures]))
+            [winter-onboarding-2021.fleet-management-service.fixtures :as fixtures]
+            [winter-onboarding-2021.fleet-management-service.db.fleet-test :as fleet-test-db]))
 
 (use-fixtures :once fixtures/config fixtures/db-connection)
 (use-fixtures :each fixtures/clear-db)
@@ -41,3 +42,9 @@
           fleet {:fleets/place "Azkaban Fleet 1"
                  :fleets/admin (str user-id)}]
       (is (= error/no-valid-keys (fleet-model/create fleet))))))
+
+(deftest list-fleet
+  (testing "Should fetch the first 10 fleets"
+    (let [{:keys [fleets]} (fleet-test-db/seed-user-fleets-db 15)
+          db-fleets (mapv fleet-test-db/dissoc-irrelevant-keys (fleet-model/select! 0 10))]
+      (is (= (subvec fleets 0 10) db-fleets)))))
