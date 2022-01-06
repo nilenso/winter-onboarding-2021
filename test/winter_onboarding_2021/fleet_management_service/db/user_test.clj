@@ -2,7 +2,6 @@
   (:require [clojure.test :refer [deftest is testing use-fixtures]]
             [winter-onboarding-2021.fleet-management-service.db.user :as user-db]
             [winter-onboarding-2021.fleet-management-service.fixtures :as fixtures]
-            [winter-onboarding-2021.fleet-management-service.utils :as utils]
             [winter-onboarding-2021.fleet-management-service.factories :as factories])
   (:import [org.postgresql.util PSQLException]))
 
@@ -19,8 +18,9 @@
                      :role "admin"
                      :email "harry@hogwarts.edu"
                      :password "hermione@123"}
-             (utils/dissoc-irrelevant-keys-from-user
-              (first (user-db/find-by-keys {:email "harry@hogwarts.edu"})))))))
+             (select-keys
+              (first (user-db/find-by-keys {:email "harry@hogwarts.edu"}))
+              [:users/name :users/role :users/email :users/password])))))
   (testing "Should throw an exception, given name is nil"
     (is (thrown-with-msg? PSQLException
                           #"null value in column \"name\" of relation \"users\" violates not-null constraint"
@@ -51,7 +51,7 @@
                                     :users/email "foobar@baz2.com"})]
       (user-db/create admin)
       (user-db/create admin-2)
-      (is (= [admin] (map utils/dissoc-irrelevant-keys-from-user
+      (is (= [admin] (map #(select-keys % [:users/name :users/email :users/role :users/password])
                           (user-db/find-by-keys {:email (:users/email admin)})))))))
 
 (deftest find-by-role

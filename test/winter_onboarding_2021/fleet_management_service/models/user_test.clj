@@ -2,8 +2,7 @@
   (:require [clojure.test :refer [deftest is testing use-fixtures]]
             [crypto.password.bcrypt :as password]
             [winter-onboarding-2021.fleet-management-service.models.user :as user-model]
-            [winter-onboarding-2021.fleet-management-service.fixtures :as fixtures]
-            [winter-onboarding-2021.fleet-management-service.utils :as utils]))
+            [winter-onboarding-2021.fleet-management-service.fixtures :as fixtures]))
 
 (use-fixtures :once fixtures/config fixtures/db-connection)
 (use-fixtures :each fixtures/clear-db)
@@ -19,8 +18,8 @@
                      :role "admin"
                      :email "harry@hogwarts.edu"
                      :password "hermione@123"}
-             (utils/dissoc-irrelevant-keys-from-user
-              (first (user-model/find-by-keys {:email (:email user)}))))))))
+             (select-keys (first (user-model/find-by-keys {:email (:email user)}))
+                          [:users/name :users/role :users/email :users/password]))))))
 
 (deftest find-by-keys
   (testing "Should return a user given a key-map(properties)"
@@ -33,8 +32,8 @@
                      :role "admin"
                      :email "harry@hogwarts.edu"
                      :password "hermione@123"}
-             (utils/dissoc-irrelevant-keys-from-user
-              (first (user-model/find-by-keys {:email (:email user)}))))))))
+             (select-keys (first (user-model/find-by-keys {:email (:email user)}))
+                          [:users/name :users/role :users/email :users/password]))))))
 
 (deftest authenticate
   (testing "Correct login credentials, should return us user data"
