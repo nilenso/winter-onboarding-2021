@@ -59,6 +59,20 @@
 
       (is (= created-cab (first selected-cab))))))
 
+(deftest get-by-id
+  (testing "Should return a cab given an id"
+    (let [created-cab (cab-db/create {:name "Maruti Celerio"
+                                      :licence-plate "HR20X6710"
+                                      :distance-travelled 2333})]
+      (is (= created-cab
+             (cab-model/get-by-id (:cabs/id created-cab))))))
+  (testing "Should throw an error if id is not valid"
+    (let [created-cab (cab-db/create {:name "Maruti Celerio"
+                                      :licence-plate "HR20X67102"
+                                      :distance-travelled 2333})]
+      (is (= errors/id-not-uuid
+             (cab-model/get-by-id (str (:cabs/id created-cab))))))))
+
 (deftest update-cab
   (testing "Should update a cab with given id"
     (let [cab {:name "Maruti"
@@ -70,7 +84,22 @@
                    :licence-plate "MHOR1234"
                    :distance-travelled 123500}]
       (cab-model/update! id new-cab)
-      (is (= 123500 ((cab-model/get-by-id id) :cabs/distance-travelled))))))
+      (is (= 123500 ((cab-model/get-by-id id) :cabs/distance-travelled)))))
+  (testing "Should throw validation error if distance-travelled is not present"
+    (let [cab {:name "Maruti"
+               :licence-plate "MHOR1235"
+               :distance-travelled 123340}
+          id (:cabs/id (cab-db/create cab))
+          new-cab̦ {:name "Maruti"}]
+      (is (= errors/validation-failed (cab-model/update! id new-cab̦)))))
+  (testing "Should throw error id not uuid with valid cab data"
+    (let [cab {:name "Maruti"
+               :licence-plate "MHOR1235"
+               :distance-travelled 123340}
+          inserted-cab (cab-model/create cab)
+          id (str (inserted-cab :cabs/id))
+          new-cab̦ {:name "Maruti"}]
+      (is (= errors/id-not-uuid (cab-model/update! id new-cab̦))))))
 
 (deftest delete-by-id
   (testing "Should delete a cab which has a specific id"
@@ -81,7 +110,10 @@
       (cab-model/delete-by-id (:cabs/id db-cab))
       (is (= nil (-> db-cab
                      :cabs/id
-                     cab-model/get-by-id))))))
+                     cab-model/get-by-id)))))
+  (testing "Should return an error if id is not uuid"
+    (let [cab-id (str (java.util.UUID/randomUUID))]
+      (is (= errors/id-not-uuid (cab-model/delete-by-id {:id cab-id}))))))
 
 (deftest get-cab-by-licence-plate
   (testing "Should return a cab given a licence plate"

@@ -49,6 +49,20 @@
       (is (= errors/validation-failed
              (cab-db/select! offset page-length))))))
 
+(deftest get-by-id
+  (testing "Should return a cab given an id"
+    (let [created-cab (cab-db/create {:name "Maruti Celerio"
+                                      :licence-plate "HR20X6710"
+                                      :distance-travelled 2333})]
+      (is (= created-cab
+           (cab-db/get-by-id (:cabs/id created-cab))))))
+  (testing "Should throw an error if id is not valid"
+    (let [created-cab (cab-db/create {:name "Maruti Celerio"
+                                      :licence-plate "HR20X67102"
+                                      :distance-travelled 2333})]
+      (is (= errors/id-not-uuid
+           (cab-db/get-by-id (str (:cabs/id created-cab))))))))
+
 (deftest pagination
   (let [cabs (factories/create-cabs 12)]
     (doall (map cab-db/create cabs))
@@ -66,7 +80,8 @@
                                                                           (cab-db/select! offset limit)))))))))
 
 (deftest update-cab
-  (let [cab {:name "Maruti"
+  (testing "Should delete a cab with updated details"
+    (let [cab {:name "Maruti"
              :licence-plate "MHOR1234"
              :distance-travelled 123340}
         inserted-cab (cab-db/create cab)
@@ -76,6 +91,22 @@
                   :distance-travelled 123500}]
     (cab-db/update! id new-cab̦)
     (is (= 123500 ((cab-db/get-by-id id) :cabs/distance-travelled)))))
+  (testing "Should throw validation error if distance-travelled is not present"
+    (let [cab {:name "Maruti"
+               :licence-plate "MHOR1235"
+               :distance-travelled 123340}
+          inserted-cab (cab-db/create cab)
+          id (inserted-cab :cabs/id)
+          new-cab̦ {:name "Maruti"}]
+      (is (= errors/validation-failed (cab-db/update! id new-cab̦)))))
+  (testing "Should throw error id not uuid"
+    (let [cab {:name "Maruti"
+               :licence-plate "MHOR1236"
+               :distance-travelled 123340}
+          inserted-cab (cab-db/create cab)
+          id (str (inserted-cab :cabs/id))
+          new-cab̦ {:name "Hyundai"}]
+      (is (= errors/id-not-uuid (cab-db/update! id new-cab̦))))))
 
 (deftest deletion
   (testing "Should delete a cab with a specific ID"

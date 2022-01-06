@@ -48,7 +48,7 @@
                                  (set cab)
                                  (where [:= :id id]))))
       errors/validation-failed)
-    (errors/id-not-uuid)))
+    errors/id-not-uuid))
 
 
 (defn delete [where-params]
