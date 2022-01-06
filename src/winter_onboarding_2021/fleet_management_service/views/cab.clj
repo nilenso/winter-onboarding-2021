@@ -1,5 +1,6 @@
 (ns winter-onboarding-2021.fleet-management-service.views.cab
-  (:require [winter-onboarding-2021.fleet-management-service.views.core :as core-views]))
+  (:require [winter-onboarding-2021.fleet-management-service.views.core :as core-views]
+            [winter-onboarding-2021.fleet-management-service.utils :as utils]))
 
 (defn cab-form [{:keys [name distance-travelled licence-plate]}]
   [:div {:id "content"}
@@ -79,8 +80,6 @@
    {:label "Created at" :value :cabs/created-at}
    {:label "Updated at" :value :cabs/updated-at}])
 
-(defn format-date [date]
-  (.format (java.text.SimpleDateFormat. "MM/dd/yyyy HH:mm") date))
 
 (defn cab-row [row]
   [:tr
@@ -89,8 +88,8 @@
          (:cabs/name row)]]
    [:td (:cabs/distance-travelled row)]
    [:td (:cabs/licence-plate row)]
-   [:td (format-date (:cabs/updated-at row))]
-   [:td (format-date (:cabs/created-at row))]])
+   [:td (utils/format-date (:cabs/updated-at row))]
+   [:td (utils/format-date (:cabs/created-at row))]])
 
 (defn cab-not-found []
   [:div {:id "content" :class "p-5"}
