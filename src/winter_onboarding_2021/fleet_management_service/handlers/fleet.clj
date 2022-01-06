@@ -1,9 +1,9 @@
 (ns winter-onboarding-2021.fleet-management-service.handlers.fleet
-  (:require [winter-onboarding-2021.fleet-management-service.models.fleet :as fleet-model]
-            [clojure.spec.alpha :as s]
-            [winter-onboarding-2021.fleet-management-service.specs :as specs]
+  (:require [clojure.spec.alpha :as s]
             [ring.util.response :as response]
             [winter-onboarding-2021.fleet-management-service.utils :refer [namespace-keys flash-msg]]
+            [winter-onboarding-2021.fleet-management-service.specs :as specs]
+            [winter-onboarding-2021.fleet-management-service.models.fleet :as fleet-model]
             [winter-onboarding-2021.fleet-management-service.views.fleet :as views]))
 
 
