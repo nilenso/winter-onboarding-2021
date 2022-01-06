@@ -16,10 +16,10 @@
       (is (= #:cabs{:licence-plate "HR20X 6710"
                     :name "Maruti Celerio"
                     :distance-travelled 2333}
-             (dissoc created-cab
-                     :cabs/id
-                     :cabs/created-at
-                     :cabs/updated-at)))))
+             (select-keys created-cab
+                     [:cabs/name
+                     :cabs/licence-plate
+                     :cabs/distance-travelled])))))
 
   (testing "Should fail to create a cab because of invalid cab"
     (is (thrown-with-msg?

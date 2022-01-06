@@ -28,11 +28,10 @@
       (is (= #:users{:name "Severus Snape"
                      :role "admin"
                      :email "s.snape@hogwarts.edu"}
-             (dissoc created-user
-                     :users/id
-                     :users/password
-                     :users/created-at
-                     :users/updated-at)))
+             (select-keys created-user
+                     [:users/name
+                     :users/role
+                     :users/email])))
       (is (password/check "lily" (:users/password created-user)))))
 
   (testing "Should flash a message if user already exist"
