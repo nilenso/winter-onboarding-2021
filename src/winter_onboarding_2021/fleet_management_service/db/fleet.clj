@@ -12,6 +12,10 @@
     (let [error-msg (s/explain-str ::spec/fleets fleet)]
       (assoc error/validation-failed :error-msg error-msg))))
 
+(defn total []
+  (db/query! (sql/format (-> (select [:%count.* :count])
+                             (from :fleets)))))
+
 (defn select-fleets-for-admin [admin-id off lim]
   (db/query! (sql/format (-> (select :id
                                      :name

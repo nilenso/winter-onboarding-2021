@@ -26,6 +26,13 @@
                 fleets))
     {:user user :fleets fleets}))
 
+(deftest total
+  (testing "Count the total number of fleets in the DB"
+    (let [total 20
+          _ (seed-user-fleets-db total)
+          db-total (:count (first (fleet-db/total)))]
+      (is (= total db-total)))))
+
 (deftest create-fleet
   (testing "Should create a fleet"
     (let [user {:users/name "Hermione Granger"
