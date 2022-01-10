@@ -43,6 +43,13 @@
                  :fleets/admin (str user-id)}]
       (is (= error/no-valid-keys (fleet-model/create fleet))))))
 
+(deftest total
+  (testing "Should return the total count of fleets in the DB"
+    (let [total 20
+          _ (fleet-test-db/seed-user-fleets-db total)
+          db-total (:count (first (fleet-model/total)))]
+      (is (= total db-total)))))
+
 (deftest list-fleet
   (testing "Should fetch the first 10 fleets"
     (let [{:keys [user fleets]} (fleet-test-db/seed-user-fleets-db 15)

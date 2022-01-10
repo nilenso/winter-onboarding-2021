@@ -11,6 +11,9 @@
       error/no-valid-keys
       (fleet-db/create fleet-with-valid-keys))))
 
+(defn total []
+  (fleet-db/total))
+
 (defn select-fleets-for-admin
   ([user-id] (fleet-db/select-fleets-for-admin user-id 0 (config/get-page-size)))
   ([user-id off lim] (fleet-db/select-fleets-for-admin user-id off lim)))
