@@ -38,8 +38,8 @@
                              :post user-handlers/create-user}
                   "/login" {:get (wrap-layout user-handlers/login-form)
                             :post user-handlers/login}}]
-        ["fleets" {"" {:post fleet-handlers/create-fleet}
-                   "/new" {:get (wrap-layout fleet-handlers/new)}}]
+        ["fleets" {"" {:post (authentication-required fleet-handlers/create-fleet #{:admin})}
+                   "/new" {:get (authentication-required (wrap-layout fleet-handlers/new) #{:admin})}}]
         ["healthcheck" {:get (wrap-json-response handler/health-check)}]
         ["index" {:get (wrap-layout handler/index)}]
         ["" {:get (wrap-layout handler/root)}]

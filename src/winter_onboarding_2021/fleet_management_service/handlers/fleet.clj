@@ -3,16 +3,9 @@
             [clojure.spec.alpha :as s]
             [winter-onboarding-2021.fleet-management-service.specs :as specs]
             [ring.util.response :as response]
+            [winter-onboarding-2021.fleet-management-service.utils :refer [flash-msg]]
             [winter-onboarding-2021.fleet-management-service.views.fleet :as views]))
 
-(def success-flash
-  {:flash {:success true
-           :style-class "alert alert-success"
-           :message "Fleet created successfully!"}})
-(def error-flash
-  {:flash {:error true
-           :style-class "alert alert-danger"
-           :message "Could not create fleet, try again!"}})
 
 (defn create-fleet [{:keys [user form-params]}]
   (let [user-id (:users/id user)
@@ -21,9 +14,9 @@
                     :created-by user-id}]
     (if (s/valid? ::specs/fleet-form fleet-data)
       (let [fleet-id (:fleets/id (fleet-model/create fleet-data))]
-        (->  success-flash
+        (->  (flash-msg "Fleet created successfully!" true)
              (merge (response/redirect (format "/fleets/%s" (str fleet-id))))))
-      (->  error-flash
+      (->  (flash-msg "Could not create fleet, try again!" false)
            (merge (response/redirect "/fleets/new"))))))
 
 (defn new [_]
