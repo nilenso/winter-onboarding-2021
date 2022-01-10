@@ -5,16 +5,15 @@
             [winter-onboarding-2021.fleet-management-service.db.user :as user-db]
             [winter-onboarding-2021.fleet-management-service.fixtures :as fixtures]
             [winter-onboarding-2021.fleet-management-service.db.core :as core-db]
-            [winter-onboarding-2021.fleet-management-service.error :as error]))
+            [winter-onboarding-2021.fleet-management-service.error :as error]
+            [winter-onboarding-2021.fleet-management-service.utils :as utils]))
+            
 
 (use-fixtures :once fixtures/config fixtures/db-connection)
 (use-fixtures :each fixtures/clear-db)
 
 (defn dissoc-irrelevant-keys [fleet]
   (dissoc fleet :fleets/created-at :fleets/org-id))
-
-(defn calc-offset [page-size page-number]
-  (* page-size (dec page-number)))
 
 (defn seed-user-fleets-db
   "adds `num-fleets` to the DB associated with a sample user"
@@ -63,7 +62,7 @@
   (let [{:keys [user fleets]} (seed-user-fleets-db 20)
         page-size 10]
     (testing "Should fetch a list of first 3 fleets regardless of the associatd user from the second page"
-      (let [offset (calc-offset page-size 2)
+      (let [offset (utils/calc-offset page-size 2)
             limit 3
             db-fleets (mapv dissoc-irrelevant-keys (fleet-db/select-fleets-for-admin
                                                     (:users/id user)
