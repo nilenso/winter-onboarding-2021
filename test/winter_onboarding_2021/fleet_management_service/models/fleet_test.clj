@@ -2,6 +2,7 @@
   (:require [clojure.test :refer [deftest is testing use-fixtures]]
             [winter-onboarding-2021.fleet-management-service.models.fleet :as fleet-model]
             [winter-onboarding-2021.fleet-management-service.db.user :as user-db]
+            [winter-onboarding-2021.fleet-management-service.error :as error]
             [winter-onboarding-2021.fleet-management-service.fixtures :as fixtures]))
 
 (use-fixtures :once fixtures/config fixtures/db-connection)
@@ -14,8 +15,29 @@
                 :users/email "hermione@hogwarts.edu"
                 :users/password "weasley&potter@123"}
           user-id (:users/id (user-db/create user))
-          fleet {:name "Azkaban Fleet 1"
-                 :created-by user-id}]
+          fleet {:fleets/name "Azkaban Fleet 1"
+                 :fleets/created-by user-id}]
       (is (= #:fleets{:name "Azkaban Fleet 1"
                       :created-by user-id} (select-keys (fleet-model/create fleet)
-                                                        [:fleets/name :fleets/created-by]))))))
+                                                        [:fleets/name :fleets/created-by])))))
+  (testing "Should ignore un-related keys while creating a fleet"
+    (let [user {:users/name "Hermione Granger"
+                :users/role "admin"
+                :users/email "hermione@hogwart.edu"
+                :users/password "weasley&potter@123"}
+          user-id (:users/id (user-db/create user))
+          fleet {:fleets/name "Azkaban Fleet 1"
+                 :fleets/place "Azkaban"
+                 :fleets/created-by user-id}]
+      (is (= #:fleets{:name "Azkaban Fleet 1"
+                      :created-by user-id} (select-keys (fleet-model/create fleet)
+                                                        [:fleets/name :fleets/created-by])))))
+  (testing "Should not create a fleet if all keys are un-related"
+    (let [user {:users/name "Ron Weasley"
+                :users/role "admin"
+                :users/email "ron@hogwart.edu"
+                :users/password "hermionie&potter@123"}
+          user-id (:users/id (user-db/create user))
+          fleet {:fleets/place "Azkaban Fleet 1"
+                 :fleets/admin (str user-id)}]
+      (is (= error/no-valid-keys (fleet-model/create fleet))))))

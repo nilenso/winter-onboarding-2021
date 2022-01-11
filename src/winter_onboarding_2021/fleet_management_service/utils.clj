@@ -59,6 +59,9 @@
 (defn namespace-users [hashmap]
   (map->nsmap hashmap :users))
 
+(defn namespace-fleets [hashmap]
+  (map->nsmap hashmap :fleets))
+
 (defn select-keys-from-spec [data spec]
   (let [required-attr (nth (s/describe spec) 2)]
     (select-keys data required-attr)))
