@@ -89,9 +89,9 @@
 (s/def :fleets/name string?)
 (s/def :fleets/created-by uuid?)
 
-(s/def ::fleet-form
-  (s/keys :req-un [:fleets/name
-                   :fleets/created-by]))
+(s/def ::fleets
+  (s/keys :req [:fleets/name
+                :fleets/created-by]))
 
 ; Pagination
 (s/def ::pagination-params
