@@ -2,32 +2,41 @@
   (:require [clojure.spec.alpha :as s]
             [clojure.spec.gen.alpha :as gen]))
 
+(defn str->long [str]
+  (if (= (type str) java.lang.Long)
+    str
+    (try (Long/parseLong str)
+         (catch Exception _ :clojure.spec.alpha/invalid))))
+
+(defn- pos-int-gen []
+  (gen/large-integer* {:min 0
+                       :max 200000000}))
+
 (def licence-plate-regex #"^[a-zA-Z0-9]*$")
 
 (s/def :cabs/name string?)
+(s/def :cabs/id uuid?)
+(s/def :cabs/created-at string?)
+(s/def :cabs/updated-at string?)
 (s/def :cabs/licence-plate (s/and string? not-empty #(re-matches licence-plate-regex %)))
-(s/def :cabs/distance-travelled (s/int-in 0 100000000000))
-(s/def :cabs-form/distance-travelled (s/conformer
-                                      #(if (= (type %) java.lang.Long)
-                                         %
-                                         (try (Long/parseLong %)
-                                              (catch Exception _ :clojure.spec.alpha/invalid)))))
-
-(s/def ::create-cab-form
-  (s/keys :req-un [:cabs/name
-                   :cabs/licence-plate
-                   :cabs-form/distance-travelled]))
-
-(s/def ::update-cab-form
-  (s/keys :req-un [:cabs/name
-                   :cabs-form/distance-travelled]))
-
+(s/def :cabs/distance-travelled (s/with-gen (s/conformer str->long)
+                                  pos-int-gen))
 (s/def ::cabs
-  (s/keys :req-un [:cabs/name
-                   :cabs/licence-plate
-                   :cabs/distance-travelled]))
+  (s/keys :req [:cabs/name
+                :cabs/licence-plate
+                :cabs/distance-travelled]))
 
-;; Users
+(s/def ::cabs-all-attr
+  (s/keys :req [:cabs/name
+                :cabs/licence-plate
+                :cabs/distance-travelled
+                :cabs/id
+                :cabs/created-at
+                :cabs/updated-at]))
+
+(s/def ::cabs-update-form
+  (s/keys :req [:cabs/name
+                :cabs/distance-travelled]))
 
 (def ^:private non-empty-alphanumeric-string
   (gen/such-that #(not= "" %)
@@ -54,20 +63,27 @@
 (s/def :users/password (s/and string? not-empty))
 
 (s/def ::users
-  (s/keys :req-un [:users/name
+  (s/keys :req [:users/name
                 :users/role
                 :users/email
                 :users/password]))
 
-(s/def ::signup-form 
-       (s/keys :req-un [:users/name
-                        :users/email
-                        :users/role
-                        :users/password]))
+(s/def ::users-all-attr
+  (s/keys :req [:users/id
+                :users/name
+                :users/role
+                :users/email
+                :users/password]))
+
+(s/def ::signup-form
+  (s/keys :req [:users/name
+                :users/email
+                :users/role
+                :users/password]))
 
 (s/def ::login-params
-  (s/keys :req-un [:users/email
-                   :users/password]))
+  (s/keys :req [:users/email
+                :users/password]))
                    
 ; Fleets
 (s/def :fleets/name string?)
@@ -77,6 +93,7 @@
   (s/keys :req-un [:fleets/name
                    :fleets/created-by]))
 
+; Pagination
 (s/def ::pagination-params
   (s/keys :req-un [:pagination/limit
                    :pagination/offset]))

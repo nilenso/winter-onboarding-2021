@@ -9,53 +9,53 @@
 
 (deftest create-cab
   (testing "Should create a cab"
-    (let [user {:name "Harry Potter"
-                :role "admin"
-                :email "harry@hogwarts.edu"
-                :password "hermione@123"}
+    (let [user {:users/name "Harry Potter"
+                :users/role "admin"
+                :users/email "harry@hogwarts.edu"
+                :users/password "hermione@123"}
           _ (user-model/create user)]
       (is (= #:users{:name "Harry Potter"
                      :role "admin"
                      :email "harry@hogwarts.edu"
                      :password "hermione@123"}
-             (select-keys (first (user-model/find-by-keys {:email (:email user)}))
+             (select-keys (first (user-model/find-by-keys {:users/email (:users/email user)}))
                           [:users/name :users/role :users/email :users/password]))))))
 
 (deftest find-by-keys
   (testing "Should return a user given a key-map(properties)"
-    (let [user {:name "Harry Potter"
-                :role "admin"
-                :email "harry@hogwarts.edu"
-                :password "hermione@123"}
+    (let [user {:users/name "Harry Potter"
+                :users/role "admin"
+                :users/email "harry@hogwarts.edu"
+                :users/password "hermione@123"}
           _ (user-model/create user)]
       (is (= #:users{:name "Harry Potter"
                      :role "admin"
                      :email "harry@hogwarts.edu"
                      :password "hermione@123"}
-             (select-keys (first (user-model/find-by-keys {:email (:email user)}))
+             (select-keys (first (user-model/find-by-keys {:users/email (:users/email user)}))
                           [:users/name :users/role :users/email :users/password]))))))
 
 (deftest authenticate
   (testing "Correct login credentials, should return us user data"
-    (let [user {:name "Harry Potter"
-                :role "admin"
-                :email "harry@hogwarts.edu"
-                :password (password/encrypt "hermione@123")}
+    (let [user {:users/name "Harry Potter"
+                :users/role "admin"
+                :users/email "harry@hogwarts.edu"
+                :users/password (password/encrypt "hermione@123")}
           created-user (user-model/create user)]
 
       (is (= {:found? true :user (dissoc created-user :users/password)}
-             (dissoc (user-model/authenticate {:email (:email user)
-                                               :password "hermione@123"})
+             (dissoc (user-model/authenticate {:users/email (:users/email user)
+                                               :users/password "hermione@123"})
                      :users/password)))))
 
   (testing "No email exists in the database"
     (is  (= {:found? false :user nil}
-            (dissoc (user-model/authenticate {:email "foo@bar.com"
-                                              :password "hermione@123"})
+            (dissoc (user-model/authenticate {:users/email "foo@bar.com"
+                                              :users/password "hermione@123"})
                     :users/password))))
 
   (testing "Password is wrong but the account is there"
     (is (= {:found? true :user nil}
-           (dissoc (user-model/authenticate {:email "harry@hogwarts.edu"
-                                             :password "wrongpassword"})
+           (dissoc (user-model/authenticate {:users/email "harry@hogwarts.edu"
+                                             :users/password "wrongpassword"})
                    :users/password)))))

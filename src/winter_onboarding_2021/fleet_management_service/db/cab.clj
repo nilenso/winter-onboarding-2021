@@ -8,7 +8,7 @@
             [honey.sql.helpers :as h :refer [select from limit offset order-by update set where]]))
 
 (defn create [cab]
-  (if (s/valid? ::specs/create-cab-form cab)
+  (if (s/valid? ::specs/cabs cab)
     (db/insert! :cabs cab)
     errors/validation-failed))
 
@@ -36,28 +36,29 @@
     errors/id-not-uuid))
 
 (defn find-by-keys [key-map]
-  (if (utils/key-exists-in-schema key-map
-                                  #{:id :name :distance-travelled :licence-plate})
-    (db/find-by-keys! :cabs key-map)
-    errors/key-not-in-schema))
+  (let [valid-key-map (utils/select-keys-from-spec key-map 
+                                                   ::specs/cabs-all-attr)]
+    (if (empty? valid-key-map)
+      errors/no-valid-keys
+      (db/find-by-keys! :cabs valid-key-map))))
 
 (defn update! [id cab]
   (if (uuid? id)
-    (if (s/valid? ::specs/update-cab-form cab)
+    (if (s/valid? ::specs/cabs-update-form cab)
       (db/query! (sql/format (-> (update :cabs)
                                  (set cab)
                                  (where [:= :id id]))))
       errors/validation-failed)
     errors/id-not-uuid))
 
-
 (defn delete [where-params]
-  (if (utils/key-exists-in-schema where-params
-                                  #{:id :name :distance-travelled :licence-plate})
-    (db/delete! :cabs where-params)
-    errors/key-not-in-schema))
+  (let [valid-where-params (utils/select-keys-from-spec where-params ::specs/cabs-all-attr)]
+    (if (empty? valid-where-params)
+      errors/no-valid-keys
+      (db/delete! :cabs {:cabs/id (:cabs/id valid-where-params)}))))
 
 (defn get-by-id-or-licence-plate [id licence-plate]
   (first (db/query! (sql/format (-> (select :*)
                                     (from :cabs)
-                                    (where :or [:= :id id] [:= :licence-plate licence-plate]))))))
+                                    (where :or [:= :id id] 
+                                           [:= :licence-plate licence-plate]))))))

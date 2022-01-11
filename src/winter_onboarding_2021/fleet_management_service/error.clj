@@ -17,3 +17,6 @@
 
 (def id-not-uuid
   {:error :id-not-uuid})
+
+(def no-valid-keys
+  {:error :no-valid-keys})

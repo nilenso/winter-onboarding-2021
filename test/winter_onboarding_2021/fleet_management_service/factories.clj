@@ -17,8 +17,8 @@
 
 (defn admin
   ([] (admin {}))
-  ([overrides] (user (merge overrides {:role "admin"}))))
+  ([overrides] (user (merge overrides {:users/role "admin"}))))
 
 (defn manager
   ([] (manager {}))
-  ([overrides] (user (merge overrides {:role "manager"}))))
+  ([overrides] (user (merge overrides {:users/role "manager"}))))

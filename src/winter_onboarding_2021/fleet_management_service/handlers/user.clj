@@ -13,19 +13,20 @@
    :content (view/signup-form)})
 
 (defn user-exist? [email]
-  (not-empty (user-model/find-by-keys {:email email})))
+  (not-empty (user-model/find-by-keys {:users/email email})))
 
 
 (defn create-user [{:keys [form-params]}]
-  (let [validated-user (s/conform ::specs/signup-form form-params)]
+  (let [ns-form-params (utils/namespace-users form-params)
+        validated-user (s/conform ::specs/signup-form ns-form-params)]
     (cond
       (s/invalid? validated-user) (merge (utils/flash-msg "Could not create user, enter valid details!" false)
                                          (response/redirect "/users/signup"))
       (user-exist? (:email form-params)) (merge (utils/flash-msg "User already exists, use different email!" false)
                                                 (response/redirect "/users/signup"))
       :else (let [created-user (user-model/create (assoc validated-user
-                                                         :password (password/encrypt
-                                                                    (:password validated-user))))]
+                                                         :users/password (password/encrypt
+                                                                    (:users/password validated-user))))]
               (merge (utils/flash-msg (format "User %s created successfully!" (:users/name created-user)) true)
                      (response/redirect "/users/signup"))))))
 
@@ -52,11 +53,12 @@
          (response/redirect "/users/login")))
 
 (defn login [{:keys [params]}]
-  (let [validated-params (s/conform ::specs/login-params params)]
+  (let [ns-params (utils/namespace-users params)
+        validated-params (s/conform ::specs/login-params ns-params)]
     (if (s/invalid? validated-params)
       (invalid-data-response)
       (let [{:keys [found? user]} (user-model/authenticate
-                                   (select-keys validated-params [:email :password]))]
+                                   (select-keys validated-params [:users/email :users/password]))]
         (if found?
           (if user
             (successful-login-response (:users/id user))
