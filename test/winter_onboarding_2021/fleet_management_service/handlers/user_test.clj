@@ -16,7 +16,7 @@
                 :role "admin"
                 :password "lily"}
           response (handler/create-user {:form-params user})
-          created-user (first (user-model/find-by-keys {:email (:email user)}))]
+          created-user (first (user-model/find-by-keys {:users/email (:email user)}))]
 
       (is (= 302 (:status response)))
 
