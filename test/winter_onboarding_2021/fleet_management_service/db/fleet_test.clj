@@ -10,10 +10,10 @@
 
 (deftest create-fleet
   (testing "Should create a fleet"
-    (let [user {:name "Hermione Granger"
-                :role "admin"
-                :email "hermione@hogwarts.edu"
-                :password "weasley&potter@123"}
+    (let [user {:users/name "Hermione Granger"
+                :users/role "admin"
+                :users/email "hermione@hogwarts.edu"
+                :users/password "weasley&potter@123"}
           user-id (:users/id (user-db/create user))
           fleet {:name "Azkaban Fleet 1"
                  :created-by user-id}]
