@@ -10,10 +10,10 @@
 
 (deftest create-fleet
   (testing "Should create a fleet by an admin"
-    (let [user {:name "foo bar"
-                :role "admin"
-                :email "foobar@gmail.com"
-                :password "foo"}
+    (let [user {:users/name "foo bar"
+                :users/role "admin"
+                :users/email "foobar@gmail.com"
+                :users/password "foo"}
           user-id (:users/id (user-db/create user))
           request {:form-params {:name "Goo fleet"}
                    :user #:users{:id user-id
