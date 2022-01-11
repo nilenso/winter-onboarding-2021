@@ -14,7 +14,7 @@
 
 (def licence-plate-regex #"^[a-zA-Z0-9]*$")
 
-(s/def :cabs/name string?)
+(s/def :cabs/name (s/and string? (comp not empty?)))
 (s/def :cabs/id uuid?)
 (s/def :cabs/created-at string?)
 (s/def :cabs/updated-at string?)
