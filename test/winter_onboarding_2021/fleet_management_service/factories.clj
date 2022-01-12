@@ -55,3 +55,9 @@
 (defn invite-driver
   ([] (invite-driver {}))
   ([overrides] (invite (merge overrides {:invites/role "driver"}))))
+  ([overrides] (user (merge overrides {:users/role "manager"}))))
+
+(defn organisation
+  ([] (organisation {}))
+  ([overrides] (merge (gen/generate (s/gen ::specs/organisations))
+                      overrides)))

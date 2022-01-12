@@ -161,12 +161,13 @@
 (s/def :organisations/updated-at inst?)
 
 (s/def ::organisations
-  (s/keys :req [:organisations/name
-                :organisations/created-by]))
-
-(s/def ::organisations-all-attrs
   (s/keys :req [:organisations/id
                 :organisations/name
-                :organisations/created-by
-                :organisations/created-at
-                :organisations/updated-at]))
+                :organisations/created-by]))
+
+(s/def ::organisations-all-attr
+       (s/keys :req [:organisations/id
+                     :organisations/name
+                     :organisations/created-by
+                     :organisations/created-at
+                     :organisations/updated-at]))
