@@ -30,4 +30,4 @@
           user-id (:users/id (user-db/create user))
           fleet {:fleets/name "Azkaban Fleet 1"
                  :fleets/created-by (str user-id)}]
-      (is (= error/validation-failed (fleet-db/create fleet))))))
+      (is (= error/validation-failed (select-keys (fleet-db/create fleet) [:error]))))))

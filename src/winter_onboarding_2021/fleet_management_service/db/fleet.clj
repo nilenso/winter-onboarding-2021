@@ -7,4 +7,5 @@
 (defn create [fleet]
   (if (s/valid? ::spec/fleets fleet)
     (db/insert! :fleets fleet)
-    error/validation-failed))
+    (let [error-msg (s/explain-str ::spec/fleets fleet)]
+      (assoc error/validation-failed :error-msg error-msg))))

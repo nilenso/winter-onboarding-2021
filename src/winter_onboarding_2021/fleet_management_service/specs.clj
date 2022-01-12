@@ -86,6 +86,7 @@
                 :users/password]))
                    
 ; Fleets
+(s/def :fleets/id uuid?)
 (s/def :fleets/name string?)
 (s/def :fleets/created-by uuid?)
 
