@@ -22,3 +22,8 @@
 (defn manager
   ([] (manager {}))
   ([overrides] (user (merge overrides {:users/role "manager"}))))
+
+(defn organisation
+  ([] (organisation {}))
+  ([overrides] (merge (gen/generate (s/gen ::specs/organisations))
+                      overrides)))
