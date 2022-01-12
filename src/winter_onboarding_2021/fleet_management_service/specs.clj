@@ -147,3 +147,27 @@
                 :invites/valid-until
                 :invites/role
                 :invites/is-active]))
+
+(s/def ::fleet-form
+  (s/keys :req-un [:fleets/name
+                   :fleets/created-by]))
+
+
+; Organisations
+(s/def :organisations/id uuid?)
+(s/def :organisations/name (s/and string? not-empty))
+(s/def :organisations/created-by uuid?)
+(s/def :organisations/created-at inst?)
+(s/def :organisations/updated-at inst?)
+
+(s/def ::organisations
+  (s/keys :req [:organisations/id
+                :organisations/name
+                :organisations/created-by]))
+
+(s/def ::organisations-all-attr
+       (s/keys :req [:organisations/id
+                     :organisations/name
+                     :organisations/created-by
+                     :organisations/created-at
+                     :organisations/updated-at]))
