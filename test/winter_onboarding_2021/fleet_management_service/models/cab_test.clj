@@ -23,7 +23,7 @@
                      :cabs/distance-travelled])))))
 
   (testing "Should fail to create a cab because of invalid cab"
-    (is (= errors/validation-failed (cab-model/create {:name "Kia"}))))
+    (is (= errors/validation-failed (select-keys (cab-model/create {:name "Kia"}) [:error]))))
   (testing "Should fail if cab with same licence-plate already exists"
     (is (= errors/license-plate-already-exists
            (cab-model/create {:cabs/name "Maruti Alto"
@@ -91,8 +91,8 @@
                :cabs/licence-plate "MHOR1235"
                :cabs/distance-travelled 123340}
           id (:cabs/id (cab-db/create cab))
-          new-cab̦ {:cabs/name "Maruti"}]
-      (is (= errors/validation-failed (cab-model/update! id new-cab̦)))))
+          new-cab {:cabs/name "Maruti"}]
+      (is (= errors/validation-failed (select-keys (cab-model/update! id new-cab) [:error])))))
   (testing "Should throw error id not uuid with valid cab data"
     (let [cab {:cabs/name "Maruti"
                :cabs/licence-plate "MHOR1235"

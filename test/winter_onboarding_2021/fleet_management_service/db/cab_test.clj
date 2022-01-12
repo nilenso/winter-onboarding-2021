@@ -24,7 +24,7 @@
                       :distance-travelled 2333}
                (select-keys created-cab [:cabs/name :cabs/licence-plate :cabs/distance-travelled])))))
     (testing "Should fail to create a cab because of invalid cab"
-      (is (= errors/validation-failed (cab-db/create {:name "Kia"}))))
+      (is (= errors/validation-failed (select-keys (cab-db/create {:name "Kia"}) [:error]))))
     (testing "Should throw an exception if cab with same licence-plate already exists"
       (is (thrown-with-msg? PSQLException
                             #"Detail: Key \(licence_plate\)=\(HR20X6710\) already exists."
@@ -46,7 +46,7 @@
           page-length -2]
       (doall (map cab-db/create cabs-list))
       (is (= errors/validation-failed
-             (cab-db/select! offset page-length))))))
+             (select-keys (cab-db/select! offset page-length) [:error]))))))
 
 (deftest get-by-id
   (testing "Should return a cab given an id"
@@ -97,7 +97,7 @@
           inserted-cab (cab-db/create cab)
           id (inserted-cab :cabs/id)
           new-cab̦ {:name "Maruti"}]
-      (is (= errors/validation-failed (cab-db/update! id new-cab̦)))))
+      (is (= errors/validation-failed (select-keys (cab-db/update! id new-cab̦) [:error])))))
   (testing "Should throw error id not uuid"
     (let [cab {:cabs/name "Maruti"
                :cabs/licence-plate "MHOR1236"

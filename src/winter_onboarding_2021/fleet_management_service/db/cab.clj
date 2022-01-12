@@ -1,7 +1,7 @@
 (ns winter-onboarding-2021.fleet-management-service.db.cab
   (:require [winter-onboarding-2021.fleet-management-service.db.core :as db]
             [honey.sql :as sql]
-            [winter-onboarding-2021.fleet-management-service.specs :as specs]
+            [winter-onboarding-2021.fleet-management-service.specs :as specs] 
             [clojure.spec.alpha :as s]
             [winter-onboarding-2021.fleet-management-service.error :as errors]
             [winter-onboarding-2021.fleet-management-service.utils :as utils]
@@ -10,7 +10,8 @@
 (defn create [cab]
   (if (s/valid? ::specs/cabs cab)
     (db/insert! :cabs cab)
-    errors/validation-failed))
+    (let [error-msg (s/explain-str ::specs/cabs cab)]
+      (assoc errors/validation-failed :error-msg error-msg))))
 
 (defn select! [off lim]
   (if (s/valid? ::specs/pagination-params {:offset off :limit lim})
@@ -24,14 +25,15 @@
                                (limit lim)
                                (offset off)
                                (order-by :created-at))))
-    errors/validation-failed))
+    (assoc errors/validation-failed
+           :error-msg "offset or limit is negative")))
 
 (defn get-count []
   (db/query! (sql/format (-> (select [:%count.* :count])
                              (from :cabs)))))
 
 (defn get-by-id [id]
-  (if (uuid? id)
+  (if (s/valid? :cabs/id id)
     (db/get-by-id! :cabs id)
     errors/id-not-uuid))
 
@@ -43,13 +45,14 @@
       (db/find-by-keys! :cabs valid-key-map))))
 
 (defn update! [id cab]
-  (if (uuid? id)
-    (if (s/valid? ::specs/cabs-update-form cab)
-      (db/query! (sql/format (-> (update :cabs)
-                                 (set cab)
-                                 (where [:= :id id]))))
-      errors/validation-failed)
-    errors/id-not-uuid))
+  (cond
+    (not (s/valid? :cabs/id id)) errors/id-not-uuid
+    (not (s/valid? ::specs/cabs-update-form cab)) (assoc errors/validation-failed
+                                                         :error-msg
+                                                         (s/explain-str ::specs/cabs-update-form cab))
+    :else (db/query! (sql/format (-> (update :cabs)
+                                     (set cab)
+                                     (where [:= :id id]))))))
 
 (defn delete [where-params]
   (let [valid-where-params (utils/select-keys-from-spec where-params ::specs/cabs-all-attr)]

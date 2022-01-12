@@ -1,5 +1,6 @@
 (ns winter-onboarding-2021.fleet-management-service.models.cab
-  (:require [winter-onboarding-2021.fleet-management-service.db.cab :as cab-db]
+  (:require [clojure.spec.alpha :as s]
+            [winter-onboarding-2021.fleet-management-service.db.cab :as cab-db]
             [winter-onboarding-2021.fleet-management-service.config :as config]
             [winter-onboarding-2021.fleet-management-service.utils :as utils]
             [winter-onboarding-2021.fleet-management-service.specs :as specs]
@@ -7,7 +8,7 @@
   (:import [org.postgresql.util PSQLException]))
 
 (defn get-by-id [id]
-  (if (uuid? id)
+  (if (s/valid? :fleets/id id)
     (cab-db/get-by-id id)
     errors/id-not-uuid))
 
@@ -34,14 +35,12 @@
 
 (defn update! [id cab]
   (let [cab-with-valid-keys (utils/select-keys-from-spec cab ::specs/cabs-update-form)]
-    (if (uuid? id)
-    (if (empty? cab-with-valid-keys)
-      errors/no-valid-keys
-      (cab-db/update! id cab-with-valid-keys))
-    errors/id-not-uuid)))
+    (cond (not (s/valid? :fleets/id id)) errors/id-not-uuid
+          (empty? cab-with-valid-keys) errors/no-valid-keys
+          :else (cab-db/update! id cab-with-valid-keys))))
 
 (defn delete-by-id [id]
-  (if (uuid? id)
+  (if (s/valid? :fleets/id id)
     (cab-db/delete {:cabs/id id})
     errors/id-not-uuid))
 

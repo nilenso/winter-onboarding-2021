@@ -1,6 +1,5 @@
 (ns winter-onboarding-2021.fleet-management-service.utils
-  (:require [clojure.walk :refer [postwalk]]
-            [clojure.spec.alpha :as s]))
+  (:require [clojure.spec.alpha :as s]))
 
 ;;uuid
 (defn uuid []
@@ -33,25 +32,16 @@
              :style-class "alert alert-danger"
              :message msg}}))
 
-;;namespace 
-(defn remove-namespace [coll]
-  (postwalk
-   (fn [key]
-     (if (keyword? key)
-       (keyword (name key))
-       key))
-   coll))
-
-(defn recursicve-ns [ns hashmap map-keys]
+(defn recursive-ns [ns hashmap map-keys]
   (if (empty? map-keys)
     hashmap
-    (recursicve-ns ns
+    (recursive-ns ns
                    (dissoc (assoc hashmap (keyword (str (name ns) "/" (name (first map-keys)))) ((first map-keys) hashmap))
                            (first map-keys))
                    (rest map-keys))))
 
 (defn map->nsmap [hashmap ns]
-  (recursicve-ns ns hashmap (keys hashmap)))
+  (recursive-ns ns hashmap (keys hashmap)))
 
 (defn namespace-cabs [hashmap]
   (map->nsmap hashmap :cabs))

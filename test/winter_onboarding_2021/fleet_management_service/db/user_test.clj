@@ -24,16 +24,16 @@
               [:users/name :users/role :users/email :users/password])))))
   (testing "Should throw an exception, given name is nil"
     (is (= errors/validation-failed
-           (user-db/create {:users/name nil
+           (select-keys (user-db/create {:users/name nil
                             :users/role "admin"
                             :users/email "harry@hogwarts.edu"
-                            :users/password "lily"}))))
+                            :users/password "lily"}) [:error]))))
   (testing "Should throw an exception, given email is nil"
     (is (= errors/validation-failed
-           (user-db/create {:users/name "Harry"
+           (select-keys (user-db/create {:users/name "Harry"
                             :users/role "admin"
                             :users/email nil
-                            :users/password "lily"}))))
+                            :users/password "lily"}) [:error]))))
   (testing "Should throw an exception, if given email already exists in db"
     (is (thrown-with-msg? PSQLException
                           #"Detail: Key \(email\)=\(harry@hogwarts.edu\) already exists."
