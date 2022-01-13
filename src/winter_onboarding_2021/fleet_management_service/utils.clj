@@ -46,3 +46,7 @@
 
 (defn rand-str [len]
   (apply str (take len (repeatedly #(char (+ (rand 26) 65))))))
+
+(defn hiccup-attrs [element]
+  (when (map? (second element))
+    (second element)))
