@@ -2,7 +2,8 @@
   (:require [clojure.test :refer [deftest is testing use-fixtures]]
             [winter-onboarding-2021.fleet-management-service.db.user :as user-db]
             [winter-onboarding-2021.fleet-management-service.fixtures :as fixtures]
-            [winter-onboarding-2021.fleet-management-service.factories :as factories])
+            [winter-onboarding-2021.fleet-management-service.factories :as factories]
+            [winter-onboarding-2021.fleet-management-service.models.organisation :as org-models])
   (:import [org.postgresql.util PSQLException]))
 
 (use-fixtures :once fixtures/config fixtures/db-connection)
@@ -72,3 +73,14 @@
       (user-db/create user-1)
       (user-db/create user-2)
       (is (= 2 (count (user-db/find-by-keys {:name name})))))))
+
+
+(deftest add-user-to-org
+  (testing "Should add org-id to an user"
+    (let [admin (user-db/create (factories/admin))
+          org (org-models/create {:name "org-1" :created-by (:users/id admin)})
+          _ (user-db/add-user-to-org org admin)
+          
+          db-admin (first (user-db/find-by-keys {:id (:users/id admin)}))]
+      
+      (is (= (:organisations/id org) (:users/org-id db-admin))))))

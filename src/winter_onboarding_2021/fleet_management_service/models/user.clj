@@ -14,3 +14,6 @@
       {:found? true :user (dissoc db-user :users/password)}
       {:found? true :user nil})
     {:found? false :user nil}))
+
+(defn add-user-to-org [org user]
+  (user/add-user-to-org org user))
