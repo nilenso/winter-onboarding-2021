@@ -26,11 +26,11 @@
 
 (deftest create-and-associate
   (testing "Should create an organisation and associate the given user with it"
-    (let [admin (user-models/create (factories/admin)) 
-          _ (org-models/create-and-associate {:name "foo-org"}
+    (let [admin (factories/admin)
+          _ (org-models/create-and-associate {:organisations/name "foo-org"}
                                              admin)
-          org (first (db-core/find-by-keys! :organisations {:name "foo-org"}))
-          user (first (user-models/find-by-keys {:id (:users/id admin)}))]
-      
+          org (first (db-core/find-by-keys! :organisations {:organisations/name "foo-org"}))
+          user (first (user-models/find-by-keys {:users/id (:users/id admin)}))]
+
       (is (= "foo-org" (:organisations/name org)))
       (is (= (:organisations/id org) (:users/org-id user))))))
