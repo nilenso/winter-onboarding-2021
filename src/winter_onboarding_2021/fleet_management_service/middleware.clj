@@ -53,6 +53,6 @@
               (merge (response/redirect "/users/login")
                      {:cookies nil}))
           (handler (assoc request :user (select-keys session-user-data
-                                                     [:users/id :users/name :users/role :users/email]))))
+                                                     [:users/id :users/name :users/role :users/email :users/org-id]))))
         (handler request))
       (handler request))))
