@@ -1,5 +1,7 @@
 (ns winter-onboarding-2021.fleet-management-service.db.user
-  (:require [clojure.spec.alpha :as s]
+  (:require [honey.sql :as sql]
+            [honey.sql.helpers :refer [update set where]]
+            [clojure.spec.alpha :as s]
             [winter-onboarding-2021.fleet-management-service.error :as error]
             [winter-onboarding-2021.fleet-management-service.db.core :as db]
             [winter-onboarding-2021.fleet-management-service.specs :as specs]))
@@ -12,3 +14,8 @@
 
 (defn find-by-keys [key-map]
   (db/find-by-keys! :users key-map))
+
+(defn add-user-to-org [org user]
+  (db/query! (sql/format (-> (update :users)
+                             (set {:org-id (:organisations/id org)})
+                             (where [:= :id (:users/id user)])))))
