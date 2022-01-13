@@ -48,7 +48,7 @@
 
 
   (testing "Should not create an organisation and associate it with a user who is not an admin"
-    (let [db-manager (user-models/create (factories/manager))
+    (let [db-manager (factories/manager)
           request {:form-params {:name "org-2"} :user db-manager}
           response (org-handlers/create request)
           org (db-core/find-by-keys! :organisations {:name "org-2"})
