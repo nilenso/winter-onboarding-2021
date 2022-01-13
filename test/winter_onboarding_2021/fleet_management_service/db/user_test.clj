@@ -72,7 +72,7 @@
 
 (deftest add-user-to-org
   (testing "Should add org-id to an user"
-    (let [admin (user-db/create (factories/admin))
+    (let [admin (factories/admin)
           org (org-models/create {:name "org-1" :created-by (:users/id admin)})
           _ (user-db/add-user-to-org org admin)
 

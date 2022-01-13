@@ -1,9 +1,11 @@
 (ns winter-onboarding-2021.fleet-management-service.models.user-test
   (:require [clojure.test :refer [deftest is testing use-fixtures]]
             [crypto.password.bcrypt :as password]
+            [clojure.spec.alpha :as s]
+            [clojure.spec.gen.alpha :as gen]
             [winter-onboarding-2021.fleet-management-service.factories :as factories]
             [winter-onboarding-2021.fleet-management-service.models.user :as user-model]
-            [winter-onboarding-2021.fleet-management-service.models.organisation :as org-models]
+            [winter-onboarding-2021.fleet-management-service.specs :as specs]
             [winter-onboarding-2021.fleet-management-service.fixtures :as fixtures]))
 
 (use-fixtures :once fixtures/config fixtures/db-connection)
@@ -57,10 +59,12 @@
 
 (deftest add-user-to-org
   (testing "Should add org-id to an user"
-    (let [admin (user-model/create (factories/admin))
-          org (org-models/create {:name "org-1" :created-by (:users/id admin)})
+    (let [admin (factories/admin)
+          org (factories/create :organisations
+                                (gen/fmap #(assoc % :organisations/created-by (:users/id admin))
+                                          (s/gen ::specs/organisations)))
           _ (user-model/add-user-to-org org admin)
 
-          db-admin (first (user-model/find-by-keys {:id (:users/id admin)}))]
+          db-admin (first (user-model/find-by-keys {:users/id (:users/id admin)}))]
 
       (is (= (:organisations/id org) (:users/org-id db-admin))))))
