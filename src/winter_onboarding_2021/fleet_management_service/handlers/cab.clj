@@ -15,7 +15,7 @@
      :content (views/cab-not-found)}))
 
 (defn create [{:keys [multipart-params]}]
-  (let [ns-multipart-params (utils/namespace-cabs multipart-params)
+  (let [ns-multipart-params (utils/namespace-keys :cabs multipart-params)
         validated-cab (s/conform ::specs/cabs
                                  ns-multipart-params)]
     (if (s/invalid? validated-cab)
@@ -59,7 +59,7 @@
                                show-next-page?)}))
 
 (defn update-cab [req]
-  (let [cab (utils/namespace-cabs (:multipart-params req))
+  (let [cab (utils/namespace-keys :cabs (:multipart-params req))
         id (get-in req [:params :slug])
         validated-cab (s/conform ::specs/cabs-update-form cab)]
     (if (s/invalid? validated-cab)

@@ -3,14 +3,14 @@
             [clojure.spec.alpha :as s]
             [winter-onboarding-2021.fleet-management-service.specs :as specs]
             [ring.util.response :as response]
-            [winter-onboarding-2021.fleet-management-service.utils :refer [namespace-fleets flash-msg]]
+            [winter-onboarding-2021.fleet-management-service.utils :refer [namespace-keys flash-msg]]
             [winter-onboarding-2021.fleet-management-service.views.fleet :as views]))
 
 
 (defn create-fleet [{:keys [user form-params]}]
   (let [user-id (:users/id user)
         fleet-name (:name form-params)
-        fleet-data (namespace-fleets {:name fleet-name
+        fleet-data (namespace-keys :fleets {:name fleet-name
                                       :created-by user-id})]
     (if (s/valid? ::specs/fleets fleet-data)
       (let [fleet-id (:fleets/id (fleet-model/create fleet-data))]
