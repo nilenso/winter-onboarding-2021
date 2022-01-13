@@ -50,6 +50,6 @@
           created-session (db-session/insert session-id user-id)
           joined-user-session (first (db-session/user-session session-id))]
       (is (= (select-keys (merge user created-session)
-                          [:users/id :users/name :users/role :users/email
+                          [:users/id :users/name :users/role :users/email :users/org-id
                            :sessions/id :sessions/expires-at])
              joined-user-session)))))
