@@ -46,6 +46,6 @@
           created-session (session/lookup session-id)
           joined-user-session (first (session/user-session session-id))]
       (is (= (select-keys (merge created-user created-session)
-                          [:users/id :users/name :users/role :users/email
+                          [:users/id :users/name :users/role :users/email :users/org-id
                            :sessions/id :sessions/expires-at])
              joined-user-session)))))

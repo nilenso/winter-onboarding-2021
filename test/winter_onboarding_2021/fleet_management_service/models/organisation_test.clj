@@ -1,5 +1,8 @@
 (ns winter-onboarding-2021.fleet-management-service.models.organisation-test
   (:require [clojure.test :refer [deftest is testing use-fixtures]]
+            [clojure.spec.alpha :as s]
+            [clojure.spec.gen.alpha :as gen]
+            [winter-onboarding-2021.fleet-management-service.specs :as specs]
             [winter-onboarding-2021.fleet-management-service.fixtures :as fixtures]
             [winter-onboarding-2021.fleet-management-service.factories :as factories]
             [winter-onboarding-2021.fleet-management-service.models.user :as user-models]
@@ -12,8 +15,9 @@
 (deftest create
   (testing "Should create an organisation in DB"
     (let [admin (factories/admin)
-          admin-id (:users/id (user-models/create admin))
-          org (factories/organisation {:organisations/created-by admin-id})
+          admin-id (:users/id admin)
+          org (gen/generate (gen/fmap #(assoc % :organisations/created-by admin-id)
+                                      (s/gen ::specs/organisations)))
           _ (org-models/create org)
           db-org (first (db-core/query! ["SELECT * FROM organisations;"]))]
       (is (= org (select-keys db-org

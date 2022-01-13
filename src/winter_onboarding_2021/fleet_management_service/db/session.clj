@@ -18,7 +18,7 @@
 
 (defn user-session [session-id]
   (db-core/query! (sql/format
-                   (-> (select  :users.id :users.name :users.role :users.email
+                   (-> (select  :users.id :users.name :users.role :users.email :users.org_id
                                 :sessions.id :sessions.expires-at)
                        (from :sessions)
                        (join :users [:= :users.id :sessions.user_id])
