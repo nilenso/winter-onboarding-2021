@@ -7,7 +7,9 @@
             [winter-onboarding-2021.fleet-management-service.handlers.fleet :as fleet-handlers]
             [winter-onboarding-2021.fleet-management-service.views.layout :as layout]
             [winter-onboarding-2021.fleet-management-service.handlers.core :as handler]
-            [winter-onboarding-2021.fleet-management-service.handlers.user :as user-handlers]))
+            [winter-onboarding-2021.fleet-management-service.handlers.user :as user-handlers]
+            [winter-onboarding-2021.fleet-management-service.handlers.dashboard :as dashboard-handlers]
+            [winter-onboarding-2021.fleet-management-service.handlers.organisation :as org-handlers]))
 
 (defn wrap-layout [handler]
   (fn [request]
@@ -37,9 +39,13 @@
         ["users" {"/signup" {:get (wrap-layout user-handlers/signup-form)
                              :post user-handlers/create-user}
                   "/login" {:get (wrap-layout user-handlers/login-form)
-                            :post user-handlers/login}}]
+                            :post user-handlers/login}
+                  "/dashboard" {:get (authentication-required (wrap-layout dashboard-handlers/index)
+                                                              #{:admin :manager :driver})}}]
         ["fleets" {"" {:post (authentication-required fleet-handlers/create-fleet #{:admin})}
                    "/new" {:get (authentication-required (wrap-layout fleet-handlers/new) #{:admin})}}]
+        ["organisations" {"/new" {:post (authentication-required org-handlers/create
+                                                                 #{:admin})}}]
         ["healthcheck" {:get (wrap-json-response handler/health-check)}]
         ["index" {:get (wrap-layout handler/index)}]
         ["" {:get (wrap-layout handler/root)}]
