@@ -11,7 +11,7 @@
   (let [user-id (:users/id user)
         fleet-name (:name form-params)
         fleet-data (namespace-keys :fleets {:name fleet-name
-                                      :created-by user-id})]
+                                            :created-by user-id})]
     (if (s/valid? ::specs/fleets fleet-data)
       (let [fleet-id (:fleets/id (fleet-model/create fleet-data))]
         (->  (flash-msg "Fleet created successfully!" true)

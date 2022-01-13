@@ -1,7 +1,15 @@
 (ns winter-onboarding-2021.fleet-management-service.factories
   (:require [clojure.spec.gen.alpha :as gen]
             [clojure.spec.alpha :as s]
+            [winter-onboarding-2021.fleet-management-service.db.core :as db-core]
             [winter-onboarding-2021.fleet-management-service.specs :as specs]))
+
+(defn create [table generator]
+  (db-core/insert! table (gen/generate generator)))
+
+(defn create-list [table count generator]
+  (doall (map #(db-core/insert! table %)
+              (gen/sample generator count))))
 
 (defn generate-cab [num]
   (s/gen (s/coll-of ::specs/cabs
@@ -17,8 +25,10 @@
 
 (defn admin
   ([] (admin {}))
-  ([overrides] (user (merge overrides {:users/role "admin"}))))
+  ([overrides] (create :users (gen/fmap #(merge % overrides {:users/role "admin"})
+                                        (s/gen ::specs/users)))))
 
 (defn manager
   ([] (manager {}))
-  ([overrides] (user (merge overrides {:users/role "manager"}))))
+  ([overrides] (create :users (gen/fmap #(merge % overrides {:users/role "manager"})
+                                        (s/gen ::specs/users)))))
