@@ -17,7 +17,7 @@
 
 
 (defn create-user [{:keys [form-params]}]
-  (let [ns-form-params (utils/namespace-users form-params)
+  (let [ns-form-params (utils/namespace-keys :users form-params)
         validated-user (s/conform ::specs/signup-form ns-form-params)]
     (cond
       (s/invalid? validated-user) (merge (utils/flash-msg "Could not create user, enter valid details!" false)
@@ -53,7 +53,7 @@
          (response/redirect "/users/login")))
 
 (defn login [{:keys [params]}]
-  (let [ns-params (utils/namespace-users params)
+  (let [ns-params (utils/namespace-keys :users params)
         validated-params (s/conform ::specs/login-params ns-params)]
     (if (s/invalid? validated-params)
       (invalid-data-response)
