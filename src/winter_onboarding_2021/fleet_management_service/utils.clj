@@ -21,3 +21,7 @@
     {:flash {:error true
              :style-class "alert alert-danger"
              :message msg}}))
+
+(defn hiccup-attrs [element]
+  (when (map? (second element))
+    (second element)))
