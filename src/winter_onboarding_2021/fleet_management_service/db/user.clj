@@ -19,3 +19,7 @@
   (db/query! tx (sql/format (-> (update :users)
                              (set {:org-id (:organisations/id org)})
                              (where [:= :id (:users/id user)])))))
+
+(defn members [org role]
+  (db/find-by-keys! :users {:role role
+                            :org-id (:organisations/id org)}))
