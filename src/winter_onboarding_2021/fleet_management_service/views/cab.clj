@@ -5,7 +5,7 @@
 (defn cab-form [{:keys [name distance-travelled licence-plate]}]
   [:div {:id "content"}
    [:h1 {:class "text-success"} "This is the form page"]
-   [:form {:action "/cabs" :method "POST" :enctype "multipart/form-data"}
+   [:form {:action "/cabs" :method "POST"}
     [:div {:class "mb-3"}
      (core-views/labelled-text-input
       "Cab Name"
@@ -110,7 +110,7 @@
   (let [route (str "/cabs/" id)]
     [:div {:id "content"}
      [:h1 {:class "text-success"} "Update Cab"]
-     [:form {:action route :method "POST" :enctype "multipart/form-data"}
+     [:form {:action route :method "POST"}
       [:div
        [:div {:class "mb-3"}
         (core-views/labelled-text-input

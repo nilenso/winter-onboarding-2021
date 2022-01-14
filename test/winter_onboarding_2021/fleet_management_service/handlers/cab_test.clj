@@ -16,7 +16,7 @@
 
 (deftest add-cab
   (testing "POST /cabs/ endpoint with valid cab data, shoudld redirect to '/cabs/<<uuid of new cab>> "
-    (let [response (handlers/create {:multipart-params
+    (let [response (handlers/create {:form-params
                                      {:name "Test cab"
                                       :licence-plate "KA20X1234"
                                       :distance-travelled "1223"}})
@@ -44,7 +44,7 @@
                       :data invalid-cab}
               :headers {"Location" "/cabs/new"}
               :body ""}
-             (handlers/create {:multipart-params invalid-cab}))))))
+             (handlers/create {:form-params invalid-cab}))))))
 
 (deftest view-single-cab
   (testing "Should return 200 code with the HTML of the single cab details view"
@@ -126,7 +126,7 @@
           new-cab {:name "Maruti Cab"
                    :distance-travelled "13000"}
           response (handlers/update-cab {:params {:slug cab-id}
-                                         :multipart-params new-cab})]
+                                         :form-params new-cab})]
       (is (= 302 (response :status)))
       (is (= {:success true
               :style-class "alert alert-success"
@@ -143,7 +143,7 @@
                                            :cabs/licence-plate "Licenseplate"
                                            :cabs/distance-travelled 123}))
           response (handlers/update-cab {:params {:slug (str cab-id)}
-                                         :multipart-params {:foo "boo"}})]
+                                         :form-params {:foo "boo"}})]
       (is (= 302 (:status response)))
       (is (= true (get-in response [:flash :error])))
       (is (re-find #"(?i)could not update" (get-in response [:flash :message])))
