@@ -34,9 +34,9 @@
                  ["/" :slug] {"/edit" {:get (wrap-layout cab-handlers/update-cab-view)}
                               :get (wrap-layout cab-handlers/view-cab)
                               :post cab-handlers/update-cab}}]
-        ["users" {"/signup" {:get (wrap-layout user-handlers/signup-form)
+        ["users" {"/signup" {:get user-handlers/signup-form
                              :post user-handlers/create-user}
-                  "/login" {:get (wrap-layout user-handlers/login-form)
+                  "/login" {:get user-handlers/login-form
                             :post user-handlers/login}}]
         ["fleets" {"" {:get (authentication-required (wrap-layout fleet-handlers/show-fleets) #{:admin})
                        :post fleet-handlers/create-fleet}

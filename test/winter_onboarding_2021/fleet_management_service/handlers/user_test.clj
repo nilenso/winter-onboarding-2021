@@ -1,10 +1,15 @@
 (ns winter-onboarding-2021.fleet-management-service.handlers.user-test
   (:require [clojure.test :refer [deftest testing is use-fixtures]]
             [crypto.password.bcrypt :as password]
+            [hiccup.page :refer [html5]]
             [winter-onboarding-2021.fleet-management-service.handlers.user :as handler]
             [winter-onboarding-2021.fleet-management-service.models.user :as user-model]
             [winter-onboarding-2021.fleet-management-service.utils :as utils]
-            [winter-onboarding-2021.fleet-management-service.fixtures :as fixtures]))
+            [winter-onboarding-2021.fleet-management-service.views.user :as user-view]
+            [winter-onboarding-2021.fleet-management-service.views.layout :as layout]
+            [winter-onboarding-2021.fleet-management-service.fixtures :as fixtures]
+            [winter-onboarding-2021.fleet-management-service.factories :as factories]
+            [winter-onboarding-2021.fleet-management-service.db.user :as user-db]))
 
 (use-fixtures :once fixtures/config fixtures/db-connection)
 (use-fixtures :each fixtures/clear-db)
@@ -123,3 +128,39 @@
               :style-class "alert alert-danger"
               :message "You are not logged in"}
              (:flash response))))))
+
+(deftest login-form
+  (testing "Should show the login form page if the user is not already logged-in"
+    (let [response (handler/login-form {})
+          html-page-login (html5 (layout/application {}
+                                                     "Login"
+                                                     (user-view/login-form)))]
+      (is (= 200 (:status response)))
+      (is (= html-page-login (:body response)))))
+  (testing "Should redirect to /users/dashboard if user is logged-in"
+    (let [user (user-db/create (factories/user))
+          response (handler/login-form {:user (select-keys user 
+                                                           [:users/id
+                                                            :users/name
+                                                            :users/role
+                                                            :users/email])})]
+      (is (= 302 (:status response)))
+      (is (= "/users/dashboard"  (get-in response [:headers "Location"]))))))
+
+(deftest signup-form
+  (testing "Should show the sign up form page if the user is not already logged-in"
+    (let [response (handler/signup-form{})
+          html-page-login (html5 (layout/application {}
+                                                     "Sign up"
+                                                     (user-view/signup-form)))]
+      (is (= 200 (:status response)))
+      (is (= html-page-login (:body response)))))
+  (testing "Should redirect to /users/dashboard if user is logged-in"
+    (let [user (user-db/create (factories/user))
+          response (handler/login-form {:user (select-keys user
+                                                           [:users/id
+                                                            :users/name
+                                                            :users/role
+                                                            :users/email])})]
+      (is (= 302 (:status response)))
+      (is (= "/users/dashboard"  (get-in response [:headers "Location"]))))))
