@@ -81,8 +81,8 @@
 (deftest managers
   (testing "Should get us list of managers associated with a certain fleet"
     (let [{:keys [user fleets]} (seed-user-fleets-db 1)
-          manager1 (dissoc (factories/manager) :users/password)
-          manager2 (dissoc (factories/manager) :users/password)]
+          manager1 (dissoc (factories/manager) :users/password :users/invite-id)
+          manager2 (dissoc (factories/manager) :users/password :users/invite-id)]
       (core-db/insert! :users-fleets {:user-id (:users/id user)
                                       :fleet-id (:fleets/id (first fleets))})
       (core-db/insert! :users-fleets {:user-id (:users/id manager1)
