@@ -77,6 +77,12 @@
             (wrong-password-response))
           (email-not-found-response))))))
 
+(defn logout [req]
+  (let [session-id (get-in req [:cookies :session-id :value])]
+    (session/delete (java.util.UUID/fromString session-id))
+    (merge (response/redirect "/")
+           {:cookies nil})))
+
 (defn not-authorized [_]
   (merge (utils/flash-msg "You are not authorized" false)
          (response/redirect "/users/dashboard")))

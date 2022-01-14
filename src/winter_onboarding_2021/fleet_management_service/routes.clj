@@ -37,10 +37,11 @@
         ["users" {"/signup" {:get user-handlers/signup-form
                              :post user-handlers/create-user}
                   "/login" {:get user-handlers/login-form
-                            :post user-handlers/login}}]
+                            :post user-handlers/login}
+                  "/logout" {:get user-handlers/logout}}]
         ["fleets" {"" {:get (authentication-required (wrap-layout fleet-handlers/show-fleets) #{:admin})
-                       :post fleet-handlers/create-fleet}
-                   "/new" {:get (wrap-layout fleet-handlers/new)}}]
+                       :post (authentication-required fleet-handlers/create-fleet #{:admin})}
+                   "/new" {:get (authentication-required (wrap-layout fleet-handlers/new) #{:admin})}}]
         ["healthcheck" {:get (wrap-json-response handler/health-check)}]
         ["index" {:get (wrap-layout handler/index)}]
         ["" {:get (wrap-layout handler/root)}]

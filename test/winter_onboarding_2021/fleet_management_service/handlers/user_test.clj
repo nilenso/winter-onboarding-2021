@@ -9,7 +9,8 @@
             [winter-onboarding-2021.fleet-management-service.views.layout :as layout]
             [winter-onboarding-2021.fleet-management-service.fixtures :as fixtures]
             [winter-onboarding-2021.fleet-management-service.factories :as factories]
-            [winter-onboarding-2021.fleet-management-service.db.user :as user-db]))
+            [winter-onboarding-2021.fleet-management-service.db.user :as user-db]
+            [winter-onboarding-2021.fleet-management-service.db.core :as db]))
 
 (use-fixtures :once fixtures/config fixtures/db-connection)
 (use-fixtures :each fixtures/clear-db)
@@ -164,3 +165,23 @@
                                                             :users/email])})]
       (is (= 302 (:status response)))
       (is (= "/users/dashboard"  (get-in response [:headers "Location"]))))))
+
+(deftest logout
+  (testing "Should logout user when the user is logged-in"
+    (let [_ (user-model/create {:users/name "Severus Snape"
+                                :users/role "admin"
+                                :users/email "s.snape@hogwarts.edu"
+                                :users/password (password/encrypt "lily")})
+          user-id (:users/id (first (user-model/find-by-keys {:users/email "s.snape@hogwarts.edu"})))
+          login-resp (handler/login {:params {:email "s.snape@hogwarts.edu"
+                                              :password "lily"}})
+          session-id-in-login-resp (str (get-in login-resp [:cookies "session-id" :value]))
+          session-before-logout (first (db/query! ["SELECT * FROM SESSIONS WHERE user_id = ?" user-id]))
+          logout-resp (handler/logout {:cookies {:session-id {:value session-id-in-login-resp}}})
+          session-after-logout (first (db/query! ["SELECT * FROM SESSIONS WHERE user_id = ?" user-id]))]
+      
+      (is (= 302 (:status logout-resp)))
+      (is (= "/" (get-in logout-resp [:headers "Location"])))
+      (is (= session-id-in-login-resp (str (:sessions/id session-before-logout))))
+      (is (nil? session-after-logout))
+      (is (nil? (:cookies logout-resp))))))
