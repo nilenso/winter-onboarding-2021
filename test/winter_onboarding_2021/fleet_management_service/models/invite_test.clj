@@ -12,7 +12,7 @@
             [clj-time.coerce :as sqltime]))
 
 (defn to-utc [dt]
-  (cljt/to-time-zone (cljt/from-time-zone (f/parse (f/formatters :date) dt) (cljt/time-zone-for-id "Asia/Kolkata")) cljt/utc))
+  (cljt/to-time-zone (cljt/from-time-zone (f/parse (f/formatters :date) dt) (cljt/default-time-zone)) cljt/utc))
 
 (defn select-keys-from-invite [invite]
   (select-keys invite [:invites/created-by

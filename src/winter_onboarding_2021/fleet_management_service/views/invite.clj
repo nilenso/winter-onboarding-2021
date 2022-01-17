@@ -1,4 +1,5 @@
-(ns winter-onboarding-2021.fleet-management-service.views.invite)
+(ns winter-onboarding-2021.fleet-management-service.views.invite
+  (:require [winter-onboarding-2021.fleet-management-service.views.core :as core]))
 
 (def headers
   [{:label "Token" :value :invites/token}
@@ -11,30 +12,30 @@
   [:div.col-md-6
    [:aside
     [:p "Generate a new token:"]
-    [:div.card
-     [:article.card-body
+    [:div {:class "card"}
+     [:article {:class "card-body"}
       [:form {:action "/invites" :method "POST"}
-       [:div.form-group
-        [:label "Select Role"]
+       [:div {:class "form-group"}
+        [:label {:class "form-label"} "Select Role:"]
         [:select
          {:name "role" :class "form-select"}
          [:option {:value "admin"} "Admin"]
          [:option {:value "manager"} "Manager"]
          [:option {:value "driver"} "Driver"]]]
-       [:br]
-       [:div.form-group
-        [:label "Number of accounts:"]
-        [:input#usages
-         {:max "50", :min "1", :name "usage-limit", :type "number"}]]
-       [:br]
-       [:div.form-group
-        [:label {:for "valid_until"} "Valid Until :"]
-        [:input#valid_until {:name "valid-until", :type "date"}]]
-       [:br]
-       [:div.form-group
-        [:button.btn.btn-primary.btn-block
-         {:type "submit"} "Create Token"]]]]]]])
-
+       (core/labelled-text-input "Number of accounts:"
+                                 :require true
+                                 :name "usage-limit"
+                                 :type "number"
+                                 :max 50
+                                 :min 1)
+       (core/labelled-text-input "Valid Until:"
+                                 :require true
+                                 :name "valid-until"
+                                 :type "date")
+       [:div
+        [:button {:class "btn btn-primary btn-block"
+                  :type "submit"}
+         "Create Token"]]]]]]])
 
 (defn format-date [date]
   (.format (java.text.SimpleDateFormat. "MM/dd/yyyy") date))
