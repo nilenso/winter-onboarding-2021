@@ -32,3 +32,19 @@
   ([] (manager {}))
   ([overrides] (create :users (gen/fmap #(merge % overrides {:users/role "manager"})
                                         (s/gen ::specs/users)))))
+
+(defn invite 
+  ([] (invite {}))
+  ([overrides] (merge (gen/generate (s/gen ::specs/invites-create-form)) overrides)))
+
+(defn invite-admin
+  ([] (invite-admin {}))
+  ([overrides] (invite (merge overrides {:invites/role "admin"}))))
+
+(defn invite-manager
+  ([] (invite-manager {}))
+  ([overrides] (invite (merge overrides {:invites/role "manager"}))))
+
+(defn invite-driver
+  ([] (invite-driver {}))
+  ([overrides] (invite (merge overrides {:invites/role "driver"}))))
