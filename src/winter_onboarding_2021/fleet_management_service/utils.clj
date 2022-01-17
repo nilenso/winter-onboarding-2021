@@ -41,5 +41,5 @@
 (defn format-date [date]
   (.format (java.text.SimpleDateFormat. "MM/dd/yyyy HH:mm") date))
 
-(defn calc-offset [page-size page-number]
+(defn offset [page-size page-number]
   (* page-size (dec page-number)))

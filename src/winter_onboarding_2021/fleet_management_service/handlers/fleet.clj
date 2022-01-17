@@ -34,7 +34,7 @@
         {:keys [page]} (:params request)
         page-size (config/get-page-size)
         current-page (Integer/parseInt (or page "1"))
-        offset (utils/calc-offset page-size current-page)
+        offset (utils/offset page-size current-page)
         fleets (fleet-model/select-fleets-for-admin user-id
                                                     offset
                                                     page-size)

@@ -69,7 +69,7 @@
   (let [{:keys [user fleets]} (seed-user-fleets-db 20)
         page-size 10]
     (testing "Should fetch a list of first 3 fleets regardless of the associatd user from the second page"
-      (let [offset (utils/calc-offset page-size 2)
+      (let [offset (utils/offset page-size 2)
             limit 3
             db-fleets (mapv dissoc-irrelevant-keys (fleet-db/select-fleets-for-admin
                                                     (:users/id user)
