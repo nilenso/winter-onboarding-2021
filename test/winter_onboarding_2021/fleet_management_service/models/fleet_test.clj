@@ -47,7 +47,7 @@
   (testing "Should return the total count of fleets in the DB"
     (let [total 20
           _ (fleet-test-db/seed-user-fleets-db total)
-          db-total (:count (first (fleet-model/total)))]
+          db-total (fleet-model/total)]
       (is (= total db-total)))))
 
 (deftest list-fleet

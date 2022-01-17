@@ -12,7 +12,7 @@
       (fleet-db/create fleet-with-valid-keys))))
 
 (defn total []
-  (fleet-db/total))
+  (:count (first (fleet-db/total))))
 
 (defn select-fleets-for-admin
   ([user-id] (fleet-db/select-fleets-for-admin user-id 0 (config/get-page-size)))

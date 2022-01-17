@@ -12,7 +12,7 @@
   (let [user-id (:users/id user)
         fleet-name (:name form-params)
         fleet-data (utils/namespace-keys :fleets {:name fleet-name
-                                            :created-by user-id})]
+                                                  :created-by user-id})]
     (if (s/valid? ::specs/fleets fleet-data)
       (let [fleet-id (:fleets/id (fleet-model/create fleet-data))]
         (->  (utils/flash-msg "Fleet created successfully!" true)
@@ -38,7 +38,7 @@
         fleets (fleet-model/select-fleets-for-admin user-id
                                                     offset
                                                     page-size)
-        fleets-count (:count (first (fleet-model/total)))
+        fleets-count (fleet-model/total)
         show-next-page? (<= (* current-page page-size) fleets-count)
         fleets-with-managers (map assoc-managers fleets)]
     {:title "List of fleets"
