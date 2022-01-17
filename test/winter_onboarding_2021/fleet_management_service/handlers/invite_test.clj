@@ -2,7 +2,6 @@
   (:require [clojure.test :refer [deftest is testing use-fixtures]]
             [winter-onboarding-2021.fleet-management-service.fixtures :as fixtures]
             [winter-onboarding-2021.fleet-management-service.handlers.invites :as invites]
-            [winter-onboarding-2021.fleet-management-service.utils :as utils]
             [winter-onboarding-2021.fleet-management-service.db.user :as user-db]
             [winter-onboarding-2021.fleet-management-service.db.invite :as invite-db]
             [winter-onboarding-2021.fleet-management-service.factories :as factory]
@@ -30,7 +29,7 @@
           user-id (:users/id user)
           invites (take 10 (repeatedly factory/invite))
           request-list (map (fn [x]
-                              {:form-params (utils/remove-namespace (dissoc x :invites/created-by))
+                              {:form-params (dissoc x :invites/created-by)
                                :user {:users/id user-id}})
                             invites)
           _ (doall (map invites/create request-list))

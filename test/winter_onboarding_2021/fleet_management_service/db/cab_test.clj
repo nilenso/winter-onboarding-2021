@@ -22,7 +22,8 @@
         (is (= #:cabs{:name "Maruti Celerio"
                       :licence-plate "HR20X6710"
                       :distance-travelled 2333}
-               (select-keys created-cab [:cabs/name :cabs/licence-plate :cabs/distance-travelled])))))
+               (select-keys created-cab
+                            [:cabs/name :cabs/licence-plate :cabs/distance-travelled])))))
     (testing "Should fail to create a cab because of invalid cab"
       (is (= errors/validation-failed (select-keys (cab-db/create {:name "Kia"}) [:error]))))
     (testing "Should throw an exception if cab with same licence-plate already exists"
@@ -149,9 +150,8 @@
     (is (= #:cabs{:name "Maruti Celerio"
                   :licence-plate "HR20X6710"
                   :distance-travelled 2333}
-           (select-keys
-            (first (cab-db/find-by-keys {:cabs/name "Maruti Celerio"})) 
-            [:cabs/name :cabs/licence-plate :cabs/distance-travelled]))))
+           (select-keys (first (cab-db/find-by-keys {:cabs/name "Maruti Celerio"}))
+                        [:cabs/name :cabs/licence-plate :cabs/distance-travelled]))))
   (testing "Should return key-not-exists-in-schema error"
     (cab-db/create {:cabs/name "Maruti Celerio"
                     :cabs/licence-plate "HR20X6710AS"

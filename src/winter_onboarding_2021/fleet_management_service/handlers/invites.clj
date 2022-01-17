@@ -13,7 +13,7 @@
      :content (invites-view/invites-page invites)}))
 
 (defn- invite-create-params [{:keys [user form-params]}]
-  (assoc (utils/map->nsmap form-params :invites)
+  (assoc (utils/namespace-keys :invites form-params)
          :invites/created-by
          (:users/id user)))
 

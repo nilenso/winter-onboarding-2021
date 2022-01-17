@@ -12,7 +12,7 @@
 
 (defn to-utc [dt]
   (if (= (type dt) java.lang.String)
-    (cljt/to-time-zone (cljt/from-time-zone (f/parse (f/formatters :date) dt) (cljt/time-zone-for-id "Asia/Kolkata")) cljt/utc)
+    (cljt/to-time-zone (cljt/from-time-zone (f/parse (f/formatters :date) dt) (cljt/default-time-zone)) cljt/utc)
     (cljt/to-time-zone (sqltime/from-sql-date dt) cljt/utc)))
 
 (defn select-keys-from-invite [invite]
@@ -57,7 +57,6 @@
         _ (invites-db/create invite1)
         _ (invites-db/create invite2)
         resp (invites-db/find-by-keys {:invites/created-by (:users/id db-user1)})
-        _ (println resp)
         resp2 (invites-db/find-by-keys {:invites/created-by (:users/id (utils/uuid))})]
     (testing "Should return list of invites filtered using user-id"
       (is (= [invite1
