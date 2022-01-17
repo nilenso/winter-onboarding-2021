@@ -4,7 +4,8 @@
             [next.jdbc.result-set :as rs]
             [winter-onboarding-2021.fleet-management-service.config :refer [config]]
             [camel-snake-kebab.core :as csk]
-            [next.jdbc.sql :as sql]))
+            [next.jdbc.sql :as sql]
+            [clj-time.jdbc]))
 
 (def sql-opts {:builder-fn rs/as-kebab-maps
                :table-fn csk/->snake_case_string

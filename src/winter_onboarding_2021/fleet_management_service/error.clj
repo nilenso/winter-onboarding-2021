@@ -6,9 +6,6 @@
 (def license-plate-already-exists
   {:error :license-plate-already-exists})
 
-(def key-not-in-schema
-  {:error :key-not-in-schema})
-
 (def validation-failed
   {:error :validation-failed})
 

@@ -6,4 +6,6 @@
                     :ci #ref [:secrets :ci-db]}
  :log {}
  :default-page-size 10
- :session-timeout-ms 86400000} ;; 1 day in milliseconds
+ :session-timeout-ms 86400000
+ :host-url "http://localhost:3000"}
+ 

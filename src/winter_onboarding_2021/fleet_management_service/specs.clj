@@ -1,6 +1,9 @@
 (ns winter-onboarding-2021.fleet-management-service.specs
   (:require [clojure.spec.alpha :as s]
-            [clojure.spec.gen.alpha :as gen]))
+            [clojure.spec.gen.alpha :as gen]
+            [clj-time.format :as f]
+            [clj-time.coerce :as sqltime]
+            [clj-time.core :as cljt]))
 
 (defn str->long [str]
   (if (= (type str) java.lang.Long)
@@ -8,9 +11,18 @@
     (try (Long/parseLong str)
          (catch Exception _ :clojure.spec.alpha/invalid))))
 
+(defn str->date [str]
+  (if (inst? str)
+    str
+    (try (sqltime/to-sql-date (f/parse (f/formatters :date) str))
+         (catch Exception _ :clojure.spec.alpha/invalid))))
+
 (defn- pos-int-gen []
   (gen/large-integer* {:min 0
                        :max 200000000}))
+
+(defn- date-inst-gen []
+  (gen/return (eval (sqltime/to-sql-time (cljt/from-now (cljt/weeks (rand-int 10)))))))
 
 (def licence-plate-regex #"^[a-zA-Z0-9]*$")
 
@@ -56,7 +68,8 @@
     non-empty-alphanumeric-string
     non-empty-alphanumeric-string)))
 
-(s/def :users/name string?)
+
+(s/def :users/name (s/and string? (comp not empty?)))
 (s/def :users/email (s/with-gen (s/and string? #(re-matches #".+\@.+\..+" %))
                       email-gen))
 (s/def :users/role #{"admin" "manager" "driver"})
@@ -84,7 +97,7 @@
 (s/def ::login-params
   (s/keys :req [:users/email
                 :users/password]))
-                   
+
 ; Fleets
 (s/def :fleets/id uuid?)
 (s/def :fleets/name string?)
@@ -101,3 +114,41 @@
 
 (s/def :pagination/offset (comp not neg-int?))
 (s/def :pagination/limit (comp not neg-int?))
+
+(s/def :invites/id uuid?)
+(s/def :invites/token (s/and string? (comp not empty?)))
+(s/def :invites/created-by uuid?)
+(s/def :invites/usage-limit (s/with-gen (s/conformer str->long)
+                              pos-int-gen))
+(s/def :invites/valid-until (s/with-gen (s/conformer str->date)
+                              date-inst-gen))
+(s/def :invites/role #{"admin", "manager", "driver"})
+(s/def :invites/status #{"active", "disabled"})
+
+(s/def ::invites-create-model
+  (s/keys :req [:invites/token
+                :invites/created-by
+                :invites/usage-limit
+                :invites/valid-until
+                :invites/role
+                :invites/status]))
+
+(s/def ::invites-create-form
+  (s/keys :req [:invites/created-by
+                :invites/usage-limit
+                :invites/valid-until
+                :invites/role]))
+
+(s/valid? ::invites-create-form {:invites/role "manager"
+                                 :invites/usage-limit "3"
+                                 :invites/valid-until "2022-10-26"
+                                 :invites/created-by #uuid "690ea73d-eea8-4512-9056-9edf3d1bebda"})
+
+(s/def ::invites
+  (s/keys :req [:invites/id
+                :invites/token
+                :invites/created-by
+                :invites/usage-limit
+                :invites/valid-until
+                :invites/role
+                :invites/status]))
