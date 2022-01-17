@@ -4,6 +4,6 @@
             [winter-onboarding-2021.fleet-management-service.views.core :as core]))
 
 (deftest index-view
-  (testing "Should return hello string"
-    (is (= "Hello Hiccup & Bootstrap"
-           (hf/hiccup-text (core/index))))))
+  (testing "Should return heading of landing page i.e Welcome to fms"
+    (is (= "Welcome to fms"
+           (hf/hiccup-text (hf/hiccup-find [:h1] (core/index)))))))
