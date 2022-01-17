@@ -7,7 +7,8 @@
             [winter-onboarding-2021.fleet-management-service.handlers.fleet :as fleet-handlers]
             [winter-onboarding-2021.fleet-management-service.views.layout :as layout]
             [winter-onboarding-2021.fleet-management-service.handlers.core :as handler]
-            [winter-onboarding-2021.fleet-management-service.handlers.user :as user-handlers]))
+            [winter-onboarding-2021.fleet-management-service.handlers.user :as user-handlers]
+            [winter-onboarding-2021.fleet-management-service.handlers.invites :as invite-handlers]))
 
 (defn wrap-layout [handler]
   (fn [request]
@@ -42,6 +43,8 @@
         ["fleets" {"" {:get (authentication-required (wrap-layout fleet-handlers/show-fleets) #{:admin})
                        :post (authentication-required fleet-handlers/create-fleet #{:admin})}
                    "/new" {:get (authentication-required (wrap-layout fleet-handlers/new) #{:admin})}}]
+        ["invites" {"" {:post (authentication-required invite-handlers/create #{:admin})}
+                    "/new" {:get (authentication-required (wrap-layout invite-handlers/invites-page) #{:admin})}}]
         ["healthcheck" {:get (wrap-json-response handler/health-check)}]
         ["index" {:get (wrap-layout handler/index)}]
         ["" {:get (wrap-layout handler/root)}]
