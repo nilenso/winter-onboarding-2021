@@ -35,7 +35,7 @@
         page-size (config/get-page-size)
         current-page (Integer/parseInt (or page "1"))
         offset (utils/offset page-size current-page)
-        fleets (fleet-model/select-fleets-for-admin user-id
+        fleets (fleet-model/user-fleets user-id
                                                     offset
                                                     page-size)
         fleets-count (fleet-model/total)

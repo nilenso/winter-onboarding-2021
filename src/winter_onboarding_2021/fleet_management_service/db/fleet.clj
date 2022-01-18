@@ -16,7 +16,7 @@
   (db/query! (sql/format (-> (select [:%count.* :count])
                              (from :fleets)))))
 
-(defn select-fleets-for-admin [admin-id off lim]
+(defn user-fleets [admin-id off lim]
   (db/query! (sql/format (-> (select :fleets.id
                                      :fleets.name
                                      :fleets.created-by

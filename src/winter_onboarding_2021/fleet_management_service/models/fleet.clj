@@ -14,9 +14,9 @@
 (defn total []
   (:count (first (fleet-db/total))))
 
-(defn select-fleets-for-admin
-  ([user-id] (fleet-db/select-fleets-for-admin user-id 0 (config/get-page-size)))
-  ([user-id off lim] (fleet-db/select-fleets-for-admin user-id off lim)))
+(defn user-fleets
+  ([user-id] (fleet-db/user-fleets user-id 0 (config/get-page-size)))
+  ([user-id off lim] (fleet-db/user-fleets user-id off lim)))
 
 (defn managers [fleet]
   (fleet-db/managers fleet))

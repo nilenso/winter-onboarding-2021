@@ -55,12 +55,12 @@
                  :fleets/created-by (str user-id)}]
       (is (= error/validation-failed (select-keys (fleet-db/create fleet) [:error]))))))
 
-(deftest select-fleets-for-admin
+(deftest user-fleets
   (testing "Should fetch us a list of first 10 fleets related to an admin user"
     (let [{:keys [user fleets]} (seed-user-fleets-db 5)
           _ (seed-user-fleets-db 5)
           db-fleets (mapv dissoc-irrelevant-keys
-                          (fleet-db/select-fleets-for-admin (:users/id user) 0 10))]
+                          (fleet-db/user-fleets (:users/id user) 0 10))]
       (is (= 5 (count fleets)))
       (is (= (map dissoc-irrelevant-keys fleets)
              db-fleets)))))
@@ -71,7 +71,7 @@
     (testing "Should fetch a list of first 3 fleets regardless of the associatd user from the second page"
       (let [offset (utils/offset page-size 2)
             limit 3
-            db-fleets (mapv dissoc-irrelevant-keys (fleet-db/select-fleets-for-admin
+            db-fleets (mapv dissoc-irrelevant-keys (fleet-db/user-fleets
                                                     (:users/id user)
                                                     offset
                                                     limit))]
