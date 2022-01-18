@@ -17,15 +17,15 @@
                              (from :fleets)))))
 
 (defn select-fleets-for-admin [admin-id off lim]
-  (db/query! (sql/format (-> (select :id
-                                     :name
-                                     :created-by
-                                     :created-at)
+  (db/query! (sql/format (-> (select :fleets.id
+                                     :fleets.name
+                                     :fleets.created-by
+                                     :fleets.created-at)
                              (from :fleets)
-                             (join :user_fleet [:= :user_fleet.fleet_id :fleets.id])
+                             (join :users_fleets [:= :users_fleets.fleet_id :fleets.id])
                              (limit lim)
                              (offset off)
-                             (where [:= :user_fleet.user_id admin-id])
+                             (where [:= :users_fleets.user_id admin-id])
                              (order-by :created-at)))))
 
 (defn managers [fleet]
@@ -41,7 +41,7 @@
                    (where
                     [:and
                      [:in :users.id (-> (select :user_id)
-                                        (from [:user_fleet])
+                                        (from [:users_fleets])
                                         (where [:= :fleet_id (:fleets/id fleet)]))]
                      [:= :role "manager"]])
                    (order-by :created-at)))))

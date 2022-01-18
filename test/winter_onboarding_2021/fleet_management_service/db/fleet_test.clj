@@ -7,7 +7,6 @@
             [winter-onboarding-2021.fleet-management-service.db.core :as core-db]
             [winter-onboarding-2021.fleet-management-service.error :as error]
             [winter-onboarding-2021.fleet-management-service.utils :as utils]))
-            
 
 (use-fixtures :once fixtures/config fixtures/db-connection)
 (use-fixtures :each fixtures/clear-db)
@@ -21,8 +20,8 @@
   (let [user (user-db/create (factories/admin))
         fleets (doall (vec (repeatedly num-fleets
                                        #(fleet-db/create (factories/fleet {:fleets/created-by (:users/id user)})))))]
-    (doall (map #(core-db/insert! :user_fleet {:user-id (:users/id user)
-                                               :fleet-id (:fleets/id %)})
+    (doall (map #(core-db/insert! :users_fleets {:user-id (:users/id user)
+                                                 :fleet-id (:fleets/id %)})
                 fleets))
     {:user user :fleets fleets}))
 
@@ -60,7 +59,8 @@
   (testing "Should fetch us a list of first 10 fleets related to an admin user"
     (let [{:keys [user fleets]} (seed-user-fleets-db 5)
           _ (seed-user-fleets-db 5)
-          db-fleets (mapv dissoc-irrelevant-keys (fleet-db/select-fleets-for-admin (:users/id user) 0 10))]
+          db-fleets (mapv dissoc-irrelevant-keys
+                          (fleet-db/select-fleets-for-admin (:users/id user) 0 10))]
       (is (= 5 (count fleets)))
       (is (= (map dissoc-irrelevant-keys fleets)
              db-fleets)))))
@@ -84,10 +84,10 @@
     (let [{:keys [user fleets]} (seed-user-fleets-db 1)
           manager1 (dissoc (user-db/create (factories/manager)) :users/password)
           manager2 (dissoc (user-db/create (factories/manager)) :users/password)]
-      (core-db/insert! :user-fleet {:user-id (:users/id user)
-                                    :fleet-id (:fleets/id (first fleets))})
-      (core-db/insert! :user-fleet {:user-id (:users/id manager1)
-                                    :fleet-id (:fleets/id (first fleets))})
-      (core-db/insert! :user-fleet {:user-id (:users/id manager2)
-                                    :fleet-id (:fleets/id (first fleets))})
+      (core-db/insert! :users-fleets {:user-id (:users/id user)
+                                      :fleet-id (:fleets/id (first fleets))})
+      (core-db/insert! :users-fleets {:user-id (:users/id manager1)
+                                      :fleet-id (:fleets/id (first fleets))})
+      (core-db/insert! :users-fleets {:user-id (:users/id manager2)
+                                      :fleet-id (:fleets/id (first fleets))})
       (is (= [manager1 manager2] (fleet-db/managers (first fleets)))))))
