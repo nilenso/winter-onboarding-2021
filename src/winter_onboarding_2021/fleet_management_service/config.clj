@@ -22,6 +22,3 @@
 
 (defn get-timeout-period []
   (:session-timeout-ms config))
-
-(defn get-host-url []
-  (:host-url config))

@@ -139,11 +139,6 @@
                 :invites/valid-until
                 :invites/role]))
 
-(s/valid? ::invites-create-form {:invites/role "manager"
-                                 :invites/usage-limit "3"
-                                 :invites/valid-until "2022-10-26"
-                                 :invites/created-by #uuid "690ea73d-eea8-4512-9056-9edf3d1bebda"})
-
 (s/def ::invites
   (s/keys :req [:invites/id
                 :invites/token

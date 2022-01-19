@@ -3,6 +3,7 @@
             [winter-onboarding-2021.fleet-management-service.fixtures :as fixtures]
             [winter-onboarding-2021.fleet-management-service.handlers.invites :as invites]
             [winter-onboarding-2021.fleet-management-service.db.user :as user-db]
+            [winter-onboarding-2021.fleet-management-service.utils :as utils]
             [winter-onboarding-2021.fleet-management-service.db.invite :as invite-db]
             [winter-onboarding-2021.fleet-management-service.factories :as factory]
             [hiccup-find.core :as hf]))
@@ -16,11 +17,37 @@
           resp (invites/create {:user user
                                 :form-params {:role "manager"
                                               :valid-until "2022-01-29"
-                                              :usage-limit "10"}})
+                                              :usage-limit "10"}
+                                :headers {"host" "https://foober.com"}})
           db-resp (invite-db/find-by-keys {:invites/created-by (:users/id user)})]
       (is (= 302
              302))
-      (is (= (str "Invite created successfully. <br> Link - http://localhost:3000/users/signup?token=" (:invites/token (first db-resp))) 
+      (is (= (str "Invite created successfully. <br> Link - <a href=https://foober.com/users/signup?token="
+                  (:invites/token (first db-resp))
+                  ">"
+                  "https://foober.com/users/signup?token="
+                  (:invites/token (first db-resp))
+                  "</a>") 
+             (get-in resp [:flash :message])))))
+  (testing "Should return Invalid parameters flash message when incorrect data is sent"
+    (let [user (user-db/create (factory/admin))
+          resp (invites/create {:user user
+                                :form-params {:role "owner"
+                                              :valid-until "2022-01-29"
+                                              :usage-limit "10"}
+                                :headers {"host" "https://foober.com"}})]
+      (is (= 302
+             302))
+      (is (= "Invalid parameters sent, try again"
+             (get-in resp [:flash :message])))))
+  (testing "Should NOT create invite when user is not loggeed in"
+    (let [resp (invites/create {:form-params {:role "owner"
+                                              :valid-until "2022-01-29"
+                                              :usage-limit "10"}
+                                :headers {"host" "https://foober.com"}})]
+      (is (= 302
+             302))
+      (is (= "Invalid parameters sent, try again"
              (get-in resp [:flash :message]))))))
 
 (deftest get-invites-table
@@ -35,4 +62,13 @@
           _ (doall (map invites/create request-list))
           invites-page (invites/invites-page {:user user})]
       (is (= 10
-             (count (hf/hiccup-find [:tbody :tr] (:content invites-page))))))))
+             (count (hf/hiccup-find [:tbody :tr] (:content invites-page)))))
+      (is (= '([:h2 "No invites found"])
+             (hf/hiccup-find [:h2] (:content (invites/invites-page {:user {:users/id (utils/uuid)}})))))))
+  
+  (testing "Should return table of invites"
+    (let [invite (factory/invite)
+          request {:form-params (dissoc invite :invites/created-by)}
+          resp (invites/invites-page request)]
+      (is (= {:error :user-not-found-in-request}
+             resp)))))
