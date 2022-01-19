@@ -16,7 +16,7 @@
                 :role "admin"
                 :password "lily"}
           response (handler/create-user {:form-params user})
-          created-user (first (user-model/find-by-keys {:email (:email user)}))]
+          created-user (first (user-model/find-by-keys {:users/email (:email user)}))]
 
       (is (= 302 (:status response)))
 
@@ -29,9 +29,7 @@
                      :role "admin"
                      :email "s.snape@hogwarts.edu"}
              (select-keys created-user
-                     [:users/name
-                     :users/role
-                     :users/email])))
+                          [:users/name :users/role :users/email])))
       (is (password/check "lily" (:users/password created-user)))))
 
   (testing "Should flash a message if user already exist"

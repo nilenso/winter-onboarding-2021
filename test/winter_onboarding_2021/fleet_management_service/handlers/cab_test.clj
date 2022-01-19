@@ -11,8 +11,8 @@
             [winter-onboarding-2021.fleet-management-service.handlers.cab :as handlers]
             [winter-onboarding-2021.fleet-management-service.utils :as utils]))
 
-(use-fixtures :once fixtures/config fixtures/db-connection)
 (use-fixtures :each fixtures/clear-db)
+(use-fixtures :once fixtures/config fixtures/db-connection)
 
 (deftest add-cab
   (testing "POST /cabs/ endpoint with valid cab data, shoudld redirect to '/cabs/<<uuid of new cab>> "
@@ -20,7 +20,7 @@
                                      {:name "Test cab"
                                       :licence-plate "KA20X1234"
                                       :distance-travelled "1223"}})
-          cab (first (models/find-by-keys {:licence-plate "KA20X1234"}))]
+          cab (first (models/find-by-keys {:cabs/licence-plate "KA20X1234"}))]
 
       (is (= 302 (:status response)))
 
@@ -48,9 +48,9 @@
 
 (deftest view-single-cab
   (testing "Should return 200 code with the HTML of the single cab details view"
-    (let [cab (models/create {:name "Foo cab"
-                              :licence-plate "FooLicencePlate"
-                              :distance-travelled 19191})
+    (let [cab (models/create {:cabs/name "Foo cab"
+                              :cabs/licence-plate "FooLicencePlate"
+                              :cabs/distance-travelled 19191})
           content (views/cab cab)]
       (is (= {:title (str "Cab - " (:cabs/name cab))
               :content content}
@@ -119,9 +119,9 @@
 (deftest update-cab
   (testing "Should redirect to /cabs:slug with success flash
             after successfull update of cab with given id and cab data"
-    (let [cab {:name "Maruti Cab"
-               :licence-plate "HR20A 1234"
-               :distance-travelled 12333}
+    (let [cab {:cabs/name "Maruti Cab"
+               :cabs/licence-plate "HR20A1234"
+               :cabs/distance-travelled 12333}
           cab-id (str (:cabs/id (models/create cab)))
           new-cab {:name "Maruti Cab"
                    :distance-travelled "13000"}
@@ -139,9 +139,9 @@
                           [:cabs/name :cabs/distance-travelled])))))
 
   (testing "Should redirect with an error message when update fails"
-    (let [cab-id (:cabs/id (models/create {:name "Some name"
-                                           :licence-plate "License plate"
-                                           :distance-travelled 123}))
+    (let [cab-id (:cabs/id (models/create {:cabs/name "Some name"
+                                           :cabs/licence-plate "Licenseplate"
+                                           :cabs/distance-travelled 123}))
           response (handlers/update-cab {:params {:slug (str cab-id)}
                                          :multipart-params {:foo "boo"}})]
       (is (= 302 (:status response)))
@@ -154,9 +154,9 @@
 
 (deftest update-cab-form
   (testing "Should return the html form to update cabs"
-    (let [cab {:name "Test cab"
-               :licence-plate "KA20X1234"
-               :distance-travelled 1223}
+    (let [cab {:cabs/name "Test cab"
+               :cabs/licence-plate "KA20X1234"
+               :cabs/distance-travelled 1223}
           cab-id (:cabs/id (models/create cab))]
       (is (= "Update cab KA20X1234"
              (:title (handlers/update-cab-view {:params
@@ -164,9 +164,9 @@
 
 (deftest deletion
   (testing "Should redirect to cabs' list when delete succeeds"
-    (let [cab #:cabs{:name "Foo cab whatever"
-                     :distance-travelled 12233
-                     :licence-plate "KA20A 3456"}
+    (let [cab {:cabs/name "Foo cab whatever"
+               :cabs/licence-plate "KA20A3456"
+               :cabs/distance-travelled 12233}
           db-cab (models/create cab)
           id (str (:cabs/id db-cab))
           handler-resp (handlers/delete {:params {:id id}})]
@@ -177,7 +177,7 @@
               :headers {"Location" "/cabs"}
               :body ""}
              handler-resp))))
-  
+
   (testing "Should redirect to /cabs when delete fails"
     (let [missing-uuid (str (java.util.UUID/randomUUID))
           handler-response (handlers/delete {:params {:id missing-uuid}})]

@@ -12,11 +12,11 @@
 
 (deftest create
   (testing "Should create an organisation and associate it with the logged in admin"
-    (let [db-admin (user-models/create (factories/admin))
+    (let [db-admin (factories/admin)
           request {:form-params {:name "org-1"} :user db-admin}
           response (org-handlers/create request)
           org (first (db-core/query! ["SELECT * FROM organisations;"]))
-          user (first (user-models/find-by-keys {:id (:users/id db-admin)}))]
+          user (first (user-models/find-by-keys {:users/id (:users/id db-admin)}))]
       (is (= 302 (:status response)))
       (is (= "/users/dashboard" (get-in response [:headers "Location"])))
 
@@ -28,7 +28,7 @@
 
 
   (testing "Should not create an organisation when the admin is already associated with an org"
-    (let [db-admin (user-models/create (factories/admin))
+    (let [db-admin (factories/admin)
           _ (org-handlers/create {:form-params {:name "foo-org"} :user db-admin})
           foo-org (first (db-core/find-by-keys! :organisations {:name "foo-org"}))
           response (org-handlers/create {:form-params {:name "foo-org-2"}

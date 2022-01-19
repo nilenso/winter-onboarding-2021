@@ -15,18 +15,24 @@
      :content (views/cab-not-found)}))
 
 (defn create [{:keys [multipart-params]}]
-  (let [validated-cab (s/conform ::specs/create-cab-form
-                                 multipart-params)]
+  (let [ns-multipart-params (utils/namespace-keys :cabs multipart-params)
+        validated-cab (s/conform ::specs/cabs
+                                 ns-multipart-params)]
     (if (s/invalid? validated-cab)
       (-> (utils/flash-msg "Could not add cab, try again!" false)
           (assoc-in [:flash :data] multipart-params)
           (merge (response/redirect "/cabs/new")))
-      (let [created-cab (models/create validated-cab)]
-        (merge (utils/flash-msg "Cab added successfully!" true)
-               (response/redirect
-                (format
-                 "/cabs/%s"
-                 (:cabs/id created-cab))))))))
+      (let [response (models/create validated-cab)]
+        (cond (= (:error response)
+                 :licence-plate-already-exists) (merge (utils/flash-msg "Cab with licence plate already exists" false)
+                                                       (response/redirect "cabs/new"))
+              (= (:error response)
+                 :generic-error) (merge (utils/flash-msg "Some error occured" false)
+                                        (response/redirect "cabs/new"))
+              :else (merge (utils/flash-msg "Cab added successfully!" true) (response/redirect
+                                                                             (format
+                                                                              "/cabs/%s"
+                                                                              (:cabs/id response)))))))))
 
 (defn new [request]
   {:title "Add a cab"
@@ -53,9 +59,9 @@
                                show-next-page?)}))
 
 (defn update-cab [req]
-  (let [cab (:multipart-params req)
+  (let [cab (utils/namespace-keys :cabs (:multipart-params req))
         id (get-in req [:params :slug])
-        validated-cab (s/conform ::specs/update-cab-form cab)]
+        validated-cab (s/conform ::specs/cabs-update-form cab)]
     (if (s/invalid? validated-cab)
       (-> (utils/flash-msg "Could not update cab, try again!" false)
           (assoc-in [:flash :data] cab)
@@ -72,7 +78,7 @@
 
 (defn delete [request]
   (let [id (get-in request [:params :id])]
-    (if (> (:next.jdbc/update-count (models/delete-by-id id)) 0)
+    (if (= (:next.jdbc/update-count (models/delete-by-id (utils/string->uuid id))) 1)
       (-> (utils/flash-msg "Cab deleted successfully" true)
           (merge (response/redirect "/cabs")))
       (-> (utils/flash-msg "Cab does not exist" false)
