@@ -184,4 +184,4 @@
       (is (= "/" (get-in logout-resp [:headers "Location"])))
       (is (= session-id-in-login-resp (str (:sessions/id session-before-logout))))
       (is (nil? session-after-logout))
-      (is (nil? (:cookies logout-resp))))))
+      (is (= nil (get-in logout-resp [:cookies "session-id" :value]))))))

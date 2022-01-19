@@ -46,7 +46,6 @@
       (response/redirect "/users/dashboard"))))
 
 (defn- successful-login-response [user-id]
-  
   (let [session-id (session/new user-id)]
     (merge (utils/flash-msg "Hooray! Logged in!" true)
            (-> (response/redirect "/users/dashboard")
@@ -81,7 +80,7 @@
   (let [session-id (get-in req [:cookies :session-id :value])]
     (session/delete (java.util.UUID/fromString session-id))
     (merge (response/redirect "/")
-           {:cookies nil})))
+        {:cookies {"session-id" {:value nil :path "/" :max-age 0}}})))
 
 (defn not-authorized [_]
   (merge (utils/flash-msg "You are not authorized" false)
