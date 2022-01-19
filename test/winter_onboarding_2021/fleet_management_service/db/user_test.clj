@@ -71,11 +71,11 @@
     (is (= 2 (count (user-db/find-by-keys {:name "Same name"}))))))
 
 
-(deftest add-user-to-org
+(deftest add-to-org
   (testing "Should add org-id to an user"
     (let [admin (factories/admin)
           org (org-models/create {:name "org-1" :created-by (:users/id admin)})
-          _ (user-db/add-user-to-org org admin)
+          _ (user-db/add-to-org org admin)
 
           db-admin (first (user-db/find-by-keys {:id (:users/id admin)}))]
 

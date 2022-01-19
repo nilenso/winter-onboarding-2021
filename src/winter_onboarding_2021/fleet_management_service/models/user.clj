@@ -29,5 +29,4 @@
       {:found? true :user nil})
     {:found? false :user nil}))
 
-(defn add-user-to-org [org user]
-  (user/add-user-to-org org user))
+(def add-to-org user/add-to-org)

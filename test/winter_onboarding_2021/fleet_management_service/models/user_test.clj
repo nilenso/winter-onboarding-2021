@@ -55,11 +55,11 @@
                                              :users/password "wrongpassword"})
                    :users/password)))))
 
-(deftest add-user-to-org
+(deftest add-to-org
   (testing "Should add org-id to an user"
     (let [admin (factories/admin)
           org (org-models/create {:name "org-1" :created-by (:users/id admin)})
-          _ (user-model/add-user-to-org org admin)
+          _ (user-model/add-to-org org admin)
 
           db-admin (first (user-model/find-by-keys {:users/id (:users/id admin)}))]
 
