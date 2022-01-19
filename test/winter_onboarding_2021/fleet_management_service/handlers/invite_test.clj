@@ -2,7 +2,6 @@
   (:require [clojure.test :refer [deftest is testing use-fixtures]]
             [winter-onboarding-2021.fleet-management-service.fixtures :as fixtures]
             [winter-onboarding-2021.fleet-management-service.handlers.invites :as invites]
-            [winter-onboarding-2021.fleet-management-service.db.user :as user-db]
             [winter-onboarding-2021.fleet-management-service.utils :as utils]
             [winter-onboarding-2021.fleet-management-service.db.invite :as invite-db]
             [winter-onboarding-2021.fleet-management-service.factories :as factory]
@@ -13,7 +12,7 @@
 
 (deftest create-invite
   (testing "Should create a new invite and return invite link"
-    (let [user (user-db/create (factory/admin))
+    (let [user (factory/admin)
           resp (invites/create {:user user
                                 :form-params {:role "manager"
                                               :valid-until "2022-01-29"
@@ -30,7 +29,7 @@
                   "</a>") 
              (get-in resp [:flash :message])))))
   (testing "Should return Invalid parameters flash message when incorrect data is sent"
-    (let [user (user-db/create (factory/admin))
+    (let [user (factory/admin)
           resp (invites/create {:user user
                                 :form-params {:role "owner"
                                               :valid-until "2022-01-29"
@@ -52,7 +51,7 @@
 
 (deftest get-invites-table
   (testing "Should return table of invites"
-    (let [user (user-db/create (factory/admin))
+    (let [user (factory/admin)
           user-id (:users/id user)
           invites (take 10 (repeatedly factory/invite))
           request-list (map (fn [x]
