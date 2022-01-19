@@ -14,4 +14,4 @@
       (is (= "POST" (:method (utils/hiccup-attrs form))))
 
       (is (= "name" (:name name-input-attrs)))
-      (is (= true (:required name-input-attrs))))))
+      (is (true? (:required name-input-attrs))))))
