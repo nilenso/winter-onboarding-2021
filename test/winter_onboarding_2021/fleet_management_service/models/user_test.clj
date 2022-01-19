@@ -57,13 +57,13 @@
                                              :users/password "wrongpassword"})
                    :users/password)))))
 
-(deftest add-user-to-org
+(deftest add-to-org
   (testing "Should add org-id to an user"
     (let [admin (factories/admin)
           org (factories/create :organisations
                                 (gen/fmap #(assoc % :organisations/created-by (:users/id admin))
                                           (s/gen ::specs/organisations)))
-          _ (user-model/add-user-to-org org admin)
+          _ (user-model/add-to-org org admin)
 
           db-admin (first (user-model/find-by-keys {:users/id (:users/id admin)}))]
 
