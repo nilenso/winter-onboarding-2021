@@ -78,14 +78,14 @@
         (is (str/includes? html-output (:cabs/name first-cab)))
         (is (str/includes? html-output (str (:cabs/distance-travelled first-cab))))
         (is (str/includes? html-output (:cabs/licence-plate first-cab)))
-        (is (str/includes? html-output (views/format-date (:cabs/updated-at first-cab))))
-        (is (str/includes? html-output (views/format-date (:cabs/created-at first-cab))))
+        (is (str/includes? html-output (utils/format-date (:cabs/updated-at first-cab))))
+        (is (str/includes? html-output (utils/format-date (:cabs/created-at first-cab))))
 
         (is (str/includes? html-output (:cabs/name second-cab)))
         (is (str/includes? html-output (str (:cabs/distance-travelled second-cab))))
         (is (str/includes? html-output (:cabs/licence-plate second-cab)))
-        (is (str/includes? html-output (views/format-date (:cabs/updated-at second-cab))))
-        (is (str/includes? html-output (views/format-date (:cabs/created-at second-cab))))
+        (is (str/includes? html-output (utils/format-date (:cabs/updated-at second-cab))))
+        (is (str/includes? html-output (utils/format-date (:cabs/created-at second-cab))))
 
         (is (not-empty (hf/hiccup-find [:#cab-next-page] output))))))
 
