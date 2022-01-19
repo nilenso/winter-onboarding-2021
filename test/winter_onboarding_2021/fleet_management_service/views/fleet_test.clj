@@ -31,7 +31,7 @@
                                             :managers
                                             [{:users/name "Manager 1"}])
                                     fleets)
-          lists-view (views/show-fleets fleets-with-managers 1 false)
+          lists-view (views/show-fleets fleets-with-managers 1 false false)
           headers (hf/hiccup-find [:thead :tr :th] lists-view)
           fleets-list (hf/hiccup-find [:tbody :tr] lists-view)]
       
@@ -39,4 +39,7 @@
       (is (= "Managers" (second (second headers))))
       (is (= "Created At" (second (nth headers 2))))
       
-      (is (= 5 (count fleets-list))))))
+      (is (= 5 (count fleets-list)))
+      
+      (is (= 0 (count (hf/hiccup-find [:#fleet-prev-page] lists-view))))
+      (is (= 0 (count (hf/hiccup-find [:#fleet-next-page] lists-view)))))))

@@ -40,8 +40,10 @@
                                                                  offset
                                                                  page-size)
           fleets-count (fleet-model/total)
-          show-next-page? (<= (* current-page page-size) fleets-count)]
+          show-next-page? (<= (* current-page page-size) fleets-count)
+          show-prev-page? (> current-page 1)]
       {:title "List of fleets"
        :content (views/show-fleets fleets-with-managers
                                    current-page
+                                   show-prev-page?
                                    show-next-page?)})))
