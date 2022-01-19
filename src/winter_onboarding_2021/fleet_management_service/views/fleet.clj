@@ -1,6 +1,5 @@
 (ns winter-onboarding-2021.fleet-management-service.views.fleet
-  (:require [clojure.string :as string]
-            [winter-onboarding-2021.fleet-management-service.utils :as utils]))
+  (:require [winter-onboarding-2021.fleet-management-service.utils :as utils]))
 
 (defn create-fleet []
   [:div {:id "content"}
@@ -16,15 +15,16 @@
    {:label "Created At" :value :fleets/created-at}])
 
 (defn managers-list [managers]
-  (string/join ", " (map #(:users/name %) managers)))
+  (map (fn [manager] [:div (:users/name manager)])
+       managers))
 
-(defn fleet-row [row]
+(defn fleet-row [{:fleets/keys [id name created-at managers]}]
   [:tr
-   [:td [:a {:href (str "/fleets/" (:fleets/id row))
+   [:td [:a {:href (str "/fleets/" id)
              :class "link-primary"}
-         (:fleets/name row)]]
-   [:td (managers-list (:managers row))]
-   [:td (utils/format-date (:fleets/created-at row))]])
+         name]]
+   [:td [:div (managers-list managers)]]
+   [:td (utils/format-date created-at)]])
 
 (defn show-fleets [fleets-with-managers page-num show-next-page?]
   (let [next-page-query (str "?page=" (inc page-num))]
