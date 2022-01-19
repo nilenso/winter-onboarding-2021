@@ -37,3 +37,9 @@
 (defn select-keys-from-spec [data spec]
   (let [required-attr (nth (s/describe spec) 2)]
     (select-keys data required-attr)))
+
+(defn format-date [date]
+  (.format (java.text.SimpleDateFormat. "MM/dd/yyyy HH:mm") date))
+
+(defn offset [page-size page-number]
+  (* page-size (dec page-number)))
