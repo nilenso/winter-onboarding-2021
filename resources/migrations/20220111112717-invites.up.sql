@@ -10,4 +10,4 @@ CREATE TABLE invites(
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 --;;
-ALTER TABLE users ADD COLUMN invite_id UUID REFERENCES invites(id);
+ALTER TABLE users ADD COLUMN invite_id UUID DEFAULT NULL REFERENCES invites(id);
