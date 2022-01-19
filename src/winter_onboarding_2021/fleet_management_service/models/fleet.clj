@@ -14,9 +14,18 @@
 (defn total []
   (:count (first (fleet-db/total))))
 
-(defn user-fleets
+(defn- user-fleets
   ([user-id] (fleet-db/user-fleets user-id 0 (config/get-page-size)))
   ([user-id off lim] (fleet-db/user-fleets user-id off lim)))
 
-(defn managers [fleet]
+(defn- managers [fleet]
   (fleet-db/managers fleet))
+
+(defn- append-managers [fleet]
+  (assoc fleet
+         :fleets/managers
+         (managers fleet)))
+
+(defn fleets-with-managers [user-id off lim]
+  (let [fleets (user-fleets user-id off lim)]
+    (doall (map append-managers fleets))))

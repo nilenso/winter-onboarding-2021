@@ -27,23 +27,17 @@
   {:title "Create fleet"
    :content (views/create-fleet)})
 
-(defn assoc-managers [fleet]
-  (assoc fleet
-         :managers
-         (fleet-model/managers fleet)))
-
 (defn show-fleets [request]
   (let [user-id (get-in request [:user :users/id])
         {:keys [page]} (:params request)
         page-size (config/get-page-size)
         current-page (Integer/parseInt (or page "1"))
         offset (utils/offset page-size current-page)
-        fleets (fleet-model/user-fleets user-id
-                                                    offset
-                                                    page-size)
+        fleets-with-managers (fleet-model/fleets-with-managers user-id
+                                                               offset
+                                                               page-size)
         fleets-count (fleet-model/total)
-        show-next-page? (<= (* current-page page-size) fleets-count)
-        fleets-with-managers (map assoc-managers fleets)]
+        show-next-page? (<= (* current-page page-size) fleets-count)]
     {:title "List of fleets"
      :content (views/show-fleets fleets-with-managers
                                  current-page
