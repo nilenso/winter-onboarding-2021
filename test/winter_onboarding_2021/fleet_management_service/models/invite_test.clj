@@ -2,7 +2,6 @@
   (:require [clojure.test :refer [deftest is testing use-fixtures]]
             [winter-onboarding-2021.fleet-management-service.models.invite :as invite]
             [winter-onboarding-2021.fleet-management-service.factories :as factory]
-            [winter-onboarding-2021.fleet-management-service.db.user :as user-db]
             [winter-onboarding-2021.fleet-management-service.db.core :as db-core]
             [winter-onboarding-2021.fleet-management-service.error :as errors]
             [winter-onboarding-2021.fleet-management-service.utils :as utils]
@@ -25,8 +24,7 @@
 
 (deftest create-invite
   (testing "Should create an invite with valid-until in UTC"
-    (let [user (factory/admin)
-          db-user (user-db/create user)
+    (let [db-user (factory/admin)
           invite  #:invites{:created-by (:users/id db-user)
                             :usage-limit 2
                             :valid-until (sqltime/to-sql-date (f/parse (f/formatters :date) "2022-10-13"))
@@ -47,7 +45,7 @@
              resp))))) 
 
 (deftest get-invites-created-by-specific-user
-    (let [db-user1 (user-db/create (factory/admin))
+    (let [db-user1 (factory/admin)
           invite1 (factory/invite-admin #:invites{:created-by (:users/id db-user1)})
           invite2 (factory/invite-manager #:invites{:created-by (:users/id db-user1)})
           _ (invite/create invite1)

@@ -1,7 +1,6 @@
 (ns winter-onboarding-2021.fleet-management-service.db.invite-test
   (:require [clojure.test :refer [deftest is testing use-fixtures]]
             [winter-onboarding-2021.fleet-management-service.db.invite :as invites-db]
-            [winter-onboarding-2021.fleet-management-service.db.user :as user-db]
             [winter-onboarding-2021.fleet-management-service.db.core :as db-core]
             [winter-onboarding-2021.fleet-management-service.fixtures :as fixtures]
             [winter-onboarding-2021.fleet-management-service.factories :as factories]
@@ -28,7 +27,7 @@
 
 (deftest create-invite
   (testing "Should create an invite with valid-until in UTC Timestamp"
-    (let [db-admin-user (user-db/create (factories/admin))
+    (let [db-admin-user (factories/admin)
           token (utils/rand-str 6)
           db-invite (invites-db/create {:invites/token token
                                         :invites/created-by (:users/id db-admin-user)
@@ -47,7 +46,7 @@
              (:invites/valid-until (first resp)))))))
 
 (deftest get-invites-created-by-specific-user
-  (let [db-user1 (user-db/create (factories/admin))
+  (let [db-user1 (factories/admin)
         invite1 (factories/invite-admin #:invites{:created-by (:users/id db-user1)
                                                   :token (utils/rand-str 8)
                                                   :status "active"})
