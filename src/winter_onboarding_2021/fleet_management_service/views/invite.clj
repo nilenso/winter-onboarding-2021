@@ -18,18 +18,18 @@
        [:div {:class "form-group"}
         [:label {:class "form-label"} "Select Role:"]
         [:select
-         {:name "role" :class "form-select"}
+         {:name "role" :class "form-select" :required true}
          [:option {:value "admin"} "Admin"]
          [:option {:value "manager"} "Manager"]
          [:option {:value "driver"} "Driver"]]]
        (core/labelled-text-input "Number of accounts:"
-                                 :require true
+                                 :required true
                                  :name "usage-limit"
                                  :type "number"
                                  :max 50
                                  :min 1)
        (core/labelled-text-input "Valid Until:"
-                                 :require true
+                                 :required true
                                  :name "valid-until"
                                  :type "date")
        [:div
@@ -51,19 +51,19 @@
    [:td (:invites/status row)]])
 
 (defn invites-not-found []
-  [:div.col-md-6 {:id "content" :class "p-5"}
+  [:div {:id "content" :class "p-5 col-md-6"}
    [:h2 "No invites found"]])
 
 (defn show-invites [invites]
   (if (empty? invites)
     (invites-not-found)
-    [:div.col-md-6
+    [:div {:class "col-md-6"}
      [:table {:class "table table-primary min-vh-40"}
       [:thead [:tr (map (fn [header] [:th (:label header)])
                         headers)]]
       [:tbody (map invite-row invites)]]]))
 
 (defn invites-page [invites]
-  [:div.row
+  [:div {:class "row"}
    (invite-form)
    (show-invites invites)])
