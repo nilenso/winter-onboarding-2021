@@ -32,7 +32,3 @@
   ([] (manager {}))
   ([overrides] (create :users (gen/fmap #(merge % overrides {:users/role "manager"})
                                         (s/gen ::specs/users)))))
-
-(defn fleet
-  ([] (fleet {}))
-  ([overrides] (merge (gen/generate (s/gen ::specs/fleets)) overrides)))
