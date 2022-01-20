@@ -6,9 +6,9 @@
             [winter-onboarding-2021.fleet-management-service.db.core :as db]
             [winter-onboarding-2021.fleet-management-service.specs :as spec]))
 
-(defn create [fleet]
+(defn create [tx fleet]
   (if (s/valid? ::spec/fleets fleet)
-    (db/insert! :fleets fleet)
+    (db/insert! tx :fleets fleet)
     (let [error-msg (s/explain-str ::spec/fleets fleet)]
       (assoc error/validation-failed :error-msg error-msg))))
 

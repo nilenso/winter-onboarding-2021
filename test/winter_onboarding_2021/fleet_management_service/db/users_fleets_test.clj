@@ -12,15 +12,15 @@
 (use-fixtures :each fixtures/clear-db)
 
 (deftest create
-    (testing "Should create an association between a fleet and a user"
-      (let [user (factories/admin)
-            fleet (->> ::specs/fleets
-                       s/gen
-                       (gen/fmap #(assoc % :fleets/created-by (:users/id user)))
-                       (factories/create :fleets))
-            user_fleet_relation (users-fleets-db/create user fleet)]
-        
-        (is (= user_fleet_relation
-               (first (core-db/find-by-keys! :users-fleets
-                                             {:user-id (:users/id user)
-                                              :fleet-id (:fleets/id fleet)})))))))
+  (testing "Should create an association between a fleet and a user"
+    (let [user (factories/admin)
+          fleet (->> ::specs/fleets
+                     s/gen
+                     (gen/fmap #(assoc % :fleets/created-by (:users/id user)))
+                     (factories/create :fleets))
+          user_fleet_relation (users-fleets-db/create core-db/db-conn user fleet)]
+
+      (is (= user_fleet_relation
+             (first (core-db/find-by-keys! :users-fleets
+                                           {:user-id (:users/id user)
+                                            :fleet-id (:fleets/id fleet)})))))))

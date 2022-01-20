@@ -3,13 +3,19 @@
             [winter-onboarding-2021.fleet-management-service.utils :as utils]
             [winter-onboarding-2021.fleet-management-service.specs :as specs]
             [winter-onboarding-2021.fleet-management-service.error :as error]
-            [winter-onboarding-2021.fleet-management-service.config :as config]))
+            [winter-onboarding-2021.fleet-management-service.config :as config]
+            [winter-onboarding-2021.fleet-management-service.models.users-fleets :as users-fleets-models]))
 
-(defn create [fleet]
+(defn create [tx fleet]
   (let [fleet-with-valid-keys (utils/select-keys-from-spec fleet ::specs/fleets)]
     (if (empty? fleet-with-valid-keys)
       error/no-valid-keys
-      (fleet-db/create fleet-with-valid-keys))))
+      (fleet-db/create tx fleet-with-valid-keys))))
+
+(defn create-and-associate [tx fleet user]
+  (let [fleet (create tx fleet)
+        _ (users-fleets-models/create tx user fleet)]
+    fleet))
 
 (defn total []
   (:count (first (fleet-db/total))))
