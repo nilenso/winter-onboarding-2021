@@ -9,9 +9,9 @@
     (let [create-view (org-views/create)
           form (first (hf/hiccup-find [:form] create-view))
           name-input (first (hf/hiccup-find [:form :input] create-view))
-          name-input-attrs (utils/hiccup-attrs name-input)]
-      (is (= "/organisations/new" (:action (utils/hiccup-attrs form))))
-      (is (= "POST" (:method (utils/hiccup-attrs form))))
+          name-input-attrs (utils/hiccup-attributes name-input)]
+      (is (= "/organisations/new" (:action (utils/hiccup-attributes form))))
+      (is (= "POST" (:method (utils/hiccup-attributes form))))
 
       (is (= "name" (:name name-input-attrs)))
       (is (true? (:required name-input-attrs))))))
