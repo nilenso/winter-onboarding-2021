@@ -1,7 +1,7 @@
 (ns winter-onboarding-2021.fleet-management-service.views.layout
   (:require [hiccup.page :refer [include-css include-js]]))
 
-(defn application [request title content]
+(defn application [{:keys [user flash]} title content]
   [:head
    [:title title]
    [:link {:rel "icon" :href "/public/favicon.ico" :type "image/x-icon"}]
@@ -15,8 +15,9 @@
       {:height "32", :width "40"}
       [:use {:xlink:href "#bootstrap"}]]
      [:span {:class "fs-4"} "Fleet Management System"]]
-    (if (:user request)
+    (if user
       [:ul {:class "nav nav-pills"}
+       [:li {:class "nav-item"} [:a {:class "nav-link" :href "#"} (:users/name user)] ]
        [:li {:class "nav-item"} [:a {:class "nav-link" :href "/cabs"} "Cabs"]]
        [:li {:class "nav-item"} [:a {:class "nav-link" :href "/users/logout"} "Logout"]]]
       [:ul {:class "nav nav-pills"}
@@ -24,6 +25,6 @@
        [:li {:class "nav-item"} [:a {:class "nav-link" :href "/users/login"} "Login"]]])]
    [:body
     [:div {:class "container"}
-     (when (:flash request)
-       [:div {:class (get-in request [:flash :style-class])} (get-in request [:flash :message])])
+     (when flash
+       [:div {:class (:style-class flash)} (:message flash)])
      content]]])
