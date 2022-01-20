@@ -2,19 +2,25 @@
   (:require [ring.util.response :as response]
             [clojure.spec.alpha :as s]
             [crypto.password.bcrypt :as password]
+            [hiccup.page :refer [html5]]
             [winter-onboarding-2021.fleet-management-service.session :as session]
             [winter-onboarding-2021.fleet-management-service.views.user :as view]
             [winter-onboarding-2021.fleet-management-service.models.user :as user-model]
             [winter-onboarding-2021.fleet-management-service.specs :as specs]
+            [winter-onboarding-2021.fleet-management-service.views.layout :as layout]
             [winter-onboarding-2021.fleet-management-service.utils :as utils]))
 
-(defn signup-form [_]
-  {:title "Sign-up"
-   :content (view/signup-form)})
+(defn signup-form [req]
+  (let [user (:user req)]
+    (if (nil? user)
+      (response/response (html5 (layout/application
+                                 req
+                                 "Sign up"
+                                 (view/signup-form))))
+      (response/redirect "/users/dashboard"))))
 
 (defn user-exist? [email]
   (not-empty (user-model/find-by-keys {:users/email email})))
-
 
 (defn create-user [{:keys [form-params]}]
   (let [ns-form-params (utils/namespace-keys :users form-params)
@@ -30,9 +36,14 @@
               (merge (utils/flash-msg (format "User %s created successfully!" (:users/name created-user)) true)
                      (response/redirect "/users/signup"))))))
 
-(defn login-form [_]
-  {:title "Login"
-   :content (view/login-form)})
+(defn login-form [req]
+  (let [user (:user req)]
+    (if (nil? user)
+      (response/response (html5 (layout/application
+                                 req
+                                 "Login"
+                                 (view/login-form))))
+      (response/redirect "/users/dashboard"))))
 
 (defn- successful-login-response [user-id]
   (let [session-id (session/new user-id)]
@@ -64,6 +75,12 @@
             (successful-login-response (:users/id user))
             (wrong-password-response))
           (email-not-found-response))))))
+
+(defn logout [req]
+  (let [session-id (get-in req [:cookies :session-id :value])]
+    (session/delete (java.util.UUID/fromString session-id))
+    (merge (response/redirect "/")
+        {:cookies {"session-id" {:value nil :path "/" :max-age 0}}})))
 
 (defn not-authorized [_]
   (merge (utils/flash-msg "You are not authorized" false)
