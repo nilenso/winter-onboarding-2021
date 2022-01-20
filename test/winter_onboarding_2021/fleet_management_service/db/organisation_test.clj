@@ -17,7 +17,7 @@
           org (factories/build (factories/overridden-generator
                                 {:organisations/created-by admin-id}
                                 ::specs/organisations))
-          _ (org-db/create org)
+          _ (org-db/create db-core/db-conn org)
           db-org (first (db-core/query! ["SELECT * FROM organisations;"]))]
       (is (= org (select-keys db-org
                               [:organisations/name
@@ -28,7 +28,7 @@
           org  {:name "unqualified-keys"
                 :created-by (:users/id admin)}]
 
-      (org-db/create org)
+      (org-db/create db-core/db-conn org)
       (is (empty? (db-core/find-by-keys! :organisations
                                          #:organisations{:name "unqualified-keys"})))))
 
@@ -37,7 +37,7 @@
           org  #:organisations{:name ""
                                :created-by (:users/id admin)}]
 
-      (org-db/create org)
+      (org-db/create db-core/db-conn org)
       (is (empty? (db-core/find-by-keys! :organisations
                                          #:organisations{:name ""
                                                          :created-by (:users/id admin)}))))))

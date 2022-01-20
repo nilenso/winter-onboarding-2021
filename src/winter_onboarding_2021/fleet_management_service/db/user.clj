@@ -15,7 +15,7 @@
 (defn find-by-keys [key-map]
   (db/find-by-keys! :users key-map))
 
-(defn add-to-org [org user]
-  (db/query! (sql/format (-> (update :users)
+(defn add-to-org [tx org user]
+  (db/query! tx (sql/format (-> (update :users)
                              (set {:org-id (:organisations/id org)})
                              (where [:= :id (:users/id user)])))))
