@@ -1,7 +1,6 @@
 (ns winter-onboarding-2021.fleet-management-service.db.user-test
   (:require [clojure.test :refer [deftest is testing use-fixtures]]
             [clojure.spec.alpha :as s]
-            [clojure.spec.gen.alpha :as gen]
             [winter-onboarding-2021.fleet-management-service.db.user :as user-db]
             [winter-onboarding-2021.fleet-management-service.fixtures :as fixtures]
             [winter-onboarding-2021.fleet-management-service.error :as errors]
@@ -57,17 +56,17 @@
 
 (deftest find-by-role
   (testing "Should return a user given a role in key-map(properties)"
-    (factories/create-list :users 2 (gen/fmap #(assoc % :users/role "admin")
-                                              (s/gen ::specs/users)))
-    (factories/create-list :users 2 (gen/fmap #(assoc % :users/role "manager")
-                                              (s/gen ::specs/users)))
+    (factories/create-list :users 2 (factories/overridden-generator {:users/role "admin"}
+                                                                    ::specs/users))
+    (factories/create-list :users 2 (factories/overridden-generator {:users/role "manager"}
+                                                                    ::specs/users))
     (is (= 2 (count (user-db/find-by-keys {:role "manager"}))))))
 
 (deftest find-by-name
   (testing "Should return a user given a name in key-map(properties)"
     (factories/create :users (s/gen ::specs/users))
-    (factories/create-list :users 2 (gen/fmap #(assoc % :users/name "Same name")
-                                              (s/gen ::specs/users)))
+    (factories/create-list :users 2 (factories/overridden-generator {:users/name "Same name"}
+                                                                    ::specs/users))
     (is (= 2 (count (user-db/find-by-keys {:name "Same name"}))))))
 
 (deftest add-to-org

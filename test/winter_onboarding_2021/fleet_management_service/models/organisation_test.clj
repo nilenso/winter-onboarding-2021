@@ -1,7 +1,5 @@
 (ns winter-onboarding-2021.fleet-management-service.models.organisation-test
   (:require [clojure.test :refer [deftest is testing use-fixtures]]
-            [clojure.spec.alpha :as s]
-            [clojure.spec.gen.alpha :as gen]
             [winter-onboarding-2021.fleet-management-service.specs :as specs]
             [winter-onboarding-2021.fleet-management-service.fixtures :as fixtures]
             [winter-onboarding-2021.fleet-management-service.factories :as factories]
@@ -20,8 +18,8 @@
   (testing "Should create an organisation in DB"
     (let [admin (factories/admin)
           admin-id (:users/id admin)
-          org (gen/generate (gen/fmap #(assoc % :organisations/created-by admin-id)
-                                      (s/gen ::specs/organisations)))
+          org (factories/build (factories/overridden-generator {:organisations/created-by admin-id}
+                                                            ::specs/organisations))
           _ (org-models/create org)
           db-org (first (db-core/query! ["SELECT * FROM organisations;"]))]
       (is (= org (select-relevant-keys db-org)))))
@@ -35,14 +33,14 @@
       (is (= (select-relevant-keys org)
              (select-relevant-keys (first (db-core/find-by-keys! :organisations
                                                                  #:organisations{:name "org-1"})))))))
-  
+
   (testing "Should not create an organsiation in DB if org name is not present"
     (let [admin (factories/admin)
           org  #:organisations{:created-by (:users/id admin)}
           response (org-models/create org)]
-      (is (= (:error errors/validation-failed) 
+      (is (= (:error errors/validation-failed)
              (:error response)))))
-  
+
   (testing "Should not create an organsiation in DB if org name is not present"
     (let [admin (factories/admin)
           org  {:name "unqualified-keys"
