@@ -4,8 +4,8 @@
 
 (defn cab-form [{:keys [name distance-travelled licence-plate]}]
   [:div {:id "content"}
-   [:h1 {:class "text-success"} "This is the form page"]
-   [:form {:action "/cabs" :method "POST" :enctype "multipart/form-data"}
+   [:h1 {:class "text-success text-center"} "Add a cab"]
+   [:form {:action "/cabs" :method "POST"}
     [:div {:class "mb-3"}
      (core-views/labelled-text-input
       "Cab Name"
@@ -98,6 +98,10 @@
 (defn show-cabs [cabs page-num show-next-page?]
   (let [next-page-query (str "?page=" (inc page-num))]
     [:div
+     [:div {:class "text-end mb-4"}
+      [:a {:id "add-cab" :class "btn btn-primary me-2"
+           :href "/cabs/new"}
+       "Add a cab"]]
      [:table {:class "table table-primary min-vh-40"}
       [:thead [:tr (map (fn [header] [:th (:label header)])
                         headers)]]
@@ -110,7 +114,7 @@
   (let [route (str "/cabs/" id)]
     [:div {:id "content"}
      [:h1 {:class "text-success"} "Update Cab"]
-     [:form {:action route :method "POST" :enctype "multipart/form-data"}
+     [:form {:action route :method "POST"}
       [:div
        [:div {:class "mb-3"}
         (core-views/labelled-text-input

@@ -36,10 +36,11 @@
                  ["/" :slug] {"/edit" {:get (wrap-layout cab-handlers/update-cab-view)}
                               :get (wrap-layout cab-handlers/view-cab)
                               :post cab-handlers/update-cab}}]
-        ["users" {"/signup" {:get (wrap-layout user-handlers/signup-form)
+        ["users" {"/signup" {:get user-handlers/signup-form
                              :post user-handlers/create-user}
-                  "/login" {:get (wrap-layout user-handlers/login-form)
+                  "/login" {:get user-handlers/login-form
                             :post user-handlers/login}
+                  "/logout" {:get user-handlers/logout}
                   "/dashboard" {:get (authentication-required (wrap-layout dashboard-handlers/index)
                                                               #{:admin :manager :driver})}}]
         ["fleets" {"" {:get (authentication-required (wrap-layout fleet-handlers/show-fleets) #{:admin})
@@ -48,8 +49,8 @@
         ["organisations" {"/new" {:post (authentication-required org-handlers/create
                                                                  #{:admin})}}]
         ["fleets" {"" {:get (authentication-required (wrap-layout fleet-handlers/show-fleets) #{:admin})
-                       :post fleet-handlers/create-fleet}
-                   "/new" {:get (wrap-layout fleet-handlers/new)}}]
+                       :post (authentication-required fleet-handlers/create-fleet #{:admin})}
+                   "/new" {:get (authentication-required (wrap-layout fleet-handlers/new) #{:admin})}}]
         ["healthcheck" {:get (wrap-json-response handler/health-check)}]
         ["index" {:get (wrap-layout handler/index)}]
         ["" {:get (wrap-layout handler/root)}]

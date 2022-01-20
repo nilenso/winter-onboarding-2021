@@ -12,7 +12,7 @@
 
 (defn root [_]
   {:title "Landing Page"
-   :content "You are viewing the landing page."})
+   :content (view/index)})
 
 (defn not-found [_]
   {:title "Not Found"

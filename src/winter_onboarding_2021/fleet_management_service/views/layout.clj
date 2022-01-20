@@ -15,10 +15,13 @@
       {:height "32", :width "40"}
       [:use {:xlink:href "#bootstrap"}]]
      [:span {:class "fs-4"} "Fleet Management System"]]
-    [:ul {:class "nav nav-pills"}
-     [:li {:class "nav-item"} [:a {:class "nav-link" :href "/cabs"} "Cabs"]]
-     [:li {:class "nav-item"} [:a {:class "nav-link" :href "/"} "FAQs"]]
-     [:li {:class "nav-item"} [:a {:class "nav-link" :href "/"} "About"]]]]
+    (if (:user request)
+      [:ul {:class "nav nav-pills"}
+       [:li {:class "nav-item"} [:a {:class "nav-link" :href "/cabs"} "Cabs"]]
+       [:li {:class "nav-item"} [:a {:class "nav-link" :href "/users/logout"} "Logout"]]]
+      [:ul {:class "nav nav-pills"}
+       [:li {:class "nav-item"} [:a {:class "nav-link" :href "/users/signup"} "Sign up"]]
+       [:li {:class "nav-item"} [:a {:class "nav-link" :href "/users/login"} "Login"]]])]
    [:body
     [:div {:class "container"}
      (when (:flash request)
