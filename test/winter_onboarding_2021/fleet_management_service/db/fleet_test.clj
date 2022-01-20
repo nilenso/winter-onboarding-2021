@@ -55,7 +55,7 @@
   (testing "Should fetch us a list of first 10 fleets related to an admin user"
     (let [{:keys [user fleets]} (seed-user-fleets-db 5)
           _ (seed-user-fleets-db 5)
-          db-fleets (fleet-db/user-fleets (:users/id user) 0 10)]
+          db-fleets (fleet-db/user-fleets core-db/db-conn (:users/id user) 0 10)]
       (is (= 5 (count fleets)))
       (is (= (map dissoc-irrelevant-keys fleets)
              (map dissoc-irrelevant-keys db-fleets))))))
@@ -66,7 +66,7 @@
     (testing "Should fetch a list of first 3 fleets regardless of the associatd user from the second page"
       (let [offset (utils/offset page-size 2)
             limit 3
-            db-fleets (fleet-db/user-fleets (:users/id user) offset limit)]
+            db-fleets (fleet-db/user-fleets core-db/db-conn (:users/id user) offset limit)]
         (is (= (mapv dissoc-irrelevant-keys (subvec fleets offset (+ offset limit)))
                (mapv dissoc-irrelevant-keys db-fleets)))))))
 
@@ -81,4 +81,4 @@
                                       :fleet-id (:fleets/id (first fleets))})
       (core-db/insert! :users-fleets {:user-id (:users/id manager2)
                                       :fleet-id (:fleets/id (first fleets))})
-      (is (= [manager1 manager2] (fleet-db/managers (first fleets)))))))
+      (is (= [manager1 manager2] (fleet-db/managers core-db/db-conn (first fleets)))))))

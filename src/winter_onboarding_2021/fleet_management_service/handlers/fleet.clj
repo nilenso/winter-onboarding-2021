@@ -29,17 +29,19 @@
    :content (views/create-fleet)})
 
 (defn show-fleets [request]
-  (let [user-id (get-in request [:user :users/id])
-        {:keys [page]} (:params request)
-        page-size (config/get-page-size)
-        current-page (Integer/parseInt (or page "1"))
-        offset (utils/offset page-size current-page)
-        fleets-with-managers (fleet-model/fleets-with-managers user-id
-                                                               offset
-                                                               page-size)
-        fleets-count (fleet-model/total)
-        show-next-page? (<= (* current-page page-size) fleets-count)]
-    {:title "List of fleets"
-     :content (views/show-fleets fleets-with-managers
-                                 current-page
-                                 show-next-page?)}))
+  (jdbc/with-transaction [tx db-core/db-conn]
+    (let [user-id (get-in request [:user :users/id])
+          {:keys [page]} (:params request)
+          page-size (config/get-page-size)
+          current-page (Integer/parseInt (or page "1"))
+          offset (utils/offset page-size current-page)
+          fleets-with-managers (fleet-model/fleets-with-managers tx
+                                                                 user-id
+                                                                 offset
+                                                                 page-size)
+          fleets-count (fleet-model/total)
+          show-next-page? (<= (* current-page page-size) fleets-count)]
+      {:title "List of fleets"
+       :content (views/show-fleets fleets-with-managers
+                                   current-page
+                                   show-next-page?)})))

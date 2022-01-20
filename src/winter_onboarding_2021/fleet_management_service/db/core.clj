@@ -30,8 +30,9 @@
                                            attributes
                                            sql-opts)))
 
-(defn query! [sql-params]
-  (sql/query db-conn sql-params sql-opts))
+(defn query!
+  ([sql-params] (query! db-conn sql-params))
+  ([tx sql-params] (sql/query tx sql-params sql-opts)))
 
 (defn get-by-id! [table id]
   (sql/get-by-id db-conn table id sql-opts))
