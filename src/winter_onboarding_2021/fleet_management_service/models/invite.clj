@@ -12,7 +12,7 @@
   (let [valid-invite (utils/select-keys-from-spec
                       (assoc invite
                              :invites/token (token)
-                             :invites/status "active")
+                             :invites/is-active true)
                       ::specs/invites-create-model)]
     (if (empty? valid-invite)
       errors/no-valid-keys

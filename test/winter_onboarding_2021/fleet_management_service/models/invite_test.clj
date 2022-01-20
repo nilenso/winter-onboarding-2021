@@ -39,7 +39,7 @@
                             :usage-limit 2
                             :valid-until (sqltime/to-sql-date (f/parse (f/formatters :date) "2022-10-13"))
                             :role "manager"
-                            :status "disabled"}
+                            :is-active false}
           resp (invite/create invite)]
       (is (= errors/validation-failed
              resp))))) 

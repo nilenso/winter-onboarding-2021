@@ -18,7 +18,7 @@
   (select-keys invite [:invites/token
                        :invites/created-by
                        :invites/role
-                       :invites/status
+                       :invites/is-active
                        :invites/usage-limit
                        :invites/valid-until]))
 
@@ -32,14 +32,14 @@
           db-invite (invites-db/create {:invites/token token
                                         :invites/created-by (:users/id db-admin-user)
                                         :invites/role "admin"
-                                        :invites/status "active"
+                                        :invites/is-active true
                                         :invites/usage-limit 1
                                         :invites/valid-until (sqltime/to-sql-date (f/parse (f/formatters :date) "2022-10-13"))})
           resp (db-core/find-by-keys! :invites {:token (:invites/token db-invite)})]
       (is (= {:invites/token token
               :invites/created-by (:users/id db-admin-user)
               :invites/role "admin"
-              :invites/status "active"
+              :invites/is-active true
               :invites/usage-limit 1}
              (dissoc (select-keys-from-invite (first resp)) :invites/valid-until)))
       (is (= (sqltime/to-sql-time (to-utc "2022-10-13"))
@@ -49,10 +49,10 @@
   (let [db-user1 (factories/admin)
         invite1 (factories/invite-admin #:invites{:created-by (:users/id db-user1)
                                                   :token (utils/rand-str 8)
-                                                  :status "active"})
+                                                  :is-active true})
         invite2 (factories/invite-manager #:invites{:created-by (:users/id db-user1)
                                                     :token (utils/rand-str 8)
-                                                    :status "active"})
+                                                    :is-active true})
         _ (invites-db/create invite1)
         _ (invites-db/create invite2)
         resp (invites-db/find-by-keys {:invites/created-by (:users/id db-user1)})
