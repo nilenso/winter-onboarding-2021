@@ -123,7 +123,7 @@
 (s/def :invites/valid-until (s/with-gen (s/conformer str->date)
                               date-inst-gen))
 (s/def :invites/role #{"admin", "manager", "driver"})
-(s/def :invites/status #{"active", "disabled"})
+(s/def :invites/is-active boolean?)
 
 (s/def ::invites-create-model
   (s/keys :req [:invites/token
@@ -131,7 +131,7 @@
                 :invites/usage-limit
                 :invites/valid-until
                 :invites/role
-                :invites/status]))
+                :invites/is-active]))
 
 (s/def ::invites-create-form
   (s/keys :req [:invites/created-by
@@ -146,4 +146,4 @@
                 :invites/usage-limit
                 :invites/valid-until
                 :invites/role
-                :invites/status]))
+                :invites/is-active]))

@@ -1,12 +1,12 @@
 (ns winter-onboarding-2021.fleet-management-service.views.invite
   (:require [winter-onboarding-2021.fleet-management-service.views.core :as core]))
 
-(def headers
+(def ^:private headers
   [{:label "Token" :value :invites/token}
    {:label "Role" :value :invites/role}
    {:label "Valid Until" :value :invites/valid-until}
    {:label "Usages Limit" :value :invites/usages-done}
-   {:label "Status" :value :invites/status}])
+   {:label "Status" :value :invites/is-active}])
 
 (defn invite-form []
   [:div.col-md-6
@@ -40,15 +40,17 @@
 (defn format-date [date]
   (.format (java.text.SimpleDateFormat. "MM/dd/yyyy") date))
 
-(defn invite-row [row]
+(defn invite-row [{:invites/keys [id token role valid-until usage-limit is-active]}]
   [:tr
-   [:td [:a {:href (str "/tokens/" (:invites/id row))
+   [:td [:a {:href (str "/tokens/" id)
              :class "link-primary"}
-         (:invites/token row)]]
-   [:td (:invites/role row)]
-   [:td (format-date (:invites/valid-until row))]
-   [:td (:invites/usage-limit row)]
-   [:td (:invites/status row)]])
+         token]]
+   [:td role]
+   [:td (format-date valid-until)]
+   [:td usage-limit]
+   [:td (if (true? is-active)
+          "Active"
+          "Disabled")]])
 
 (defn invites-not-found []
   [:div {:id "content" :class "p-5 col-md-6"}
