@@ -110,11 +110,10 @@
 (s/def :organisations/updated-at inst?)
 
 (s/def ::organisations
-  (s/keys :req [:organisations/id
-                :organisations/name
+  (s/keys :req [:organisations/name
                 :organisations/created-by]))
 
-(s/def ::organisations-all-attr
+(s/def ::organisations-all-attrs
   (s/keys :req [:organisations/id
                 :organisations/name
                 :organisations/created-by

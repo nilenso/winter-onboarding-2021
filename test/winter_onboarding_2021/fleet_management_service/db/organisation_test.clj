@@ -17,5 +17,24 @@
           _ (org-db/create org)
           db-org (first (db-core/query! ["SELECT * FROM organisations;"]))]
       (is (= org (select-keys db-org
-                              [:organisations/id :organisations/name
-                               :organisations/created-by]))))))
+                              [:organisations/name
+                               :organisations/created-by])))))
+
+  (testing "Should not create an organsiation in DB if supplied data is not namespaced"
+    (let [admin (factories/admin)
+          org  {:name "unqualified-keys"
+                :created-by (:users/id admin)}]
+
+      (org-db/create org)
+      (is (empty? (db-core/find-by-keys! :organisations
+                                         #:organisations{:name "unqualified-keys"})))))
+
+  (testing "Should not create an organsiation in DB if org name is empty"
+    (let [admin (factories/admin)
+          org  #:organisations{:name ""
+                               :created-by (:users/id admin)}]
+
+      (org-db/create org)
+      (is (empty? (db-core/find-by-keys! :organisations
+                                         #:organisations{:name ""
+                                                         :created-by (:users/id admin)}))))))
