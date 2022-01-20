@@ -26,9 +26,10 @@
              :style-class "alert alert-danger"
              :message msg}}))
 
-(defn hiccup-attrs [element]
-  (when (map? (second element))
-    (second element)))
+
+(defn hiccup-attributes [hiccup-element]
+  (when (map? (second hiccup-element))
+    (second hiccup-element)))
 
 (defn- namespace-key [ns k]
   (keyword (str (name ns) "/" (name k))))
