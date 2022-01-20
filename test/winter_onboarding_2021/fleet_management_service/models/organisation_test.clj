@@ -19,8 +19,8 @@
     (let [admin (factories/admin)
           admin-id (:users/id admin)
           org (factories/build (factories/overridden-generator {:organisations/created-by admin-id}
-                                                            ::specs/organisations))
-          _ (org-models/create org)
+                                                               ::specs/organisations))
+          _ (org-models/create db-core/db-conn org)
           db-org (first (db-core/query! ["SELECT * FROM organisations;"]))]
       (is (= org (select-relevant-keys db-org)))))
 
@@ -29,7 +29,7 @@
           org  #:organisations{:name "org-1"
                                :created-by (:users/id admin)
                                :extra-key "yoo hoo"}]
-      (org-models/create org)
+      (org-models/create db-core/db-conn org)
       (is (= (select-relevant-keys org)
              (select-relevant-keys (first (db-core/find-by-keys! :organisations
                                                                  #:organisations{:name "org-1"})))))))
@@ -37,7 +37,7 @@
   (testing "Should not create an organsiation in DB if org name is not present"
     (let [admin (factories/admin)
           org  #:organisations{:created-by (:users/id admin)}
-          response (org-models/create org)]
+          response (org-models/create db-core/db-conn org)]
       (is (= (:error errors/validation-failed)
              (:error response)))))
 
@@ -45,13 +45,13 @@
     (let [admin (factories/admin)
           org  {:name "unqualified-keys"
                 :created-by (:users/id admin)}
-          response (org-models/create org)]
+          response (org-models/create db-core/db-conn org)]
       (is (= errors/no-valid-keys response)))))
 
 (deftest create-and-associate
   (testing "Should create an organisation and associate the given user with it"
     (let [admin (factories/admin)
-          _ (org-models/create-and-associate {:organisations/name "foo-org"}
+          _ (org-models/create-and-associate db-core/db-conn {:organisations/name "foo-org"}
                                              admin)
           org (first (db-core/find-by-keys! :organisations {:organisations/name "foo-org"}))
           user (first (user-models/find-by-keys {:users/id (:users/id admin)}))]

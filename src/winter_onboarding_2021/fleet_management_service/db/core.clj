@@ -22,14 +22,18 @@
   :start (connect-db)
   :stop (disconnect-db db-conn))
 
-(defn insert! [table-name attributes]
-  (sql/insert! db-conn
-               table-name
-               attributes
-               sql-opts))
+(defn insert!
+  ([table-name attributes] (insert! db-conn
+                                    table-name
+                                    attributes))
+  ([tx table-name attributes] (sql/insert! tx
+                                           table-name
+                                           attributes
+                                           sql-opts)))
 
-(defn query! [sql-params]
-  (sql/query db-conn sql-params sql-opts))
+(defn query!
+  ([sql-params] (query! db-conn sql-params))
+  ([tx sql-params] (sql/query tx sql-params sql-opts)))
 
 (defn get-by-id! [table id]
   (sql/get-by-id db-conn table id sql-opts))

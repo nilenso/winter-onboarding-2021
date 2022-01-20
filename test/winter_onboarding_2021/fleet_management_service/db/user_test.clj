@@ -6,7 +6,8 @@
             [winter-onboarding-2021.fleet-management-service.error :as errors]
             [winter-onboarding-2021.fleet-management-service.specs :as specs]
             [winter-onboarding-2021.fleet-management-service.factories :as factories]
-            [winter-onboarding-2021.fleet-management-service.models.organisation :as org-models])
+            [winter-onboarding-2021.fleet-management-service.models.organisation :as org-models]
+            [winter-onboarding-2021.fleet-management-service.db.core :as db-core])
   (:import [org.postgresql.util PSQLException]))
 
 (use-fixtures :once fixtures/config fixtures/db-connection)
@@ -72,8 +73,8 @@
 (deftest add-to-org
   (testing "Should add org-id to an user"
     (let [admin (factories/admin)
-          org (org-models/create {:name "org-1" :created-by (:users/id admin)})
-          _ (user-db/add-to-org org admin)
+          org (org-models/create db-core/db-conn {:name "org-1" :created-by (:users/id admin)})
+          _ (user-db/add-to-org db-core/db-conn org admin)
 
           db-admin (first (user-db/find-by-keys {:id (:users/id admin)}))]
 
