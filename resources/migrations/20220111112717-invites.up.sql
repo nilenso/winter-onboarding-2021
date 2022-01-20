@@ -5,7 +5,7 @@ CREATE TABLE invites(
     valid_until TIMESTAMP WITHOUT TIME ZONE DEFAULT (NOW() AT TIME ZONE 'UTC'),
     usage_limit INTEGER NOT NULL DEFAULT 1,
     role TEXT NOT NULL,
-    is-active BOOLEAN,
+    is_active BOOLEAN,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
