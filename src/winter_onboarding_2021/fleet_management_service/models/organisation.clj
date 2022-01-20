@@ -5,13 +5,13 @@
             [winter-onboarding-2021.fleet-management-service.db.organisation :as org-db]
             [winter-onboarding-2021.fleet-management-service.models.user :as user-models]))
 
-(defn create [org]
+(defn create [tx org]
   (let [org-with-valid-keys (utils/select-keys-from-spec org ::specs/organisations)]
     (if (empty? org-with-valid-keys)
       errors/no-valid-keys
-      (org-db/create org-with-valid-keys))))
+      (org-db/create tx org-with-valid-keys))))
 
-(defn create-and-associate [org admin]
-  (let [db-org (create (assoc org
+(defn create-and-associate [tx org admin]
+  (let [db-org (create tx (assoc org
                               :organisations/created-by (:users/id admin)))]
-    (user-models/add-to-org db-org admin)))
+    (user-models/add-to-org tx db-org admin)))

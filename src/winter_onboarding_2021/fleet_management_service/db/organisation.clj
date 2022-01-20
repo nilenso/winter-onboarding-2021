@@ -4,8 +4,8 @@
             [winter-onboarding-2021.fleet-management-service.specs :as specs]
             [winter-onboarding-2021.fleet-management-service.db.core :as db]))
 
-(defn create [organisation]
+(defn create [tx organisation]
   (if (s/valid? ::specs/organisations organisation)
-    (db/insert! :organisations organisation)
+    (db/insert! tx :organisations organisation)
     (let [error-msg (s/explain-str ::specs/organisations organisation)]
       (assoc errors/validation-failed :error-msg error-msg))))
