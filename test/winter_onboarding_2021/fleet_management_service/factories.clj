@@ -55,7 +55,6 @@
 (defn invite-driver
   ([] (invite-driver {}))
   ([overrides] (invite (merge overrides {:invites/role "driver"}))))
-  ([overrides] (user (merge overrides {:users/role "manager"}))))
 
 (defn organisation
   ([] (organisation {}))
