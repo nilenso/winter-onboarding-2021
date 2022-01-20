@@ -1,7 +1,6 @@
 (ns winter-onboarding-2021.fleet-management-service.db.fleet-test
   (:require [clojure.test :refer [deftest is testing use-fixtures]]
             [clojure.spec.alpha :as s]
-            [clojure.spec.gen.alpha :as gen]
             [winter-onboarding-2021.fleet-management-service.specs :as specs]
             [winter-onboarding-2021.fleet-management-service.factories :as factories]
             [winter-onboarding-2021.fleet-management-service.db.fleet :as fleet-db]
@@ -22,8 +21,8 @@
   (let [user (factories/admin)
         fleets (vec (factories/create-list :fleets
                                            num-fleets
-                                           (gen/fmap #(assoc % :fleets/created-by (:users/id user))
-                                                     (s/gen ::specs/fleets))))]
+                                           (factories/overridden-generator {:fleets/created-by (:users/id user)}
+                                                                           ::specs/fleets)))]
     (doall (map #(core-db/insert! :users_fleets {:user-id (:users/id user)
                                                  :fleet-id (:fleets/id %)})
                 fleets))
@@ -39,8 +38,8 @@
 (deftest create-fleet
   (testing "Should create a fleet"
     (let [user-id (:users/id (factories/create :users (s/gen ::specs/users)))
-          fleet (factories/create :fleets (gen/fmap #(assoc % :fleets/created-by user-id)
-                                                    (s/gen ::specs/fleets)))]
+          fleet (factories/create :fleets (factories/overridden-generator {:fleets/created-by user-id}
+                                                                          ::specs/fleets))]
 
       (is (= fleet (first (core-db/query! ["select * from fleets;"]))))))
 
