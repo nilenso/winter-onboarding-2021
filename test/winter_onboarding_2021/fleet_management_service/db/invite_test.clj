@@ -53,14 +53,12 @@
         invite2 (factories/invite-manager #:invites{:created-by (:users/id db-user1)
                                                     :token (utils/rand-str 8)
                                                     :is-active true})
-        _ (invites-db/create invite1)
-        _ (invites-db/create invite2)
         resp (invites-db/find-by-keys {:invites/created-by (:users/id db-user1)})
         resp2 (invites-db/find-by-keys {:invites/created-by (:users/id (utils/uuid))})]
     (testing "Should return list of invites filtered using user-id"
       (is (= [invite1
               invite2]
-             (mapv select-keys-from-invite resp))))
+             resp)))
     (testing "Should return empty list for other user-id"
       (is (= []
              resp2)))))

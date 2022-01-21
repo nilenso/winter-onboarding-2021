@@ -79,3 +79,13 @@
           db-admin (first (user-db/find-by-keys {:id (:users/id admin)}))]
 
       (is (= (:organisations/id org) (:users/org-id db-admin))))))
+
+(deftest user-with-invitation
+  (testing "Should create an user with an invitation")
+  (let [db-admin (factories/admin)
+        invite (factories/invite-admin {:invites/created-by (:users/id db-admin)})
+        new-user (factories/user {:users/role (:invites/role invite)
+                                  :users/invite-id (:invites/id invite)})
+        resp (user-db/create new-user)
+        _ (println resp)]
+    (is (= 1 1))))

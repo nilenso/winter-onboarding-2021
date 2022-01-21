@@ -48,14 +48,12 @@
     (let [db-user1 (factory/admin)
           invite1 (factory/invite-admin #:invites{:created-by (:users/id db-user1)})
           invite2 (factory/invite-manager #:invites{:created-by (:users/id db-user1)})
-          _ (invite/create invite1)
-          _ (invite/create invite2)
           resp (invite/find-by-keys {:invites/created-by (:users/id db-user1)})
           resp2 (invite/find-by-keys {:invites/created-by (:users/id (utils/uuid))})]
       (testing "Should return list of invites filtered using user-id"
         (is (= [invite1
                 invite2]
-               (mapv select-keys-from-invite resp))))
+               resp)))
       (testing "Should return empty list for other user-id"
         (is (= []
                resp2)))
