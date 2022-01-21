@@ -1,7 +1,7 @@
 (ns winter-onboarding-2021.fleet-management-service.handlers.invite-test
   (:require [clojure.test :refer [deftest is testing use-fixtures]]
             [winter-onboarding-2021.fleet-management-service.fixtures :as fixtures]
-            [winter-onboarding-2021.fleet-management-service.handlers.invites :as invites]
+            [winter-onboarding-2021.fleet-management-service.handlers.invite :as invite]
             [winter-onboarding-2021.fleet-management-service.utils :as utils]
             [winter-onboarding-2021.fleet-management-service.db.invite :as invite-db]
             [winter-onboarding-2021.fleet-management-service.factories :as factory]
@@ -13,7 +13,7 @@
 (deftest create-invite
   (testing "Should create a new invite and return invite link"
     (let [user (factory/admin)
-          resp (invites/create {:user user
+          resp (invite/create {:user user
                                 :form-params {:role "manager"
                                               :valid-until "2022-01-29"
                                               :usage-limit "10"}
@@ -30,7 +30,7 @@
              (get-in resp [:flash :message])))))
   (testing "Should return Invalid parameters flash message when incorrect data is sent"
     (let [user (factory/admin)
-          resp (invites/create {:user user
+          resp (invite/create {:user user
                                 :form-params {:role "owner"
                                               :valid-until "2022-01-29"
                                               :usage-limit "10"}
@@ -40,7 +40,7 @@
       (is (= "Invalid parameters sent, try again"
              (get-in resp [:flash :message])))))
   (testing "Should NOT create invite when user is not loggeed in"
-    (let [resp (invites/create {:form-params {:role "owner"
+    (let [resp (invite/create {:form-params {:role "owner"
                                               :valid-until "2022-01-29"
                                               :usage-limit "10"}
                                 :headers {"host" "https://foober.com"}})]
@@ -58,16 +58,16 @@
                               {:form-params (dissoc x :invites/created-by)
                                :user {:users/id user-id}})
                             invites)
-          _ (doall (map invites/create request-list))
-          invites-page (invites/invites-page {:user user})]
+          _ (doall (map invite/create request-list))
+          invites-page (invite/invites-page {:user user})]
       (is (= 10
              (count (hf/hiccup-find [:tbody :tr] (:content invites-page)))))
       (is (= '([:h2 "No invites found"])
-             (hf/hiccup-find [:h2] (:content (invites/invites-page {:user {:users/id (utils/uuid)}})))))))
+             (hf/hiccup-find [:h2] (:content (invite/invites-page {:user {:users/id (utils/uuid)}})))))))
   
   (testing "Should return table of invites"
     (let [invite (factory/invite)
           request {:form-params (dissoc invite :invites/created-by)}
-          resp (invites/invites-page request)]
+          resp (invite/invites-page request)]
       (is (= {:error :user-not-found-in-request}
              resp)))))
