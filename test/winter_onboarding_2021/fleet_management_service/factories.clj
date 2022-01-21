@@ -45,13 +45,16 @@
   ([overrides] (merge (gen/generate (s/gen ::specs/invites-create-form)) overrides)))
 
 (defn invite-admin
-  ([] (invite-admin {}))
-  ([overrides] (invite (merge overrides {:invites/role "admin"}))))
+    ([] (invite-admin {}))
+    ([overrides] (create :invites (gen/fmap #(merge % overrides {:invites/role "admin"})
+                                            (s/gen ::specs/invites)))))
 
 (defn invite-manager
-  ([] (invite-manager {}))
-  ([overrides] (invite (merge overrides {:invites/role "manager"}))))
+    ([] (invite-manager {}))
+    ([overrides] (create :invites (gen/fmap #(merge % overrides {:invites/role "manager"})
+                                            (s/gen ::specs/invites)))))
 
 (defn invite-driver
-  ([] (invite-driver {}))
-  ([overrides] (invite (merge overrides {:invites/role "driver"}))))
+    ([] (invite-driver {}))
+    ([overrides] (create :invite (gen/fmap #(merge % overrides {:invites/role "driver"})
+                                           (s/gen ::specs/invites)))))

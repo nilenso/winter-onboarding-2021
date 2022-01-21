@@ -24,6 +24,9 @@
 (defn- date-inst-gen []
   (gen/return (eval (sqltime/to-sql-time (cljt/from-now (cljt/weeks (rand-int 10)))))))
 
+(defn- capital-string-gen []
+  (gen/return (apply str (take 8 (repeatedly #(char (+ (rand 26) 65)))))))
+
 (def licence-plate-regex #"^[a-zA-Z0-9]*$")
 
 (s/def :cabs/name (s/and string? (comp not empty?)))
@@ -74,6 +77,7 @@
                       email-gen))
 (s/def :users/role #{"admin" "manager" "driver"})
 (s/def :users/password (s/and string? not-empty))
+(s/def :users/invite-id uuid?)
 
 (s/def ::users
   (s/keys :req [:users/name
@@ -86,7 +90,8 @@
                 :users/name
                 :users/role
                 :users/email
-                :users/password]))
+                :users/password
+                :users/invite-id]))
 
 (s/def ::signup-form
   (s/keys :req [:users/name
@@ -116,7 +121,9 @@
 (s/def :pagination/limit (comp not neg-int?))
 
 (s/def :invites/id uuid?)
-(s/def :invites/token (s/and string? (comp not empty?)))
+(s/def :invites/token (s/with-gen (s/and string?
+                                         (fn [x] (every? #(Character/isUpperCase %) x)))
+                        capital-string-gen))
 (s/def :invites/created-by uuid?)
 (s/def :invites/usage-limit (s/with-gen (s/conformer str->long)
                               pos-int-gen))
