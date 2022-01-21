@@ -26,6 +26,10 @@
              :style-class "alert alert-danger"
              :message msg}}))
 
+(defn hiccup-attributes [hiccup-element]
+  (when (map? (second hiccup-element))
+    (second hiccup-element)))
+
 (defn- namespace-key [ns k]
   (keyword (str (name ns) "/" (name k))))
 
@@ -43,3 +47,6 @@
 
 (defn offset [page-size page-number]
   (* page-size (dec page-number)))
+
+(defn rand-str [len]
+  (apply str (take len (repeatedly #(char (+ (rand 26) 65))))))

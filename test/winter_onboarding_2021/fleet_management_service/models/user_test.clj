@@ -3,7 +3,9 @@
             [crypto.password.bcrypt :as password]
             [winter-onboarding-2021.fleet-management-service.factories :as factories]
             [winter-onboarding-2021.fleet-management-service.models.user :as user-model]
-            [winter-onboarding-2021.fleet-management-service.fixtures :as fixtures]))
+            [winter-onboarding-2021.fleet-management-service.fixtures :as fixtures]
+            [winter-onboarding-2021.fleet-management-service.db.core :as db-core]
+            [winter-onboarding-2021.fleet-management-service.models.organisation :as org-models]))
 
 (use-fixtures :once fixtures/config fixtures/db-connection)
 (use-fixtures :each fixtures/clear-db)
@@ -53,3 +55,13 @@
            (dissoc (user-model/authenticate {:users/email "harry@hogwarts.edu"
                                              :users/password "wrongpassword"})
                    :users/password)))))
+
+(deftest add-to-org
+  (testing "Should add org-id to an user"
+    (let [admin (factories/admin)
+          org (org-models/create db-core/db-conn {:name "org-1" :created-by (:users/id admin)})
+          _ (user-model/add-to-org db-core/db-conn org admin)
+
+          db-admin (first (user-model/find-by-keys {:users/id (:users/id admin)}))]
+
+      (is (= (:organisations/id org) (:users/org-id db-admin))))))

@@ -7,7 +7,10 @@
             [winter-onboarding-2021.fleet-management-service.handlers.fleet :as fleet-handlers]
             [winter-onboarding-2021.fleet-management-service.views.layout :as layout]
             [winter-onboarding-2021.fleet-management-service.handlers.core :as handler]
-            [winter-onboarding-2021.fleet-management-service.handlers.user :as user-handlers]))
+            [winter-onboarding-2021.fleet-management-service.handlers.user :as user-handlers]
+            [winter-onboarding-2021.fleet-management-service.handlers.invite :as invite-handlers]
+            [winter-onboarding-2021.fleet-management-service.handlers.dashboard :as dashboard-handlers]
+            [winter-onboarding-2021.fleet-management-service.handlers.organisation :as org-handlers]))
 
 (defn wrap-layout [handler]
   (fn [request]
@@ -38,10 +41,16 @@
                              :post user-handlers/create-user}
                   "/login" {:get user-handlers/login-form
                             :post user-handlers/login}
-                  "/logout" {:get user-handlers/logout}}]
+                  "/logout" {:get user-handlers/logout}
+                  "/dashboard" {:get (authentication-required (wrap-layout dashboard-handlers/index)
+                                                              #{:admin :manager :driver})}}]
         ["fleets" {"" {:get (authentication-required (wrap-layout fleet-handlers/show-fleets) #{:admin})
                        :post (authentication-required fleet-handlers/create-fleet #{:admin})}
                    "/new" {:get (authentication-required (wrap-layout fleet-handlers/new) #{:admin})}}]
+        ["invites" {"" {:post (authentication-required invite-handlers/create #{:admin})}
+                    "/new" {:get (authentication-required (wrap-layout invite-handlers/invites-page) #{:admin})}}]
+        ["organisations" {"/new" {:post (authentication-required org-handlers/create
+                                                                 #{:admin})}}]
         ["healthcheck" {:get (wrap-json-response handler/health-check)}]
         ["index" {:get (wrap-layout handler/index)}]
         ["" {:get (wrap-layout handler/root)}]

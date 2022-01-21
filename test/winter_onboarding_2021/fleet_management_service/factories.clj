@@ -4,6 +4,13 @@
             [winter-onboarding-2021.fleet-management-service.db.core :as db-core]
             [winter-onboarding-2021.fleet-management-service.specs :as specs]))
 
+(defn overridden-generator [overrides spec]
+  (gen/fmap #(merge % overrides)
+            (s/gen spec)))
+
+(defn build [generator]
+  (gen/generate generator))
+
 (defn create [table generator]
   (db-core/insert! table (gen/generate generator)))
 
@@ -32,3 +39,19 @@
   ([] (manager {}))
   ([overrides] (create :users (gen/fmap #(merge % overrides {:users/role "manager"})
                                         (s/gen ::specs/users)))))
+
+(defn invite 
+  ([] (invite {}))
+  ([overrides] (merge (gen/generate (s/gen ::specs/invites-create-form)) overrides)))
+
+(defn invite-admin
+  ([] (invite-admin {}))
+  ([overrides] (invite (merge overrides {:invites/role "admin"}))))
+
+(defn invite-manager
+  ([] (invite-manager {}))
+  ([overrides] (invite (merge overrides {:invites/role "manager"}))))
+
+(defn invite-driver
+  ([] (invite-driver {}))
+  ([overrides] (invite (merge overrides {:invites/role "driver"}))))

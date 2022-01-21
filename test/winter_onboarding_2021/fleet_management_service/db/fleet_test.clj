@@ -1,7 +1,6 @@
 (ns winter-onboarding-2021.fleet-management-service.db.fleet-test
   (:require [clojure.test :refer [deftest is testing use-fixtures]]
             [clojure.spec.alpha :as s]
-            [clojure.spec.gen.alpha :as gen]
             [winter-onboarding-2021.fleet-management-service.specs :as specs]
             [winter-onboarding-2021.fleet-management-service.factories :as factories]
             [winter-onboarding-2021.fleet-management-service.db.fleet :as fleet-db]
@@ -13,8 +12,17 @@
 (use-fixtures :once fixtures/config fixtures/db-connection)
 (use-fixtures :each fixtures/clear-db)
 
-(defn dissoc-irrelevant-keys [fleet]
+(defn- dissoc-irrelevant-keys [fleet]
   (dissoc fleet :fleets/created-at :fleets/org-id))
+
+(defn- select-keys-user [user]
+  (select-keys user [:users/id
+                     :users/name
+                     :users/role
+                     :users/email
+                     :users/created-at
+                     :users/updated-at
+                     :users/org-id]))
 
 (defn seed-user-fleets-db
   "adds `num-fleets` to the DB associated with a sample user"
@@ -22,8 +30,8 @@
   (let [user (factories/admin)
         fleets (vec (factories/create-list :fleets
                                            num-fleets
-                                           (gen/fmap #(assoc % :fleets/created-by (:users/id user))
-                                                     (s/gen ::specs/fleets))))]
+                                           (factories/overridden-generator {:fleets/created-by (:users/id user)}
+                                                                           ::specs/fleets)))]
     (doall (map #(core-db/insert! :users_fleets {:user-id (:users/id user)
                                                  :fleet-id (:fleets/id %)})
                 fleets))
@@ -39,8 +47,8 @@
 (deftest create-fleet
   (testing "Should create a fleet"
     (let [user-id (:users/id (factories/create :users (s/gen ::specs/users)))
-          fleet (factories/create :fleets (gen/fmap #(assoc % :fleets/created-by user-id)
-                                                    (s/gen ::specs/fleets)))]
+          fleet (factories/create :fleets (factories/overridden-generator {:fleets/created-by user-id}
+                                                                          ::specs/fleets))]
 
       (is (= fleet (first (core-db/query! ["select * from fleets;"]))))))
 
@@ -81,4 +89,5 @@
                                       :fleet-id (:fleets/id (first fleets))})
       (core-db/insert! :users-fleets {:user-id (:users/id manager2)
                                       :fleet-id (:fleets/id (first fleets))})
-      (is (= [manager1 manager2] (fleet-db/managers core-db/db-conn (first fleets)))))))
+      (is (= (mapv select-keys-user [manager1 manager2])
+             (fleet-db/managers core-db/db-conn (first fleets)))))))

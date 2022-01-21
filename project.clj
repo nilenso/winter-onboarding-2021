@@ -20,7 +20,8 @@
                  [com.taoensso/timbre "5.1.0"]
                  [io.aviso/pretty "1.1"]
                  [com.github.seancorfield/honeysql "2.1.833"]
-                 [crypto-password "0.3.0"]]
+                 [crypto-password "0.3.0"]
+                 [clj-time "0.15.2"]]
   :aliases {"migrations" ["run" "-m" "winter-onboarding-2021.fleet-management-service.migration/run-migratus"]
             "migrate-licence-plate" ["run" "-m" "format-licence-plate/run-data-migration"]}
   :profiles {:uberjar {:aot :all}
