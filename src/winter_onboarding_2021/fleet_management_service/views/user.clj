@@ -25,6 +25,8 @@
      :type "password"
      :name "password")]
    [:input {:type "hidden" :name "role" :value "admin"}]
+   [:div {:class "g-recaptcha"
+          :data-sitekey "6Lc1XSkeAAAAAJUFg_Zv7qQ7w4bZ2v2sH7Y_cNW3"}]
    [:button {:type "submit" :class "btn btn-primary"} "Submit"]])
 
 (defn login-form []

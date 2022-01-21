@@ -1,5 +1,6 @@
 (ns winter-onboarding-2021.fleet-management-service.handlers.user
   (:require [ring.util.response :as response]
+            [clojure.data.json :as json]
             [clojure.spec.alpha :as s]
             [crypto.password.bcrypt :as password]
             [hiccup.page :refer [html5]]
@@ -8,7 +9,8 @@
             [winter-onboarding-2021.fleet-management-service.models.user :as user-model]
             [winter-onboarding-2021.fleet-management-service.specs :as specs]
             [winter-onboarding-2021.fleet-management-service.views.layout :as layout]
-            [winter-onboarding-2021.fleet-management-service.utils :as utils]))
+            [winter-onboarding-2021.fleet-management-service.utils :as utils]
+            [clj-http.client :as client]))
 
 (defn signup-form [req]
   (let [user (:user req)]
@@ -19,20 +21,34 @@
                                  (view/signup-form))))
       (response/redirect "/users/dashboard"))))
 
-(defn user-exist? [email]
+(defn- user-exist? [email]
   (not-empty (user-model/find-by-keys {:users/email email})))
+
+(defn- recaptcha-invalid? [g-recaptcha-response]
+  (try (let [res (client/post "https://www.google.com/recaptcha/api/siteverify"
+                              {:form-params {:secret "6Lc1XSkeAAAAAEsQ0OQsFsLNlphwPQd9_1JUjvB8"
+                                             :response g-recaptcha-response}})
+             body (json/read-str (:body res))]
+         (false? (get-in body ["success"])))
+       (catch Exception e
+         (str "Could not verify reCAPTCHA" (.getMessage e)))))
 
 (defn create-user [{:keys [form-params]}]
   (let [ns-form-params (utils/namespace-keys :users form-params)
-        validated-user (s/conform ::specs/signup-form ns-form-params)]
+        validated-user (s/conform ::specs/signup-form ns-form-params)
+        g-recaptcha-response (:g-recaptcha-response form-params)]
     (cond
       (s/invalid? validated-user) (merge (utils/flash-msg "Could not create user, enter valid details!" false)
                                          (response/redirect "/users/signup"))
       (user-exist? (:email form-params)) (merge (utils/flash-msg "User already exists, use different email!" false)
                                                 (response/redirect "/users/signup"))
+      (empty? g-recaptcha-response) (merge (utils/flash-msg "Please complete reCAPTCHA" false)
+                                           (response/redirect "/users/signup"))
+      (recaptcha-invalid? g-recaptcha-response) (merge (utils/flash-msg "You are not a human." false)
+                                                       (response/redirect "/users/signup"))
       :else (let [created-user (user-model/create (assoc validated-user
                                                          :users/password (password/encrypt
-                                                                    (:users/password validated-user))))]
+                                                                          (:users/password validated-user))))]
               (merge (utils/flash-msg (format "User %s created successfully!" (:users/name created-user)) true)
                      (response/redirect "/users/signup"))))))
 
@@ -80,7 +96,7 @@
   (let [session-id (get-in req [:cookies :session-id :value])]
     (session/delete (java.util.UUID/fromString session-id))
     (merge (response/redirect "/")
-        {:cookies {"session-id" {:value nil :path "/" :max-age 0}}})))
+           {:cookies {"session-id" {:value nil :path "/" :max-age 0}}})))
 
 (defn not-authorized [_]
   (merge (utils/flash-msg "You are not authorized" false)

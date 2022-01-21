@@ -27,19 +27,24 @@
 (defn- get-host [req]
   (get-in req [:headers "host"]))
 
-(defn create [req]
+(defn create [{:keys [user] :as req}]
   (let [invite-params (s/conform ::specs/invites-create-form (invite-create-params req))
         host (get-host req)]
     (if (s/invalid? invite-params)
-      (-> (utils/flash-msg "Invalid parameters sent, try again" false)
-          (merge (response/redirect "/invites/new")))
-      (let [resp (model/create invite-params)
-            err (:error resp)]
-        (condp = err
-          :generic-error (merge (response/redirect "/invites/new")
-                                (utils/flash-msg "Some error has occured, please try again." false))
-          :validation-failed (merge (response/redirect "invites/new")
-                                    (utils/flash-msg "Some error has occured, please try again." false))
-          nil (merge (response/redirect "/invites/new")
-                     (utils/flash-msg (link-from-token-msg host (:invites/token resp))
-                                      true)))))))
+      (merge (response/redirect "/invites/new")
+             (utils/flash-msg "Invalid parameters sent, try again" false))
+      (if (nil? (:users/org-id user))
+        (merge (response/redirect "/invites/new")
+               (utils/flash-msg "You are not associated to any organisation. 
+                                 Please create/join organisation to invite users."
+                                false))
+        (let [resp (model/create invite-params)
+              err (:error resp)]
+          (condp = err
+            :generic-error (merge (response/redirect "/invites/new")
+                                  (utils/flash-msg "Some error has occured, please try again." false))
+            :validation-failed (merge (response/redirect "invites/new")
+                                      (utils/flash-msg "Some error has occured, please try again." false))
+            nil (merge (response/redirect "/invites/new")
+                       (utils/flash-msg (link-from-token-msg host (:invites/token resp))
+                                        true))))))))

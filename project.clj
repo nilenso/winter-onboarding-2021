@@ -21,7 +21,9 @@
                  [io.aviso/pretty "1.1"]
                  [com.github.seancorfield/honeysql "2.1.833"]
                  [crypto-password "0.3.0"]
-                 [clj-time "0.15.2"]]
+                 [clj-time "0.15.2"]
+                 [clj-http "3.12.3"]
+                 [org.clojure/data.json "2.4.0"]]
   :aliases {"migrations" ["run" "-m" "winter-onboarding-2021.fleet-management-service.migration/run-migratus"]
             "migrate-licence-plate" ["run" "-m" "format-licence-plate/run-data-migration"]}
   :profiles {:uberjar {:aot :all}

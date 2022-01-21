@@ -24,6 +24,17 @@
              (select-relevant-keys (first (user-model/find-by-keys
                                            {:users/email (:users/email user)}))))))))
 
+(deftest user-with-invitation
+  (testing "Should create an user with an invitation")
+  (let [db-admin (factories/admin)
+        invite (factories/invite-admin {:invites/created-by (:users/id db-admin)})
+        new-user (factories/user {:users/role (:invites/role invite)
+                                  :users/invite-id (:invites/id invite)})
+        _ (user-model/create new-user)
+        db-user (user-model/find-by-keys {:users/email (:users/email new-user)})]
+    (is (= (:invites/id invite)
+           (:users/invite-id (first db-user))))))
+
 (deftest find-by-keys
   (testing "Should return a user given a key-map(properties)"
     (let [user (factories/admin)]
