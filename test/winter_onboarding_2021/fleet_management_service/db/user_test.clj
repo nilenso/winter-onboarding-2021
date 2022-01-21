@@ -86,6 +86,7 @@
         invite (factories/invite-admin {:invites/created-by (:users/id db-admin)})
         new-user (factories/user {:users/role (:invites/role invite)
                                   :users/invite-id (:invites/id invite)})
-        resp (user-db/create new-user)
-        _ (println resp)]
-    (is (= 1 1))))
+        _ (user-db/create new-user)
+        db-user (user-db/find-by-keys {:users/email (:users/email new-user)})]
+    (is (= (:invites/id invite)
+           (:users/invite-id (first db-user))))))

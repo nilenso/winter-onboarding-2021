@@ -8,6 +8,10 @@
    (include-css "/public/css/bootstrap.min.css")
    (include-js "/public/js/jquery-3.6.0.min.js")
    (include-js "/public/js/bootstrap.bundle.min.js")
+   [:script
+    {:defer "defer"
+     :async "async"
+     :src "https://www.google.com/recaptcha/api.js"}]
    [:header {:class "d-flex flex-wrap justify-content-center py-3 mb-4 border-bottom"}
     [:a {:class "d-flex align-items-center mb-3 mb-md-0 me-md-auto text-dark text-decoration-none"
          :href "/"}
