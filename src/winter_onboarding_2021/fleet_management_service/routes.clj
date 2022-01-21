@@ -8,7 +8,7 @@
             [winter-onboarding-2021.fleet-management-service.views.layout :as layout]
             [winter-onboarding-2021.fleet-management-service.handlers.core :as handler]
             [winter-onboarding-2021.fleet-management-service.handlers.user :as user-handlers]
-            [winter-onboarding-2021.fleet-management-service.handlers.invites :as invite-handlers]))
+            [winter-onboarding-2021.fleet-management-service.handlers.invite :as invite-handlers]))
 
 (defn wrap-layout [handler]
   (fn [request]

@@ -13,17 +13,6 @@
 (use-fixtures :once fixtures/config fixtures/db-connection)
 (use-fixtures :each fixtures/clear-db)
 
-#_#:users{:role "manager"
-          :updated-at
-          #inst "2022-01-20T09:59:24.673398000-00:00"
-          :email "rE9Z78iP4uBLsQ@PYp80.4.F94OT541EJG1A"
-          :name "7t0xw9bYxvqc31XSy3d1by0"
-          :org-id nil
-          :id #uuid "a1b95d5b-289b-4193-9093-e75bc8332575"
-          :created-at
-          #inst "2022-01-20T09:59:24.673398000-00:00"
-          :invite-id nil}
-
 (defn- dissoc-irrelevant-keys [fleet]
   (dissoc fleet :fleets/created-at :fleets/org-id))
 
@@ -100,4 +89,5 @@
                                       :fleet-id (:fleets/id (first fleets))})
       (core-db/insert! :users-fleets {:user-id (:users/id manager2)
                                       :fleet-id (:fleets/id (first fleets))})
-      (is (= [(select-keys-user manager1) (select-keys-user manager2)] (fleet-db/managers (first fleets)))))))
+      (is (= (mapv select-keys-user [manager1 manager2])
+             (fleet-db/managers (first fleets)))))))

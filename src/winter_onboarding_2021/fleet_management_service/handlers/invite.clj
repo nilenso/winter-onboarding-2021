@@ -1,4 +1,4 @@
-(ns winter-onboarding-2021.fleet-management-service.handlers.invites
+(ns winter-onboarding-2021.fleet-management-service.handlers.invite
   (:require [clojure.spec.alpha :as s]
             [ring.util.response :as response]
             [winter-onboarding-2021.fleet-management-service.views.invite :as view]
@@ -17,11 +17,7 @@
   (let [link (str host
                   "/users/signup?token="
                   token)]
-    (str "Invite created successfully. <br> Link - <a href="
-         link
-         ">"
-         link
-         "</a>")))
+    (format "Invite created successfully. <br> Link - <a href=%s>%s</a>" link link)))
 
 (defn- invite-create-params [{:keys [user form-params]}]
   (assoc (utils/namespace-keys :invites form-params)
