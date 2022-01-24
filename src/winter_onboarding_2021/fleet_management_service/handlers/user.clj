@@ -31,7 +31,8 @@
              body (json/read-str (:body res))]
          (false? (get-in body ["success"])))
        (catch Exception e
-         (str "Could not verify reCAPTCHA" (.getMessage e)))))
+         (println "Could not verify reCAPTCHA" (.getMessage e))
+         true)))
 
 (defn create-user [{:keys [form-params]}]
   (let [ns-form-params (utils/namespace-keys :users form-params)

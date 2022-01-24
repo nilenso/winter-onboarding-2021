@@ -7,7 +7,7 @@
   (:import [org.postgresql.util PSQLException]))
 
 (defn create [user]
-  (let [user-with-valid-keys (utils/select-keys-from-spec user ::specs/users)]
+  (let [user-with-valid-keys (utils/select-keys-from-spec user ::specs/users-all-attr)]
     (if (empty? user-with-valid-keys)
       errors/no-valid-keys
       (try (user/create user-with-valid-keys)
