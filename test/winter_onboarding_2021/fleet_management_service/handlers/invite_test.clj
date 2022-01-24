@@ -5,19 +5,24 @@
             [winter-onboarding-2021.fleet-management-service.utils :as utils]
             [winter-onboarding-2021.fleet-management-service.db.invite :as invite-db]
             [winter-onboarding-2021.fleet-management-service.factories :as factory]
+            [winter-onboarding-2021.fleet-management-service.handlers.organisation :as organisation]
+            [winter-onboarding-2021.fleet-management-service.models.user :as user]
             [hiccup-find.core :as hf]))
 
 (use-fixtures :once fixtures/config fixtures/db-connection)
 (use-fixtures :each fixtures/clear-db)
 
 (deftest create-invite
-  (testing "Should create a new invite and return invite link"
+  (testing "Should create a new invite and return invite link when user has organisation associated."
     (let [user (factory/admin)
-          resp (invite/create {:user user
-                                :form-params {:role "manager"
-                                              :valid-until "2022-01-29"
-                                              :usage-limit "10"}
-                                :headers {"host" "https://foober.com"}})
+          _ (organisation/create {:user user
+                                  :form-params {:name "First Organization"}})
+          user-with-org (first (user/find-by-keys {:users/id (:users/id user)}))
+          resp (invite/create {:user user-with-org
+                               :form-params {:role "manager"
+                                             :valid-until "2022-01-29"
+                                             :usage-limit "10"}
+                               :headers {"host" "https://foober.com"}})
           db-resp (invite-db/find-by-keys {:invites/created-by (:users/id user)})]
       (is (= 302
              302))
@@ -47,16 +52,18 @@
       (is (= 302
              302))
       (is (= "Invalid parameters sent, try again"
-             (get-in resp [:flash :message]))))))
+             (get-in resp [:flash :message])))))) 
 
 (deftest get-invites-table
   (testing "Should return table of invites"
     (let [user (factory/admin)
-          user-id (:users/id user)
+          _ (organisation/create {:user user
+                                  :form-params {:name "First Organization"}})
+          user-with-org (first (user/find-by-keys {:users/id (:users/id user)}))
           invites (take 10 (repeatedly factory/invite))
           request-list (map (fn [x]
                               {:form-params (dissoc x :invites/created-by)
-                               :user {:users/id user-id}})
+                               :user user-with-org})
                             invites)
           _ (doall (map invite/create request-list))
           invites-page (invite/invites-page {:user user})]

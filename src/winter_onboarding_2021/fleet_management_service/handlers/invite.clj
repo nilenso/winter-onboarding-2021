@@ -28,7 +28,8 @@
   (get-in req [:headers "host"]))
 
 (defn create [{:keys [user] :as req}]
-  (let [invite-params (s/conform ::specs/invites-create-form (invite-create-params req))
+  (let [raw-invite-params (invite-create-params req)
+        invite-params (s/conform ::specs/invites-create-form raw-invite-params)
         host (get-host req)]
     (if (s/invalid? invite-params)
       (merge (response/redirect "/invites/new")

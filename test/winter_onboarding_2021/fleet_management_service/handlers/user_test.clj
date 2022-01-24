@@ -2,6 +2,8 @@
   (:require [clojure.test :refer [deftest testing is use-fixtures]]
             [crypto.password.bcrypt :as password]
             [hiccup.page :refer [html5]]
+            [clj-http.client :as client]
+            [clojure.data.json :as json]
             [winter-onboarding-2021.fleet-management-service.handlers.user :as handler]
             [winter-onboarding-2021.fleet-management-service.models.user :as user-model]
             [winter-onboarding-2021.fleet-management-service.utils :as utils]
@@ -16,57 +18,84 @@
 (use-fixtures :each fixtures/clear-db)
 
 (deftest user-create
-  (testing "Should create a user in db"
-    (let [user {:name "Severus Snape"
-                :email "s.snape@hogwarts.edu"
-                :role "admin"
-                :password "lily"}
-          response (handler/create-user {:form-params user})
-          created-user (first (user-model/find-by-keys {:users/email (:email user)}))]
+  (with-redefs [client/post (constantly {:body (json/json-str {"success" true})})]
+    (testing "Should create a user in db"
+      (let [user {:name "Severus Snape"
+                  :email "s.snape@hogwarts.edu"
+                  :role "admin"
+                  :password "lily"
+                  :g-recaptcha-response "abcd123"}
+            response (handler/create-user {:form-params user})
+            created-user (first (user-model/find-by-keys {:users/email (:email user)}))]
 
-      (is (= 302 (:status response)))
+        (is (= 302 (:status response)))
 
-      (is (= {:success true
-              :style-class "alert alert-success"
-              :message (format "User %s created successfully!" (:users/name created-user))}
-             (:flash response)))
+        (is (= {:success true
+                :style-class "alert alert-success"
+                :message (format "User %s created successfully!" (:users/name created-user))}
+               (:flash response)))
 
-      (is (= #:users{:name "Severus Snape"
-                     :role "admin"
-                     :email "s.snape@hogwarts.edu"}
-             (select-keys created-user
-                     [:users/name
-                     :users/role
-                     :users/email])))
-      (is (password/check "lily" (:users/password created-user)))))
+        (is (= #:users{:name "Severus Snape"
+                       :role "admin"
+                       :email "s.snape@hogwarts.edu"}
+               (select-keys created-user
+                            [:users/name
+                             :users/role
+                             :users/email])))
+        (is (password/check "lily" (:users/password created-user)))))
 
-  (testing "Should flash a message if user already exist"
-    (let [user {:name "Severus Snape"
-                :email "s.snape@hogwarts.edu"
-                :role "admin"
-                :password "lily"}
-          response (handler/create-user {:form-params user})]
-      (is (= {:error true
-              :style-class "alert alert-danger"
-              :message "User already exists, use different email!"}
-             (:flash response)))))
-  (testing "Should flash a message invalid details are passed"
+    (testing "Should flash a message if user already exist"
+      (let [user {:name "Severus Snape"
+                  :email "s.snape@hogwarts.edu"
+                  :role "admin"
+                  :password "lily"
+                  :g-recaptcha-response "abcd123"}
+            response (handler/create-user {:form-params user})]
+        (is (= {:error true
+                :style-class "alert alert-danger"
+                :message "User already exists, use different email!"}
+               (:flash response)))))
+    (testing "Should flash a message invalid details are passed"
+      (let [user {:name "Dumbledore"
+                  :email "albus@hogwarts"
+                  :password "fawkes"
+                  :g-recaptcha-response "abcd123"}
+            response (handler/create-user {:form-params user})]
+        (is (= {:error true
+                :style-class "alert alert-danger"
+                :message "Could not create user, enter valid details!"}
+               (:flash response)))))
+    (testing "Should flash a message 'Please complete reCAPTCHA' when CAPTCHA not solved"
+      (let [user {:name "Dumbledore"
+                  :email "albus@hogwarts.com"
+                  :role "admin"
+                  :password "fawkes"}
+            response (handler/create-user {:form-params user})]
+        (is (= {:error true
+                :style-class "alert alert-danger"
+                :message "Please complete reCAPTCHA"}
+               (:flash response))))))
+  (testing "Should flash a message 'You are not a human.' when CAPTCHA solved, but is is wrong"
     (let [user {:name "Dumbledore"
-                :email "albus@hogwarts"
-                :password "fawkes"}
+                :email "albus@hogwarts.com"
+                :role "admin"
+                :password "fawkes"
+                :g-recaptcha-response "abcd123"}
           response (handler/create-user {:form-params user})]
       (is (= {:error true
               :style-class "alert alert-danger"
-              :message "Could not create user, enter valid details!"}
+              :message "You are not a human."}
              (:flash response))))))
 
 (deftest user-login
   (testing "Correct login credentials, should redirect to user dashboard"
-    (with-redefs [utils/uuid (fn [] (java.util.UUID/fromString "9088992d-d0f4-4207-9b95-c934ad071c32"))]
+    (with-redefs [utils/uuid (fn [] (java.util.UUID/fromString "9088992d-d0f4-4207-9b95-c934ad071c32"))
+                  client/post (constantly {:body (json/json-str {"success" true})})]
       (let [user {:name "Severus Snape"
                   :email "s.snape@hogwarts.edu"
                   :role "admin"
-                  :password "lily"}
+                  :password "lily"
+                  :g-recaptcha-response "abcd123"}
             _ (handler/create-user {:form-params user})
             response (handler/login {:params
                                      {:email "s.snape@hogwarts.edu" :password "lily"}})]
@@ -75,41 +104,43 @@
                (get-in response [:headers "Location"])))
         (is (= "" (:body response)))
         (is (= (java.util.UUID/fromString "9088992d-d0f4-4207-9b95-c934ad071c32")
-               (get-in response [:cookies "session-id" :value]))))))
+               (get-in response [:cookies "session-id" :value])))))
 
-  (testing "No email exists in the database, should redirect to login page with error flash message"
-    (let [user {:name "Severus Snape"
-                :email "foo@gmail.com"
-                :password "lily"}
-          response (handler/login {:params
-                                   {:email (:email user) :password (:password user)}})]
+    (testing "No email exists in the database, should redirect to login page with error flash message"
+      (let [user {:name "Severus Snape"
+                  :email "foo@gmail.com"
+                  :password "lily"}
+            response (handler/login {:params
+                                     {:email (:email user) :password (:password user)}})]
 
-      (is (= 302 (:status response)))
-      (is (= (str "/users/login")
-             (get-in response [:headers "Location"])))
-      (is (= {:error true
-              :style-class "alert alert-danger"
-              :message "User with email not found"}
-             (:flash response)))
-      (is (= "" (:body response)))))
+        (is (= 302 (:status response)))
+        (is (= (str "/users/login")
+               (get-in response [:headers "Location"])))
+        (is (= {:error true
+                :style-class "alert alert-danger"
+                :message "User with email not found"}
+               (:flash response)))
+        (is (= "" (:body response))))))
 
   (testing "Password is wrong, should redirect to login page with error flash message"
-    (let [user {:name "Severus Snape"
-                :email "foo@gmail.com"
-                :role "admin"
-                :password "lily"}
-          _ (handler/create-user {:form-params user})
-          response (handler/login {:params
-                                   {:email (:email user) :password "notthecorrectpassword"}})]
+    (with-redefs [client/post (constantly {:body (json/json-str {"success" true})})]
+      (let [user {:name "Severus Snape"
+                  :email "foo@gmail.com"
+                  :role "admin"
+                  :password "lily"
+                  :g-recaptcha-response "abcd123"}
+            _ (handler/create-user {:form-params user})
+            response (handler/login {:params
+                                     {:email (:email user) :password "notthecorrectpassword"}})]
 
-      (is (= 302 (:status response)))
-      (is (= (str "/users/login")
-             (get-in response [:headers "Location"])))
-      (is (= {:error true
-              :style-class "alert alert-danger"
-              :message "Wrong password"}
-             (:flash response)))
-      (is (= "" (:body response))))))
+        (is (= 302 (:status response)))
+        (is (= (str "/users/login")
+               (get-in response [:headers "Location"])))
+        (is (= {:error true
+                :style-class "alert alert-danger"
+                :message "Wrong password"}
+               (:flash response)))
+        (is (= "" (:body response)))))))
 
 (deftest authorization
   (testing "Should return a 302 response with flash message of \"not authorized\""
