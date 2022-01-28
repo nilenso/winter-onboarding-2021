@@ -98,9 +98,9 @@
 
     (testing "Should return us the members of given organisation & role"
       (is (= (user-db/find-by-keys {:id (:users/id admin)})
-             (user-db/members org "admin")))
-      (is (= managers (user-db/members org "manager")))
-      (is (= drivers (user-db/members org "driver"))))
+             (user-db/members org ["admin"])))
+      (is (= managers (user-db/members org ["manager"])))
+      (is (= drivers (user-db/members org ["driver"]))))
 
     (testing "Should not return us users who are not in any organisation"
       (let [non-member-managers (->> ::specs/users
@@ -110,9 +110,9 @@
                                     (factories/overridden-generator {:users/role "driver"})
                                     (factories/create-list :users 2))]
         (is (not= non-member-managers
-                  (user-db/members org "manager")))
+                  (user-db/members org ["manager"])))
         (is (not= non-member-drivers
-                  (user-db/members org "driver")))))
+                  (user-db/members org ["driver"])))))
 
     (testing "Should not return us the members of another organisation"
       (let [another-admin (factories/admin)
@@ -128,6 +128,6 @@
                                                                      :users/org-id (:organisations/id another-org)})
                                     (factories/create-list :users 2))]
         (is (not= non-member-managers
-                  (user-db/members org "manager")))
+                  (user-db/members org ["manager"])))
         (is (not= non-member-drivers
-                  (user-db/members org "driver")))))))
+                  (user-db/members org ["driver"])))))))

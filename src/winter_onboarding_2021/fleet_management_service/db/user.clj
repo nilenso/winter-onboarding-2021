@@ -20,6 +20,8 @@
                                 (h/set {:org-id (:organisations/id org)})
                                 (h/where [:= :id (:users/id user)])))))
 
-(defn members [org role]
-  (db/find-by-keys! :users {:role role
-                            :org-id (:organisations/id org)}))
+(defn members [org roles]
+  (db/query! (sql/format (-> (h/select :*)
+                             (h/from :users)
+                             (h/where [:and [:in :role roles]
+                                       [:= :org-id (:organisations/id org)]])))))
