@@ -25,7 +25,7 @@
                                :headers {"host" "https://foober.com"}})
           db-resp (invite-db/find-by-keys {:invites/created-by (:users/id user)})]
       (is (= 302
-             302))
+             (:status resp)))
       (is (= (str "Invite created successfully. <br> Link - <a href=https://foober.com/users/signup?token="
                   (:invites/token (first db-resp))
                   ">"
@@ -41,7 +41,7 @@
                                               :usage-limit "10"}
                                 :headers {"host" "https://foober.com"}})]
       (is (= 302
-             302))
+             (:status resp)))
       (is (= "Invalid parameters sent, try again"
              (get-in resp [:flash :message])))))
   (testing "Should NOT create invite when user is not loggeed in"
@@ -50,7 +50,7 @@
                                               :usage-limit "10"}
                                 :headers {"host" "https://foober.com"}})]
       (is (= 302
-             302))
+             (:status resp)))
       (is (= "Invalid parameters sent, try again"
              (get-in resp [:flash :message])))))) 
 
@@ -78,3 +78,4 @@
           resp (invite/invites-page request)]
       (is (= {:error :user-not-found-in-request}
              resp)))))
+

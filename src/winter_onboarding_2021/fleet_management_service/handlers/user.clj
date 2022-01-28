@@ -11,15 +11,17 @@
             [winter-onboarding-2021.fleet-management-service.specs :as specs]
             [winter-onboarding-2021.fleet-management-service.views.layout :as layout]
             [winter-onboarding-2021.fleet-management-service.utils :as utils]
-            [winter-onboarding-2021.fleet-management-service.config :as config]))
+            [winter-onboarding-2021.fleet-management-service.config :as config]
+            [winter-onboarding-2021.fleet-management-service.models.invite :as invite]))
 
 (defn signup-form [req]
-  (let [user (:user req)]
+  (let [user (:user req)
+        token (get-in req [:params :token])]
     (if (nil? user)
       (response/response (html5 (layout/application
                                  req
                                  "Sign up"
-                                 (view/signup-form))))
+                                 (view/signup-form token))))
       (response/redirect "/users/dashboard"))))
 
 (defn- user-exist? [email]
@@ -34,20 +36,45 @@
        (catch Exception e
          (println "Could not verify reCAPTCHA" (.getMessage e))
          true)))
- 
+
+(defn- error-redirect [msg redirect-url]
+  (merge (utils/flash-msg msg false)
+         (response/redirect redirect-url)))
+
+(defn- create-user-via-invite [token validated-user]
+  (let [invite (first (invite/find-by-keys {:invites/token token}))]
+    (cond
+      (nil? invite) (error-redirect "Invite Token not found"
+                                    "/users/signup")
+      :else (let [user (first (user-model/find-by-keys {:users/id (:invites/created-by invite)}))
+                  org-id (:users/org-id user)
+                  created-user (user-model/create (assoc validated-user
+                                                         :users/password (password/encrypt
+                                                                          (:users/password validated-user))
+                                                         :users/role (:invites/role invite)
+                                                         :users/invite-id (:invites/id invite)
+                                                         :users/org-id org-id))]
+              (merge (utils/flash-msg (format "User %s created successfully in organisation %s"
+                                              (:users/name created-user)
+                                              (:users/org-id created-user))
+                                      true)
+                     (response/redirect "/users/signup"))))))
+
 (defn create-user [{:keys [form-params]}]
   (let [ns-form-params (utils/namespace-keys :users form-params)
         validated-user (s/conform ::specs/signup-form ns-form-params)
-        g-recaptcha-response (:g-recaptcha-response form-params)]
+        g-recaptcha-response (:g-recaptcha-response form-params)
+        token (:token form-params)]
     (cond
-      (s/invalid? validated-user) (merge (utils/flash-msg "Could not create user, enter valid details!" false)
-                                         (response/redirect "/users/signup"))
-      (user-exist? (:email form-params)) (merge (utils/flash-msg "User already exists, use different email!" false)
-                                                (response/redirect "/users/signup"))
-      (empty? g-recaptcha-response) (merge (utils/flash-msg "Please complete reCAPTCHA" false)
-                                           (response/redirect "/users/signup"))
-      (recaptcha-invalid? g-recaptcha-response) (merge (utils/flash-msg "You are not a human." false)
-                                                       (response/redirect "/users/signup"))
+      (s/invalid? validated-user) (error-redirect "Could not create user, enter valid details!"
+                                                  "/users/signup")
+      (user-exist? (:email form-params)) (error-redirect "User already exists, use different email!"
+                                                         "/users/signup")
+      (empty? g-recaptcha-response) (error-redirect "Please complete reCAPTCHA"
+                                                    "/users/signup")
+      (recaptcha-invalid? g-recaptcha-response) (error-redirect "You are not a human."
+                                                                "/users/signup")
+      (some? token) (create-user-via-invite token validated-user)
       :else (let [created-user (user-model/create (assoc validated-user
                                                          :users/password (password/encrypt
                                                                           (:users/password validated-user))))]
@@ -107,4 +134,3 @@
 (defn not-logged-in [_]
   (merge (utils/flash-msg "You are not logged in" false)
          (response/redirect "/users/login")))
-   

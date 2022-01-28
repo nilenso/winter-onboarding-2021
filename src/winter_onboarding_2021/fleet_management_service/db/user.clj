@@ -7,7 +7,8 @@
             [winter-onboarding-2021.fleet-management-service.specs :as specs]))
 
 (defn create [user]
-  (if (s/valid? ::specs/users user)
+  (if (or (s/valid? ::specs/users user)
+          (s/valid? ::specs/user-with-invite-token user))
     (db/insert! :users user)
     (let [error-msg (s/explain-str ::specs/users user)]
       (assoc error/validation-failed :error-msg error-msg))))

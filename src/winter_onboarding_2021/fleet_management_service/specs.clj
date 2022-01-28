@@ -78,6 +78,7 @@
 (s/def :users/role #{"admin" "manager" "driver"})
 (s/def :users/password (s/and string? not-empty))
 (s/def :users/invite-id uuid?)
+(s/def :users/org-id uuid?)
 
 (s/def ::users
   (s/keys :req [:users/name
@@ -85,13 +86,22 @@
                 :users/email
                 :users/password]))
 
+(s/def ::user-with-invite-token
+  (s/keys :req [:users/name
+                :users/role
+                :users/email
+                :users/password
+                :users/org-id
+                :users/invite-id]))
+
 (s/def ::users-all-attr
   (s/keys :req [:users/id
                 :users/name
                 :users/role
                 :users/email
                 :users/password
-                :users/invite-id]))
+                :users/invite-id
+                :users/org-id]))
 
 (s/def ::signup-form
   (s/keys :req [:users/name

@@ -57,7 +57,7 @@ jobs:
       ENV: test
       POSTGRES_PASSWORD: postgres
       POSTGRES_DB: fleet_management_test
-      RECAPTCHA: ${{ secrets.RECAPTCHA}}
+      RECAPTCHA: ${{ secrets.RECAPTCHA }}
       POSTGRES_USER: postgres
     services:
       postgres:
