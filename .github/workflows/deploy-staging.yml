@@ -37,12 +37,14 @@ jobs:
       POSTGRES_PASSWORD: postgres
       POSTGRES_DB: fleet_management_test
       POSTGRES_USER: postgres
+      RECAPTCHA: ${{ secrets.RECAPTCHA}}
     services:
       postgres:
         env:
           POSTGRES_PASSWORD: ${{ env.POSTGRES_PASSWORD }}
           POSTGRES_DB: ${{ env.POSTGRES_DB }}
           POSTGRES_USER: ${{ env.POSTGRES_USER }}
+          RECAPTCHA: ${{ env.RECAPTCHA}}
         image: postgres:14.1
         options: >-
           --health-cmd pg_isready
@@ -91,6 +93,7 @@ jobs:
         heroku_api_key: ${{ secrets.HEROKU_API_KEY }}
         heroku_app_name: ${{ env.app_name }}
         heroku_email: ${{ secrets.HEROKU_EMAIL }}
+        RECAPTCHA: ${{ secrets.RECAPTCHA}}
 
   health_check:
     name: Health Check

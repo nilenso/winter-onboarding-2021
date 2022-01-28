@@ -22,3 +22,6 @@
 
 (defn get-timeout-period []
   (:session-timeout-ms config))
+
+(defn recaptcha-secret []
+  (:recaptcha-secret config))
