@@ -56,5 +56,5 @@
 
 (defn invite-driver
     ([] (invite-driver {}))
-    ([overrides] (create :invite (gen/fmap #(merge % overrides {:invites/role "driver"})
+    ([overrides] (create :invites (gen/fmap #(merge % overrides {:invites/role "driver"})
                                            (s/gen ::specs/invites)))))
