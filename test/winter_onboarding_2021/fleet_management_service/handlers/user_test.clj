@@ -12,7 +12,8 @@
             [winter-onboarding-2021.fleet-management-service.fixtures :as fixtures]
             [winter-onboarding-2021.fleet-management-service.factories :as factories]
             [winter-onboarding-2021.fleet-management-service.db.user :as user-db]
-            [winter-onboarding-2021.fleet-management-service.db.core :as db]))
+            [winter-onboarding-2021.fleet-management-service.db.core :as db]
+            [winter-onboarding-2021.fleet-management-service.handlers.organisation :as org-handler]))
 
 (use-fixtures :once fixtures/config fixtures/db-connection)
 (use-fixtures :each fixtures/clear-db)
@@ -80,12 +81,44 @@
                 :email "albus@hogwarts.com"
                 :role "admin"
                 :password "fawkes"
-                :g-recaptcha-response "abcd123"}
+                :g-recaptcha-response "THIS-IS-WRONG-RESPONSE"}
           response (handler/create-user {:form-params user})]
       (is (= {:error true
               :style-class "alert alert-danger"
               :message "You are not a human."}
-             (:flash response))))))
+             (:flash response)))))
+  (with-redefs [client/post (constantly {:body (json/json-str {"success" true})})]
+    (testing "Should create a user who has a invite and associate the user to org of host"
+      (let [admin (factories/admin)
+            _ (org-handler/create {:user admin
+                                   :form-params {:name "First Organization"}})
+            invite (factories/invite-driver {:invites/created-by (:users/id admin)})
+            host (first (user-model/find-by-keys {:users/email (:users/email admin)}))
+            user {:name "Minerva McGonagall"
+                  :email "m.minerva@hogwarts.edu"
+                  :role "admin"
+                  :password "albus"
+                  :token (:invites/token invite)
+                  :g-recaptcha-response "abcd123"}
+            response (handler/create-user {:form-params user})
+            new-user (first (user-model/find-by-keys {:users/email (:email user)}))]
+        (is (= (get-in response [:flash :message])
+               (str "User Minerva McGonagall created successfully in organisation " (:users/org-id host))))
+        (is (= (:user/org-id new-user)
+               (:user/org-id host)))))
+    (testing "Should return 'Invite Token not found' and NOT create user"
+      (let [user {:name "Albus McGonagall"
+                  :email "albus.minerva@hogwarts.edu"
+                  :role "admin"
+                  :password "albus"
+                  :token "ABCDEF"
+                  :g-recaptcha-response "abcd123"}
+            response (handler/create-user {:form-params user})
+            new-user (first (user-model/find-by-keys {:users/email (:email user)}))]
+        (is (= (get-in response [:flash :message])
+               "Invite Token not found"))
+        (is (= new-user
+               nil))))))
 
 (deftest user-login
   (testing "Correct login credentials, should redirect to user dashboard"
@@ -171,7 +204,7 @@
       (is (= html-page-login (:body response)))))
   (testing "Should redirect to /users/dashboard if user is logged-in"
     (let [user (user-db/create (factories/user))
-          response (handler/login-form {:user (select-keys user 
+          response (handler/login-form {:user (select-keys user
                                                            [:users/id
                                                             :users/name
                                                             :users/role
@@ -181,7 +214,7 @@
 
 (deftest signup-form
   (testing "Should show the sign up form page if the user is not already logged-in"
-    (let [response (handler/signup-form{})
+    (let [response (handler/signup-form {})
           html-page-login (html5 (layout/application {}
                                                      "Sign up"
                                                      (user-view/signup-form)))]
@@ -210,7 +243,7 @@
           session-before-logout (first (db/query! ["SELECT * FROM SESSIONS WHERE user_id = ?" user-id]))
           logout-resp (handler/logout {:cookies {:session-id {:value session-id-in-login-resp}}})
           session-after-logout (first (db/query! ["SELECT * FROM SESSIONS WHERE user_id = ?" user-id]))]
-      
+
       (is (= 302 (:status logout-resp)))
       (is (= "/" (get-in logout-resp [:headers "Location"])))
       (is (= session-id-in-login-resp (str (:sessions/id session-before-logout))))

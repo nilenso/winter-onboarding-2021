@@ -13,8 +13,13 @@
       (is (= "Name"
              (hf/hiccup-text (hf/hiccup-find [:#name] signup-form-output))))
       (is (= "Password"
-             (hf/hiccup-text (hf/hiccup-find [:#password] signup-form-output)))))))
-
+             (hf/hiccup-text (hf/hiccup-find [:#password] signup-form-output))))))
+  (testing "Should return extra input of token"
+    (let [signup-form-output (view/signup-form "THISISTOKEN")]
+      (is (= [:input
+              {:type "hidden", :name "token", :value "THISISTOKEN", :id "token"}]
+             (first (hf/hiccup-find [:#token] signup-form-output)))))))
+ 
 (deftest login-form
   (testing "Should return inputs for email and password"
     (let [login-form-output (view/login-form)]
