@@ -6,5 +6,5 @@
                     :ci #ref [:secrets :ci-db]}
  :log {}
  :default-page-size 10
- :session-timeout-ms 86400000}
- 
+ :session-timeout-ms 86400000
+ :recaptcha-secret #or [#env "RECAPTCHA" #env secret]}

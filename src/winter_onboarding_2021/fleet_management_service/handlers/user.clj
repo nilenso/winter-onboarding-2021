@@ -3,6 +3,7 @@
             [clojure.data.json :as json]
             [clojure.spec.alpha :as s]
             [crypto.password.bcrypt :as password]
+            [clj-http.client :as client]
             [hiccup.page :refer [html5]]
             [winter-onboarding-2021.fleet-management-service.session :as session]
             [winter-onboarding-2021.fleet-management-service.views.user :as view]
@@ -10,7 +11,7 @@
             [winter-onboarding-2021.fleet-management-service.specs :as specs]
             [winter-onboarding-2021.fleet-management-service.views.layout :as layout]
             [winter-onboarding-2021.fleet-management-service.utils :as utils]
-            [clj-http.client :as client]))
+            [winter-onboarding-2021.fleet-management-service.config :as config]))
 
 (defn signup-form [req]
   (let [user (:user req)]
@@ -26,14 +27,14 @@
 
 (defn- recaptcha-invalid? [g-recaptcha-response]
   (try (let [res (client/post "https://www.google.com/recaptcha/api/siteverify"
-                              {:form-params {:secret "6Lc1XSkeAAAAAEsQ0OQsFsLNlphwPQd9_1JUjvB8"
+                              {:form-params {:secret (config/recaptcha-secret)
                                              :response g-recaptcha-response}})
              body (json/read-str (:body res))]
          (false? (get-in body ["success"])))
        (catch Exception e
          (println "Could not verify reCAPTCHA" (.getMessage e))
          true)))
-
+ 
 (defn create-user [{:keys [form-params]}]
   (let [ns-form-params (utils/namespace-keys :users form-params)
         validated-user (s/conform ::specs/signup-form ns-form-params)
@@ -106,3 +107,4 @@
 (defn not-logged-in [_]
   (merge (utils/flash-msg "You are not logged in" false)
          (response/redirect "/users/login")))
+   
