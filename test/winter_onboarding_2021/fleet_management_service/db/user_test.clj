@@ -82,11 +82,17 @@
 
 (deftest user-with-invitation
   (testing "Should create an user with an invitation")
-  (let [db-admin (factories/admin)
-        invite (factories/invite-admin {:invites/created-by (:users/id db-admin)})
-        new-user (factories/user {:users/role (:invites/role invite)
-                                  :users/invite-id (:invites/id invite)})
-        _ (user-db/create new-user)
-        db-user (user-db/find-by-keys {:users/email (:users/email new-user)})]
+  (let [admin (factories/admin)
+        _ (org-models/create-and-associate db-core/db-conn {:organisations/name "foo-org"}
+                                           admin)
+        invite (factories/invite-admin {:invites/created-by (:users/id admin)})
+        host (first (user-db/find-by-keys {:users/email (:users/email admin)}))
+        user (factories/user {:users/role (:invites/role invite)
+                                  :users/invite-id (:invites/id invite)
+                                  :users/org-id (:users/org-id host)})
+        _ (user-db/create user)
+        new-user (user-db/find-by-keys {:users/email (:users/email user)})]
     (is (= (:invites/id invite)
-           (:users/invite-id (first db-user))))))
+           (:users/invite-id (first new-user))))
+    (is (= (:users/org-id host)
+           (:users/org-id (first new-user))))))
