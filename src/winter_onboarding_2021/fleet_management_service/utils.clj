@@ -31,7 +31,7 @@
   (when (map? (second hiccup-element))
     (second hiccup-element)))
 
-(defn- namespace-key [ns k]
+(defn namespace-key [ns k]
   (keyword (str (name ns) "/" (name k))))
 
 (defn namespace-keys [ns m]

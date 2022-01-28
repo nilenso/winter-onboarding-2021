@@ -47,7 +47,7 @@
      [:div {:class "modal-footer"}
       (:footer data)]]]])
 
-(defn cab [cab]
+(defn cab [cab role]
   [:div {:id "content" :class "p-5"}
    [:h2 (:cabs/name cab)]
    [:div {:class "mt-5"}
@@ -56,14 +56,16 @@
    [:div {:class "mt-5"}
     [:div "Distance Travlled"]
     [:h3 (:cabs/distance-travelled cab)]]
-   [:a {:id "cab-next-page" :class "btn btn-primary me-2"
-        :href (str "/cabs/" (:cabs/id cab) "/edit")}
-    "Update"]
-   [:button.btn.btn-danger
-    {:data-bs-target "#deleteCabModal"
-     :data-bs-toggle "modal"
-     :type "button"}
-    "Delete"]
+   (when (or (= role "manager")
+             (= role "admin"))
+     [:a {:id "cab-next-page" :class "btn btn-primary me-2"
+          :href (str "/cabs/" (:cabs/id cab) "/edit")}
+      "Update"]
+     [:button.btn.btn-danger
+      {:data-bs-target "#deleteCabModal"
+       :data-bs-toggle "modal"
+       :type "button"}
+      "Delete"])
    (modal {:modal-id "deleteCabModal"
            :title (str "Delete " (:cabs/name cab) "?")
            :body "Once the cab is deleted, it can't be recovered."
@@ -72,6 +74,9 @@
                          [:form {:action "/cabs/delete" :method "POST"}
                           [:input {:name "id" :value (:cabs/id cab) :hidden true}]
                           [:button {:type "submit" :class "btn btn-danger"} "Delete"]])})])
+
+(defn admin-cab-details
+  (cab {:manager [:div] :driver [:div]}))
 
 (def headers
   [{:label "Name" :value :cabs/name}
