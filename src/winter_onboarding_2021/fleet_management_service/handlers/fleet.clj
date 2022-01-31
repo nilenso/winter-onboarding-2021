@@ -26,7 +26,7 @@
 
 (defn new [_]
   {:title "Create fleet"
-   :content (views/create-fleet)})
+   :content (views/create-fleet [])})
 
 (defn show-fleets [request]
   (jdbc/with-transaction [tx db-core/db-conn]
