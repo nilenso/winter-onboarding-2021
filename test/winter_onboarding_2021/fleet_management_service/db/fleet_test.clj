@@ -56,8 +56,8 @@
     (let [user-id (:users/id (factories/create :users (s/gen ::specs/users)))
           fleet {:fleets/name "Azkaban Fleet 1"
                  :fleets/created-by (str user-id)}]
-      (is (= error/validation-failed (select-keys (fleet-db/create core-db/db-conn fleet)
-                                                  [:error]))))))
+      (is (= error/validation-failed
+             (select-keys (fleet-db/create core-db/db-conn fleet) [:error]))))))
 
 (deftest user-fleets
   (testing "Should fetch us a list of first 10 fleets related to an admin user"

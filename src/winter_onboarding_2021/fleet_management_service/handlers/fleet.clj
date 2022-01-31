@@ -1,8 +1,9 @@
 (ns winter-onboarding-2021.fleet-management-service.handlers.fleet
   (:require [clojure.spec.alpha :as s]
             [next.jdbc :as jdbc]
-            [winter-onboarding-2021.fleet-management-service.db.core :as db-core]
             [ring.util.response :as response]
+            [winter-onboarding-2021.fleet-management-service.models.user :as user-models]
+            [winter-onboarding-2021.fleet-management-service.db.core :as db-core]
             [winter-onboarding-2021.fleet-management-service.specs :as specs]
             [winter-onboarding-2021.fleet-management-service.utils :as utils]
             [winter-onboarding-2021.fleet-management-service.config :as config]
@@ -11,22 +12,27 @@
 
 
 (defn create-fleet [{:keys [user form-params]}]
-  (let [user-id (:users/id user)
-        fleet-name (:name form-params)
-        fleet-data (utils/namespace-keys :fleets {:name fleet-name
-                                                  :created-by user-id})]
-    (if (s/valid? ::specs/fleets fleet-data)
-      (jdbc/with-transaction [tx db-core/db-conn]
+  (jdbc/with-transaction [tx db-core/db-conn]
+    (let [user-id (:users/id user)
+          fleet-name (:name form-params)
+          fleet-data (utils/namespace-keys :fleets {:name fleet-name
+                                                    :created-by user-id})]
+      (if (s/valid? ::specs/fleets fleet-data)
         (let [fleet (fleet-model/create-and-associate tx fleet-data user)
               fleet-id (:fleets/id fleet)]
           (merge (utils/flash-msg "Fleet created successfully!" true)
-                 (response/redirect (format "/fleets/%s" (str fleet-id))))))
-      (merge (utils/flash-msg "Could not create fleet, try again!" false)
-             (response/redirect "/fleets/new")))))
+                 (response/redirect (format "/fleets/%s" (str fleet-id)))))
+        (merge (utils/flash-msg "Could not create fleet, try again!" false)
+               (response/redirect "/fleets/new"))))))
 
-(defn new [_]
-  {:title "Create fleet"
-   :content (views/create-fleet [])})
+(defn new [{:keys [user]}]
+  (if-let [org-id (:users/org-id user)]
+    (let [org-team-members (user-models/members {:organisations/id org-id}
+                                                ["manager" "driver"])]
+      {:title "Create fleet"
+       :content (views/create-fleet org-team-members)})
+    (merge (utils/flash-msg "You must join an organisation first" false)
+           (response/redirect "/users/dashboard"))))
 
 (defn show-fleets [request]
   (jdbc/with-transaction [tx db-core/db-conn]
