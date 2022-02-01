@@ -26,13 +26,16 @@
    [:td [:div (managers-list managers)]]
    [:td (utils/format-date created-at)]])
 
-(defn show-fleets [fleets-with-managers page-num show-next-page?]
-  (let [next-page-query (str "?page=" (inc page-num))]
+(defn show-fleets [fleets-with-managers page-num show-prev-page? show-next-page?]
+  (let [next-page-query (str "?page=" (inc page-num))
+        prev-page-query (str "?page=" (dec page-num))]
     [:div
      [:table {:class "table table-primary min-vh-40"}
       [:thead [:tr (map (fn [header] [:th (:label header)])
                         headers)]]
       [:tbody (map fleet-row fleets-with-managers)]]
      [:div {:class "text-end"}
+      (if show-prev-page?
+        [:a {:id "fleet-prev-page" :href prev-page-query}  "< Prev Page "] ())
       (if show-next-page?
-        [:a {:id "cab-next-page" :href next-page-query}  "Next Page > "] ())]]))
+        [:a {:id "fleet-next-page" :href next-page-query}  "Next Page > "] ())]]))

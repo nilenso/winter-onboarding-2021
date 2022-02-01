@@ -15,7 +15,7 @@
           fleet (->> ::specs/fleets
                      (factories/overridden-generator {:fleets/created-by (:users/id user)})
                      (factories/create :fleets))
-          user_fleet_relation (users-fleets-db/create user fleet)]
+          user_fleet_relation (users-fleets-db/create core-db/db-conn user fleet)]
 
       (is (= user_fleet_relation
              (first (core-db/find-by-keys! :users-fleets

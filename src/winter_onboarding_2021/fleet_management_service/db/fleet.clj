@@ -6,9 +6,9 @@
             [winter-onboarding-2021.fleet-management-service.db.core :as db]
             [winter-onboarding-2021.fleet-management-service.specs :as spec]))
 
-(defn create [fleet]
+(defn create [tx fleet]
   (if (s/valid? ::spec/fleets fleet)
-    (db/insert! :fleets fleet)
+    (db/insert! tx :fleets fleet)
     (let [error-msg (s/explain-str ::spec/fleets fleet)]
       (assoc error/validation-failed :error-msg error-msg))))
 
@@ -16,20 +16,23 @@
   (db/query! (sql/format (-> (select [:%count.* :count])
                              (from :fleets)))))
 
-(defn user-fleets [admin-id off lim]
-  (db/query! (sql/format (-> (select :fleets.id
-                                     :fleets.name
-                                     :fleets.created-by
-                                     :fleets.created-at)
-                             (from :fleets)
-                             (join :users_fleets [:= :users_fleets.fleet_id :fleets.id])
-                             (limit lim)
-                             (offset off)
-                             (where [:= :users_fleets.user_id admin-id])
-                             (order-by :created-at)))))
-
-(defn managers [fleet]
+(defn user-fleets [tx admin-id off lim]
   (db/query!
+   tx
+   (sql/format (-> (select :fleets.id
+                           :fleets.name
+                           :fleets.created-by
+                           :fleets.created-at)
+                   (from :fleets)
+                   (join :users_fleets [:= :users_fleets.fleet_id :fleets.id])
+                   (limit lim)
+                   (offset off)
+                   (where [:= :users_fleets.user_id admin-id])
+                   (order-by :created-at)))))
+
+(defn managers [tx fleet]
+  (db/query!
+   tx
    (sql/format (-> (select :id
                            :name
                            :role
