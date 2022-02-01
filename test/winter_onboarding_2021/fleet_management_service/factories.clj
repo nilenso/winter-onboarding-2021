@@ -58,5 +58,4 @@
 
 (defn organisation
   ([] (organisation {}))
-  ([overrides] (merge (gen/generate (s/gen ::specs/organisations))
-                      overrides)))
+  ([overrides] (create :organisations (overridden-generator overrides ::specs/organisations))))

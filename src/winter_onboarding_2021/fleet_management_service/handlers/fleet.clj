@@ -13,10 +13,11 @@
 
 (defn create-fleet [{:keys [user form-params]}]
   (jdbc/with-transaction [tx db-core/db-conn]
-    (let [user-id (:users/id user)
+    (let [{user-id :users/id org-id :users/org-id} user
           fleet-name (:name form-params)
           fleet-data (utils/namespace-keys :fleets {:name fleet-name
-                                                    :created-by user-id})]
+                                                    :created-by user-id
+                                                    :org-id org-id})]
       (if (s/valid? ::specs/fleets fleet-data)
         (let [fleet (fleet-model/create-and-associate tx fleet-data user)
               fleet-id (:fleets/id fleet)]

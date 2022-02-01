@@ -27,10 +27,12 @@
 (defn seed-user-fleets-db
   "adds `num-fleets` to the DB associated with a sample user"
   [num-fleets]
-  (let [user (factories/admin)
+  (let [{user-id :users/id :as user} (factories/admin)
+        {org-id :organisations/id} (factories/organisation {:organisations/created-by user-id})
         fleets (vec (factories/create-list :fleets
                                            num-fleets
-                                           (factories/overridden-generator {:fleets/created-by (:users/id user)}
+                                           (factories/overridden-generator {:fleets/created-by user-id
+                                                                            :fleets/org-id org-id}
                                                                            ::specs/fleets)))]
     (doall (map #(core-db/insert! :users_fleets {:user-id (:users/id user)
                                                  :fleet-id (:fleets/id %)})
@@ -46,8 +48,10 @@
 
 (deftest create-fleet
   (testing "Should create a fleet"
-    (let [user-id (:users/id (factories/create :users (s/gen ::specs/users)))
-          fleet (factories/create :fleets (factories/overridden-generator {:fleets/created-by user-id}
+    (let [{user-id :users/id} (factories/create :users (s/gen ::specs/users))
+          {org-id :organisations/id} (factories/organisation {:organisations/created-by user-id})
+          fleet (factories/create :fleets (factories/overridden-generator {:fleets/created-by user-id
+                                                                           :fleets/org-id org-id}
                                                                           ::specs/fleets))]
 
       (is (= fleet (first (core-db/query! ["select * from fleets;"]))))))

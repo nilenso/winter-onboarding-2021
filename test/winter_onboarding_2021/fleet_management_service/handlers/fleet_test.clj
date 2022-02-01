@@ -12,15 +12,15 @@
 
 (deftest create-fleet
   (testing "Should create a fleet by an admin"
-    (let [user (factories/admin)
-          user-id (:users/id user)
+    (let [{admin-id :users/id :as admin} (factories/admin)
+          {org-id :organisations/id} (factories/organisation {:organisations/created-by admin-id})
           request {:form-params {:name "Foo fleet"}
-                   :user user}
+                   :user (assoc admin :users/org-id org-id)}
           response (fleet-handler/create-fleet request)
           inserted-fleet (first (db-core/query! ["SELECT * FROM FLEETS"]))]
       (is (= 302 (:status response)))
       (is (= #:fleets{:name "Foo fleet"
-                      :created-by user-id} (select-keys inserted-fleet
+                      :created-by admin-id} (select-keys inserted-fleet
                                                         [:fleets/name :fleets/created-by])))
       (is (= {:success true
               :style-class "alert alert-success"

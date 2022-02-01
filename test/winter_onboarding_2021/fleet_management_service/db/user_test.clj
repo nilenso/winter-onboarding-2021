@@ -83,9 +83,7 @@
 
 (deftest members
   (let [admin (factories/admin)
-        org (->> ::specs/organisations
-                 (factories/overridden-generator {:organisations/created-by (:users/id admin)})
-                 (factories/create :organisations))
+        org (factories/organisation {:organisations/created-by (:users/id admin)})
         _ (user-db/add-to-org db-core/db-conn org admin)
         managers (->> ::specs/users
                       (factories/overridden-generator {:users/role "manager"

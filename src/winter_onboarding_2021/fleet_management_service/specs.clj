@@ -102,10 +102,12 @@
 (s/def :fleets/id uuid?)
 (s/def :fleets/name string?)
 (s/def :fleets/created-by uuid?)
+(s/def :fleets/org-id uuid?)
 
 (s/def ::fleets
   (s/keys :req [:fleets/name
-                :fleets/created-by]))
+                :fleets/created-by
+                :fleets/org-id]))
 
 ; Pagination
 (s/def ::pagination-params

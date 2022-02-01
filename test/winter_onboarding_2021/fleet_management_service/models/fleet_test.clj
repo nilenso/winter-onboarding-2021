@@ -12,23 +12,26 @@
 
 (deftest create-fleet
   (testing "Should create a fleet"
-    (let [user (factories/admin)
-          user-id (:users/id user)
+    (let [{user-id :users/id} (factories/admin)
+          {org-id :organisations/id} (factories/organisation {:organisations/created-by user-id})
           fleet #:fleets{:name "Azkaban Fleet 1"
-                         :created-by user-id}]
+                         :created-by user-id
+                         :org-id org-id}]
       (is (= fleet
              (select-keys (fleet-model/create db-core/db-conn fleet)
-                          [:fleets/name :fleets/created-by])))))
+                          [:fleets/name :fleets/created-by :fleets/org-id])))))
   (testing "Should ignore un-related keys while creating a fleet"
-    (let [user (factories/admin)
-          user-id (:users/id user)
-          fleet {:fleets/name "Azkaban Fleet 1"
-                 :fleets/place "Azkaban"
-                 :fleets/created-by user-id}]
+    (let [{user-id :users/id} (factories/admin)
+          {org-id :organisations/id} (factories/organisation {:organisations/created-by user-id})
+          fleet #:fleets{:name "Azkaban Fleet 1"
+                         :place "Azkaban"
+                         :created-by user-id
+                         :org-id org-id}]
       (is (= #:fleets{:name "Azkaban Fleet 1"
-                      :created-by user-id}
+                      :created-by user-id
+                      :org-id org-id}
              (select-keys (fleet-model/create db-core/db-conn fleet)
-                          [:fleets/name :fleets/created-by])))))
+                                                        [:fleets/name :fleets/created-by :fleets/org-id])))))
   (testing "Should not create a fleet if all keys are un-related"
     (let [user (factories/admin)
           user-id (:users/id user)
