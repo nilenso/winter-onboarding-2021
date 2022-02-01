@@ -5,7 +5,7 @@
   [{:label "Token" :value :invites/token}
    {:label "Role" :value :invites/role}
    {:label "Valid Until" :value :invites/valid-until}
-   {:label "Usages Limit" :value :invites/usages-done}
+   {:label "Usages Limit" :value :invites/usage-limit}
    {:label "Status" :value :invites/is-active}])
 
 (defn invite-form []
