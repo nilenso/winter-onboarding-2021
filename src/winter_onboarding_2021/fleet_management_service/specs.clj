@@ -22,7 +22,7 @@
                        :max 200000000}))
 
 (defn- date-inst-gen []
-  (gen/return (eval (sqltime/to-sql-time (cljt/from-now (cljt/weeks (rand-int 10)))))))
+  (gen/return (eval (sqltime/to-sql-time (cljt/from-now (cljt/weeks (+ 1 (rand-int 10))))))))
 
 (defn- capital-string-gen []
   (gen/return (apply str (take 8 (repeatedly #(char (+ (rand 26) 65)))))))
