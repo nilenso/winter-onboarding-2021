@@ -4,6 +4,8 @@
             [hiccup.page :refer [html5]]
             [clj-http.client :as client]
             [clojure.data.json :as json]
+            [clj-time.coerce :as sqltime]
+            [clj-time.format :as f]
             [winter-onboarding-2021.fleet-management-service.handlers.user :as handler]
             [winter-onboarding-2021.fleet-management-service.models.user :as user-model]
             [winter-onboarding-2021.fleet-management-service.utils :as utils]
@@ -106,6 +108,47 @@
                (str "User Minerva McGonagall created successfully in organisation " (:users/org-id host))))
         (is (= (:user/org-id new-user)
                (:user/org-id host)))))
+    (testing "Should return token expired"
+      (let [admin (factories/admin)
+            _ (org-handler/create {:user admin
+                                   :form-params {:name "First Organization"}})
+            invite (factories/invite-driver {:invites/created-by (:users/id admin)
+                                             :invites/valid-until (sqltime/to-sql-date (f/parse (f/formatters :date)
+                                                                                                "2020-03-04"))})
+            user {:name "Minerva McGonagall"
+                  :email "kj.minerva@hogwarts.edu"
+                  :role "admin"
+                  :password "albus"
+                  :token (:invites/token invite)
+                  :g-recaptcha-response "abcd123"}
+            response (handler/create-user {:form-params user})]
+        (is (= (get-in response [:flash :message])
+               (str "Token expired.")))))
+    (testing "Should return token usage limit reached"
+      (let [admin (factories/admin)
+            _ (org-handler/create {:user admin
+                                   :form-params {:name "First Organization"}})
+            invite (factories/invite-driver {:invites/created-by (:users/id admin)
+                                             :invites/usage-limit 1})
+            host (first (user-model/find-by-keys {:users/email (:users/email admin)}))
+            user1 {:name "Pomona Sprout"
+                   :email "p.sprout@hogwarts.edu"
+                   :role "admin"
+                   :password "pulses"
+                   :token (:invites/token invite)
+                   :g-recaptcha-response "abcd123"}
+            user2 {:name "Remus Lupin"
+                   :email "r.lupin@hogwarts.edu"
+                   :role "admin"
+                   :password "moony"
+                   :token (:invites/token invite)
+                   :g-recaptcha-response "abcd123"}
+            response1 (handler/create-user {:form-params user1})
+            response2 (handler/create-user {:form-params user2})]
+        (is (= (get-in response1 [:flash :message])
+               (str "User Pomona Sprout created successfully in organisation " (:users/org-id host))))
+        (is (= (get-in response2 [:flash :message])
+               (str "Token usage limit reached. Please use a new token")))))
     (testing "Should return 'Invite Token not found' and NOT create user"
       (let [user {:name "Albus McGonagall"
                   :email "albus.minerva@hogwarts.edu"

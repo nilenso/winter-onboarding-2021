@@ -1,10 +1,13 @@
 (ns winter-onboarding-2021.fleet-management-service.handlers.user
   (:require [ring.util.response :as response]
+            [next.jdbc :as jdbc]
             [clojure.data.json :as json]
             [clojure.spec.alpha :as s]
             [crypto.password.bcrypt :as password]
             [clj-http.client :as client]
             [hiccup.page :refer [html5]]
+            [clj-time.coerce :as c]
+            [clj-time.core :as t]
             [winter-onboarding-2021.fleet-management-service.session :as session]
             [winter-onboarding-2021.fleet-management-service.views.user :as view]
             [winter-onboarding-2021.fleet-management-service.models.user :as user-model]
@@ -12,7 +15,8 @@
             [winter-onboarding-2021.fleet-management-service.views.layout :as layout]
             [winter-onboarding-2021.fleet-management-service.utils :as utils]
             [winter-onboarding-2021.fleet-management-service.config :as config]
-            [winter-onboarding-2021.fleet-management-service.models.invite :as invite]))
+            [winter-onboarding-2021.fleet-management-service.models.invite :as invite]
+            [winter-onboarding-2021.fleet-management-service.db.core :as db-core]))
 
 (defn signup-form [req]
   (let [user (:user req)
@@ -46,19 +50,30 @@
     (cond
       (nil? invite) (error-redirect "Invite Token not found"
                                     "/users/signup")
-      :else (let [user (first (user-model/find-by-keys {:users/id (:invites/created-by invite)}))
-                  org-id (:users/org-id user)
-                  created-user (user-model/create (assoc validated-user
+      (t/after? (t/now) (c/from-sql-time (:invites/valid-until invite))) (error-redirect "Token expired."
+                                                                                         "/users/signup")
+      :else (jdbc/with-transaction [tx db-core/db-conn]
+              (let [user (first (user-model/find-by-keys {:users/id (:invites/created-by invite)}))
+                    org-id (:users/org-id user)
+                    db-reponse (user-model/create tx
+                                                  (assoc validated-user
                                                          :users/password (password/encrypt
                                                                           (:users/password validated-user))
                                                          :users/role (:invites/role invite)
                                                          :users/invite-id (:invites/id invite)
-                                                         :users/org-id org-id))]
-              (merge (utils/flash-msg (format "User %s created successfully in organisation %s"
-                                              (:users/name created-user)
-                                              (:users/org-id created-user))
-                                      true)
-                     (response/redirect "/users/signup"))))))
+                                                         :users/org-id org-id))
+                    invite-usage-count (count (user-model/find-by-keys tx {:users/invite-id (:invites/id invite)}))]
+                (cond
+                  (> invite-usage-count (:invites/usage-limit invite)) (do (.rollback tx)
+                                                                           (error-redirect "Token usage limit reached. Please use a new token"
+                                                                                           "/users/signup"))
+                  (some? (:error db-reponse)) (error-redirect "Some error occured, please try again later."
+                                                              "/users/signup")
+                  :else (merge (utils/flash-msg (format "User %s created successfully in organisation %s"
+                                                        (:users/name db-reponse)
+                                                        (:users/org-id db-reponse))
+                                                true)
+                               (response/redirect "/users/signup"))))))))
 
 (defn create-user [{:keys [form-params]}]
   (let [ns-form-params (utils/namespace-keys :users form-params)
