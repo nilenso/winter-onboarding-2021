@@ -32,3 +32,7 @@
 (def add-to-org user/add-to-org)
 
 (def members user/members)
+
+(defn users-in-org? [tx user-ids org]
+  (= (count user-ids)
+     (:count (first (user/users-in-org tx user-ids org)))))
