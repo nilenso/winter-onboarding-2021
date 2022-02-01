@@ -6,15 +6,17 @@
             [winter-onboarding-2021.fleet-management-service.db.core :as db]
             [winter-onboarding-2021.fleet-management-service.specs :as specs]))
 
-(defn create [user]
-  (if (or (s/valid? ::specs/users user)
-          (s/valid? ::specs/user-with-invite-token user))
-    (db/insert! :users user)
-    (let [error-msg (s/explain-str ::specs/users user)]
-      (assoc error/validation-failed :error-msg error-msg))))
+(defn create
+  ([user] (create db/db-conn user))
+  ([tx user] (if (or (s/valid? ::specs/users user)
+                     (s/valid? ::specs/user-with-invite-token user))
+               (db/insert! tx :users user)
+               (let [error-msg (s/explain-str ::specs/users user)]
+                 (assoc error/validation-failed :error-msg error-msg)))))
 
-(defn find-by-keys [key-map]
-  (db/find-by-keys! :users key-map))
+(defn find-by-keys 
+  ([tx key-map] (db/find-by-keys! tx :users key-map))
+  ([key-map] (db/find-by-keys! :users key-map)))
 
 (defn add-to-org [tx org user]
   (db/query! tx (sql/format (-> (update :users)
