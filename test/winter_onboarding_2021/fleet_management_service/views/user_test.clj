@@ -14,7 +14,7 @@
              (hf/hiccup-text (hf/hiccup-find [:#name] signup-form-output))))
       (is (= "Password"
              (hf/hiccup-text (hf/hiccup-find [:#password] signup-form-output))))))
-  (testing "Should return extra input of token"
+  (testing "Should return hidden input field of token"
     (let [signup-form-output (view/signup-form "THISISTOKEN")]
       (is (= [:input
               {:type "hidden", :name "token", :value "THISISTOKEN", :id "token"}]

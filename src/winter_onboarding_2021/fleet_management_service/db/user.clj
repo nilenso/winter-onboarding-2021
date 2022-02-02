@@ -14,9 +14,9 @@
                (let [error-msg (s/explain-str ::specs/users user)]
                  (assoc error/validation-failed :error-msg error-msg)))))
 
-(defn find-by-keys 
-  ([tx key-map] (db/find-by-keys! tx :users key-map))
-  ([key-map] (db/find-by-keys! :users key-map)))
+(defn find-by-keys
+  ([key-map] (db/find-by-keys! :users key-map))
+  ([tx key-map] (db/find-by-keys! tx :users key-map)))
 
 (defn add-to-org [tx org user]
   (db/query! tx (sql/format (-> (update :users)

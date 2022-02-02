@@ -26,11 +26,11 @@
 
 (deftest user-with-invitation
   (testing "Should create an user with an invitation with org-id set to that of host")
-  (let [db-admin (factories/admin)
+  (let [{:users/keys [id email] :as db-admin} (factories/admin)
         _ (org-models/create-and-associate db-core/db-conn {:organisations/name "foo-org"}
                                            db-admin)
-        host (first (user-model/find-by-keys {:users/email (:users/email db-admin)}))
-        invite (factories/invite-manager {:invites/created-by (:users/id db-admin)})
+        host (first (user-model/find-by-keys {:users/email email}))
+        invite (factories/invite-manager {:invites/created-by id})
         new-user (factories/user {:users/role (:invites/role invite)
                                   :users/invite-id (:invites/id invite)
                                   :users/org-id (:users/org-id host)})
