@@ -25,3 +25,9 @@
 
 (defn recaptcha-secret []
   (:recaptcha-secret config))
+
+(defn recaptcha-site-key []
+  (:recaptcha-site-key config))
+
+(defn recaptcha-url []
+  (:recaptcha-url config))

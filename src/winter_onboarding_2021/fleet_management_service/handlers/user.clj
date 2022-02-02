@@ -32,7 +32,7 @@
   (not-empty (user-model/find-by-keys {:users/email email})))
 
 (defn- recaptcha-invalid? [g-recaptcha-response]
-  (try (let [res (client/post "https://www.google.com/recaptcha/api/siteverify"
+  (try (let [res (client/post (config/recaptcha-url)
                               {:form-params {:secret (config/recaptcha-secret)
                                              :response g-recaptcha-response}})
              body (json/read-str (:body res))]
