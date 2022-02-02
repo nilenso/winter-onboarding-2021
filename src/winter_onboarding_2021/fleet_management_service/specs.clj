@@ -68,7 +68,7 @@
     non-empty-alphanumeric-string
     non-empty-alphanumeric-string)))
 
-
+(s/def :users/id uuid?)
 (s/def :users/name (s/and string? (comp not empty?)))
 (s/def :users/email (s/with-gen (s/and string? #(re-matches #".+\@.+\..+" %))
                       email-gen))

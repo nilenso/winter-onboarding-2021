@@ -28,7 +28,7 @@
 
 (defn users-in-org [tx user-ids org]
   (db/query! tx (sql/format (-> (h/select [:%count.* :count])
-                             (h/from :users)
-                             (h/where [:and
-                                       [:in :id user-ids]
-                                       [:= :org-id (:organisations/id org)]])))))
+                                (h/from :users)
+                                (h/where [:and
+                                          [:in :id user-ids]
+                                          [:= :org-id (:organisations/id org)]])))))
