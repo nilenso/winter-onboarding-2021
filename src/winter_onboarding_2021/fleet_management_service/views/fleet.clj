@@ -1,13 +1,29 @@
 (ns winter-onboarding-2021.fleet-management-service.views.fleet
-  (:require [winter-onboarding-2021.fleet-management-service.utils :as utils]))
+  (:require [clojure.string :as string]
+            [winter-onboarding-2021.fleet-management-service.utils :as utils]))
 
-(defn create-fleet []
-  [:div {:id "content"}
-   [:h1 {:class "text-success"} "Create Fleet"]
-   [:form {:action "/fleets" :method "POST"}
-    [:div [:label {:for "name" :class "form-label"} "Fleet Name"]
-     [:input {:class "form-control" :type "text" :name "name" :id "name" :value ""}]]
-    [:button {:type "submit" :class "btn btn-primary"} "Submit"]]])
+(defn- no-team-members-present [role]
+  [:div (format "You have no %s in your organisation" role)])
+
+(defn- checkbox-group [label members]
+  [:fieldset {:class "mt-4 mb-4" :id label}
+   [:legend (str "Add " (string/capitalize label))]
+   (if (> (count members) 0)
+     (map #(list [:input {:class "me-2" :type "checkbox" :name label :value (:users/id %)}]
+                 [:label {:class "me-4"} (:users/name %)]) members)
+     (no-team-members-present label))])
+
+(defn create-fleet [org-team-members]
+  (let [managers (filter #(= "manager" (:users/role %)) org-team-members)
+        drivers (filter #(= "driver" (:users/role %)) org-team-members)]
+    [:div {:id "content"}
+     [:h1 {:class "text-success"} "Create Fleet"]
+     [:form {:action "/fleets" :method "POST"}
+      [:div [:label {:for "name" :class "form-label"} "Fleet Name"]
+       [:input {:class "form-control" :type "text" :name "name" :id "name" :value ""}]]
+      (checkbox-group "managers" managers)
+      (checkbox-group "drivers" drivers)
+      [:button {:type "submit" :class "btn btn-primary"} "Submit"]]]))
 
 (def headers
   [{:label "Name" :value :fleets/name}

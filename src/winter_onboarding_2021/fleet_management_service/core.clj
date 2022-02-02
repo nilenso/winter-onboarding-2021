@@ -18,6 +18,7 @@
   (->
    r/routes
    br/make-handler
+   middleware/wrap-layout
    wrap-flash
    middleware/keywordize-multipart-params
    middleware/keywordize-form-params

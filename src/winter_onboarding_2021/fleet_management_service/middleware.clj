@@ -1,10 +1,12 @@
 (ns winter-onboarding-2021.fleet-management-service.middleware
   (:require [clojure.walk :as walk]
+            [ring.util.response :as response]
+            [hiccup.page :refer [html5]]
             [taoensso.timbre :as timbre]
             [ring.logger :as logger]
             [ring.middleware.stacktrace :as stacktrace]
-            [ring.util.response :as response]
-            [winter-onboarding-2021.fleet-management-service.session :as session]))
+            [winter-onboarding-2021.fleet-management-service.session :as session]
+            [winter-onboarding-2021.fleet-management-service.views.layout :as layout]))
 
 (defn keywordize-multipart-params [handler]
   (fn [{:keys [multipart-params] :as request}]
@@ -56,3 +58,13 @@
                                                      [:users/id :users/name :users/role :users/email :users/org-id]))))
         (handler request))
       (handler request))))
+
+(defn wrap-layout [handler]
+  (fn [request]
+    (let [data (handler request)]
+      (if (:status data)
+        data
+        (response/response (html5 (layout/application
+                                   request
+                                   (:title data)
+                                   (:content data))))))))

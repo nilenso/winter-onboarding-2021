@@ -1,24 +1,14 @@
 (ns winter-onboarding-2021.fleet-management-service.routes
   (:require [bidi.ring :as br]
-            [ring.util.response :as response]
+            
             [ring.middleware.json :refer [wrap-json-response]]
-            [hiccup.page :refer [html5]]
             [winter-onboarding-2021.fleet-management-service.handlers.cab :as cab-handlers]
             [winter-onboarding-2021.fleet-management-service.handlers.fleet :as fleet-handlers]
-            [winter-onboarding-2021.fleet-management-service.views.layout :as layout]
             [winter-onboarding-2021.fleet-management-service.handlers.core :as handler]
             [winter-onboarding-2021.fleet-management-service.handlers.user :as user-handlers]
             [winter-onboarding-2021.fleet-management-service.handlers.invite :as invite-handlers]
             [winter-onboarding-2021.fleet-management-service.handlers.dashboard :as dashboard-handlers]
             [winter-onboarding-2021.fleet-management-service.handlers.organisation :as org-handlers]))
-
-(defn wrap-layout [handler]
-  (fn [request]
-    (let [data (handler request)]
-      (response/response (html5 (layout/application
-                                 request
-                                 (:title data)
-                                 (:content data)))))))
 
 (defn authentication-required [handler allowed-roles]
   (fn [request]
@@ -30,28 +20,28 @@
 
 (def routes
   ["/" [["public" {:get (br/->Resources {:prefix "/bootstrap"})}]
-        ["cabs" {"" {:get (authentication-required (wrap-layout cab-handlers/get-cabs) #{:admin :manager})
+        ["cabs" {"" {:get (authentication-required cab-handlers/get-cabs #{:admin :manager})
                      :post cab-handlers/create}
-                 "/new" {:get (authentication-required  (wrap-layout cab-handlers/new) #{:admin :manager})}
-                 "/delete" {:post (authentication-required  (wrap-layout cab-handlers/delete) #{:admin :manager})}
-                 ["/" :slug] {"/edit" {:get (wrap-layout cab-handlers/update-cab-view)}
-                              :get (wrap-layout cab-handlers/view-cab)
+                 "/new" {:get (authentication-required  cab-handlers/new #{:admin :manager})}
+                 "/delete" {:post (authentication-required  cab-handlers/delete #{:admin :manager})}
+                 ["/" :slug] {"/edit" {:get cab-handlers/update-cab-view}
+                              :get cab-handlers/view-cab
                               :post cab-handlers/update-cab}}]
         ["users" {"/signup" {:get user-handlers/signup-form
                              :post user-handlers/create-user}
                   "/login" {:get user-handlers/login-form
                             :post user-handlers/login}
                   "/logout" {:get user-handlers/logout}
-                  "/dashboard" {:get (authentication-required (wrap-layout dashboard-handlers/index)
+                  "/dashboard" {:get (authentication-required dashboard-handlers/index
                                                               #{:admin :manager :driver})}}]
-        ["fleets" {"" {:get (authentication-required (wrap-layout fleet-handlers/show-fleets) #{:admin})
+        ["fleets" {"" {:get (authentication-required fleet-handlers/show-fleets #{:admin})
                        :post (authentication-required fleet-handlers/create-fleet #{:admin})}
-                   "/new" {:get (authentication-required (wrap-layout fleet-handlers/new) #{:admin})}}]
+                   "/new" {:get (authentication-required fleet-handlers/new #{:admin})}}]
         ["invites" {"" {:post (authentication-required invite-handlers/create #{:admin})}
-                    "/new" {:get (authentication-required (wrap-layout invite-handlers/invites-page) #{:admin})}}]
+                    "/new" {:get (authentication-required invite-handlers/invites-page #{:admin})}}]
         ["organisations" {"/new" {:post (authentication-required org-handlers/create
                                                                  #{:admin})}}]
         ["healthcheck" {:get (wrap-json-response handler/health-check)}]
-        ["index" {:get (wrap-layout handler/index)}]
-        ["" {:get (wrap-layout handler/root)}]
-        [true (wrap-layout handler/not-found)]]])
+        ["index" {:get handler/index}]
+        ["" {:get handler/root}]
+        [true handler/not-found]]])

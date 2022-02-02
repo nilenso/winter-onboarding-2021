@@ -79,3 +79,53 @@
           db-admin (first (user-db/find-by-keys {:id (:users/id admin)}))]
 
       (is (= (:organisations/id org) (:users/org-id db-admin))))))
+
+
+(deftest members
+  (let [admin (factories/admin)
+        org (factories/organisation {:organisations/created-by (:users/id admin)})
+        _ (user-db/add-to-org db-core/db-conn org admin)
+        managers (->> ::specs/users
+                      (factories/overridden-generator {:users/role "manager"
+                                                       :users/org-id (:organisations/id org)})
+                      (factories/create-list :users 2))
+        drivers (->> ::specs/users
+                     (factories/overridden-generator {:users/role "driver"
+                                                      :users/org-id (:organisations/id org)})
+                     (factories/create-list :users 2))]
+
+    (testing "Should return us the members of given organisation & role"
+      (is (= (user-db/find-by-keys {:id (:users/id admin)})
+             (user-db/members org ["admin"])))
+      (is (= managers (user-db/members org ["manager"])))
+      (is (= drivers (user-db/members org ["driver"]))))
+
+    (testing "Should not return us users who are not in any organisation"
+      (let [non-member-managers (->> ::specs/users
+                                     (factories/overridden-generator {:users/role "manager"})
+                                     (factories/create-list :users 2))
+            non-member-drivers (->> ::specs/users
+                                    (factories/overridden-generator {:users/role "driver"})
+                                    (factories/create-list :users 2))]
+        (is (not= non-member-managers
+                  (user-db/members org ["manager"])))
+        (is (not= non-member-drivers
+                  (user-db/members org ["driver"])))))
+
+    (testing "Should not return us the members of another organisation"
+      (let [another-admin (factories/admin)
+            another-org (->> ::specs/organisations
+                             (factories/overridden-generator {:organisations/created-by (:users/id another-admin)})
+                             (factories/create :organisations))
+            non-member-managers (->> ::specs/users
+                                     (factories/overridden-generator {:users/role "manager"
+                                                                      :users/org-id (:organisations/id another-org)})
+                                     (factories/create-list :users 2))
+            non-member-drivers (->> ::specs/users
+                                    (factories/overridden-generator {:users/role "driver"
+                                                                     :users/org-id (:organisations/id another-org)})
+                                    (factories/create-list :users 2))]
+        (is (not= non-member-managers
+                  (user-db/members org ["manager"])))
+        (is (not= non-member-drivers
+                  (user-db/members org ["driver"])))))))

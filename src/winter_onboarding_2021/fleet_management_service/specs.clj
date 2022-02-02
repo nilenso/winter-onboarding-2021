@@ -68,7 +68,7 @@
     non-empty-alphanumeric-string
     non-empty-alphanumeric-string)))
 
-
+(s/def :users/id uuid?)
 (s/def :users/name (s/and string? (comp not empty?)))
 (s/def :users/email (s/with-gen (s/and string? #(re-matches #".+\@.+\..+" %))
                       email-gen))
@@ -102,10 +102,12 @@
 (s/def :fleets/id uuid?)
 (s/def :fleets/name string?)
 (s/def :fleets/created-by uuid?)
+(s/def :fleets/org-id uuid?)
 
 (s/def ::fleets
   (s/keys :req [:fleets/name
-                :fleets/created-by]))
+                :fleets/created-by
+                :fleets/org-id]))
 
 ; Pagination
 (s/def ::pagination-params
@@ -164,7 +166,7 @@
   (s/keys :req [:organisations/name
                 :organisations/created-by]))
 
-(s/def ::organisations-all-attrs
+(s/def ::organisations-all-attr
   (s/keys :req [:organisations/id
                 :organisations/name
                 :organisations/created-by

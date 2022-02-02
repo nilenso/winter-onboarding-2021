@@ -27,10 +27,12 @@
 (defn seed-user-fleets-db
   "adds `num-fleets` to the DB associated with a sample user"
   [num-fleets]
-  (let [user (factories/admin)
+  (let [{user-id :users/id :as user} (factories/admin)
+        {org-id :organisations/id} (factories/organisation {:organisations/created-by user-id})
         fleets (vec (factories/create-list :fleets
                                            num-fleets
-                                           (factories/overridden-generator {:fleets/created-by (:users/id user)}
+                                           (factories/overridden-generator {:fleets/created-by user-id
+                                                                            :fleets/org-id org-id}
                                                                            ::specs/fleets)))]
     (doall (map #(core-db/insert! :users_fleets {:user-id (:users/id user)
                                                  :fleet-id (:fleets/id %)})
@@ -46,8 +48,10 @@
 
 (deftest create-fleet
   (testing "Should create a fleet"
-    (let [user-id (:users/id (factories/create :users (s/gen ::specs/users)))
-          fleet (factories/create :fleets (factories/overridden-generator {:fleets/created-by user-id}
+    (let [{user-id :users/id} (factories/create :users (s/gen ::specs/users))
+          {org-id :organisations/id} (factories/organisation {:organisations/created-by user-id})
+          fleet (factories/create :fleets (factories/overridden-generator {:fleets/created-by user-id
+                                                                           :fleets/org-id org-id}
                                                                           ::specs/fleets))]
 
       (is (= fleet (first (core-db/query! ["select * from fleets;"]))))))
@@ -56,8 +60,8 @@
     (let [user-id (:users/id (factories/create :users (s/gen ::specs/users)))
           fleet {:fleets/name "Azkaban Fleet 1"
                  :fleets/created-by (str user-id)}]
-      (is (= error/validation-failed (select-keys (fleet-db/create core-db/db-conn fleet)
-                                                  [:error]))))))
+      (is (= error/validation-failed
+             (select-keys (fleet-db/create core-db/db-conn fleet) [:error]))))))
 
 (deftest user-fleets
   (testing "Should fetch us a list of first 10 fleets related to an admin user"
@@ -81,8 +85,8 @@
 (deftest managers
   (testing "Should get us list of managers associated with a certain fleet"
     (let [{:keys [user fleets]} (seed-user-fleets-db 1)
-          manager1 (dissoc (factories/manager) :users/password)
-          manager2 (dissoc (factories/manager) :users/password)]
+          manager1 (dissoc (factories/manager) :users/password :users/invite-id)
+          manager2 (dissoc (factories/manager) :users/password :users/invite-id)]
       (core-db/insert! :users-fleets {:user-id (:users/id user)
                                       :fleet-id (:fleets/id (first fleets))})
       (core-db/insert! :users-fleets {:user-id (:users/id manager1)
