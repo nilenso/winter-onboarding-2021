@@ -25,7 +25,11 @@
   (gen/return (eval (sqltime/to-sql-time (cljt/from-now (cljt/weeks (+ 1 (rand-int 10))))))))
 
 (defn- capital-string-gen []
-  (gen/return (apply str (take 8 (repeatedly #(char (+ (rand 26) 65)))))))
+  (->> #(char (+ (rand 26) 65))
+       repeatedly
+       (take 8)
+       (apply str)
+       (gen/return)))
 
 (def licence-plate-regex #"^[a-zA-Z0-9]*$")
 
