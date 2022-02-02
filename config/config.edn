@@ -7,4 +7,6 @@
  :log {}
  :default-page-size 10
  :session-timeout-ms 86400000
- :recaptcha-secret #or [#env "RECAPTCHA" #env secret]}
+ :recaptcha-secret #or [#env "RECAPTCHA" #env secret]
+ :recaptcha-url "https://www.google.com/recaptcha/api/siteverify"
+ :recaptcha-site-key "6Lc1XSkeAAAAAJUFg_Zv7qQ7w4bZ2v2sH7Y_cNW3"}

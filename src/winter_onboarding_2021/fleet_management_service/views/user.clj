@@ -1,5 +1,6 @@
 (ns winter-onboarding-2021.fleet-management-service.views.user
-  (:require [winter-onboarding-2021.fleet-management-service.views.core :as core-views]))
+  (:require [winter-onboarding-2021.fleet-management-service.views.core :as core-views]
+            [winter-onboarding-2021.fleet-management-service.config :as config]))
 
 
 (defn signup-form
@@ -29,8 +30,8 @@
             (when (some? token)
               [:input {:type "hidden" :name "token" :value token :id "token"}])
             [:div {:class "g-recaptcha"
-                   :data-sitekey "6Lc1XSkeAAAAAJUFg_Zv7qQ7w4bZ2v2sH7Y_cNW3"}]
-            [:button {:type "submit" :class "btn btn-primary"} "Submit"]]))
+                    :data-sitekey (config/recaptcha-site-key)}]
+             [:button {:type "submit" :class "btn btn-primary"} "Submit"]]]))
 
 (defn login-form []
   [:div [:h1 {:class "text-center"} "Login"] 
