@@ -1,0 +1,14 @@
+
+
+Expression language/types
+
+{bin-op}
+{dice-model}
+{literal}
+{set}
+
+Result types
+{dice-model + :states + :value + :result}
+{bin-op + :result}
+{literal + :result}
+{set + :result + :states}
